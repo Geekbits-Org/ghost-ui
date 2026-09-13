@@ -1,0 +1,8 @@
+﻿/* Required Ghost styles for wide and full-bleed image/card formats */
+.kg-width-wide {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+.kg-width-full {
+    width: 100vw;
+}

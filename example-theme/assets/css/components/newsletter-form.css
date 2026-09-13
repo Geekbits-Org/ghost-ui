@@ -1,0 +1,7 @@
+/* If the user is using Tailwind, they don't necessarily need this file. 
+   But we can include fallback generic CSS or Tailwind `@apply` rules if desired. 
+   For now, this component uses Tailwind utility classes inline. 
+*/
+.gh-newsletter-form {
+    /* Add custom scoped overrides here if needed */
+}

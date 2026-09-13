@@ -1,0 +1,19 @@
+{
+  "name": "example-ghost-theme",
+  "description": "Example theme to test Ghost UI component installation",
+  "version": "1.0.0",
+  "engines": {
+    "ghost": ">=5.0.0"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Test User",
+    "email": "test@example.com"
+  },
+  "keywords": [
+    "ghost-theme"
+  ],
+  "config": {
+    "posts_per_page": 5
+  }
+}

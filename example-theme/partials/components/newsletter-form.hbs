@@ -1,0 +1,32 @@
+{{!-- 
+  Component: Newsletter Form
+  Usage: {{> "components/newsletter-form" title="Subscribe!"}} 
+--}}
+<section class="gh-newsletter-form bg-slate-50 border border-slate-200 p-8 rounded-xl text-center max-w-2xl mx-auto my-8">
+    <h3 class="text-2xl font-bold mb-2 text-slate-900">{{#if title}}{{title}}{{else}}Subscribe to our newsletter{{/if}}</h3>
+    <p class="text-slate-600 mb-6">{{#if description}}{{description}}{{else}}Get the latest posts delivered right to your inbox.{{/if}}</p>
+    
+    {{!-- Ghost native members form handling --}}
+    <form data-members-form="subscribe" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto relative">
+        <label for="gh-email" class="sr-only">Email address</label>
+        <input 
+            data-members-email 
+            type="email" 
+            id="gh-email" 
+            required 
+            placeholder="jamie@example.com" 
+            class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+        />
+        <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center">
+            <span class="button-text">Subscribe</span>
+        </button>
+        
+        {{!-- Ghost automatic states (hidden by default, shown via Ghost Portal JS) --}}
+        <div class="message-success hidden absolute -bottom-8 left-0 right-0 text-sm text-green-600 font-medium" data-members-success>
+            Success! Check your inbox to confirm.
+        </div>
+        <div class="message-error hidden absolute -bottom-8 left-0 right-0 text-sm text-red-600 font-medium" data-members-error>
+            Please enter a valid email address.
+        </div>
+    </form>
+</section>

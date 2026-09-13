@@ -1,0 +1,7 @@
+{
+  "style": "tailwind",
+  "aliases": {
+    "partials": "partials/components",
+    "styles": "assets/css/components"
+  }
+}

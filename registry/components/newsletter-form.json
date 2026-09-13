@@ -1,0 +1,25 @@
+{
+  "name": "newsletter-form",
+  "type": "components:ui",
+  "description": "A native Ghost members subscription form.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "newsletter-form.hbs",
+      "type": "partial",
+      "target": "partials/components/newsletter-form.hbs",
+      "content": "{{!-- \n  Component: Newsletter Form\n  Usage: {{> \"components/newsletter-form\" title=\"Subscribe!\"}} \n--}}\n<section class=\"gh-newsletter-form bg-slate-50 border border-slate-200 p-8 rounded-xl text-center max-w-2xl mx-auto my-8\">\n    <h3 class=\"text-2xl font-bold mb-2 text-slate-900\">{{#if title}}{{title}}{{else}}Subscribe to our newsletter{{/if}}</h3>\n    <p class=\"text-slate-600 mb-6\">{{#if description}}{{description}}{{else}}Get the latest posts delivered right to your inbox.{{/if}}</p>\n    \n    {{!-- Ghost native members form handling --}}\n    <form data-members-form=\"subscribe\" class=\"flex flex-col sm:flex-row gap-3 max-w-md mx-auto relative\">\n        <label for=\"gh-email\" class=\"sr-only\">Email address</label>\n        <input \n            data-members-email \n            type=\"email\" \n            id=\"gh-email\" \n            required \n            placeholder=\"jamie@example.com\" \n            class=\"flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500\" \n        />\n        <button type=\"submit\" class=\"bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center\">\n            <span class=\"button-text\">Subscribe</span>\n        </button>\n        \n        {{!-- Ghost automatic states (hidden by default, shown via Ghost Portal JS) --}}\n        <div class=\"message-success hidden absolute -bottom-8 left-0 right-0 text-sm text-green-600 font-medium\" data-members-success>\n            Success! Check your inbox to confirm.\n        </div>\n        <div class=\"message-error hidden absolute -bottom-8 left-0 right-0 text-sm text-red-600 font-medium\" data-members-error>\n            Please enter a valid email address.\n        </div>\n    </form>\n</section>"
+    },
+    {
+      "name": "newsletter-form.css",
+      "type": "style",
+      "target": "assets/css/components/newsletter-form.css",
+      "content": "/* If the user is using Tailwind, they don't necessarily need this file. \n   But we can include fallback generic CSS or Tailwind `@apply` rules if desired. \n   For now, this component uses Tailwind utility classes inline. \n*/\n.gh-newsletter-form {\n    /* Add custom scoped overrides here if needed */\n}\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": ["GS010-PJ-VALID", "GS050-MEMBERS-FORM"],
+    "notes": "Uses Ghost's native `data-members-form` attributes. No custom JS required."
+  }
+}
