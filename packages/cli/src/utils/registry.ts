@@ -43,6 +43,19 @@ export async function getComponent(componentName: string): Promise<ComponentMani
     currentDir = path.dirname(currentDir);
   }
 
+  // Also search upwards from the CLI package location itself
+  if (!registryPath) {
+    let cliDir = __dirname;
+    while (cliDir !== path.parse(cliDir).root) {
+      const potentialPath = path.join(cliDir, 'registry', 'components', `${componentName}.json`);
+      if (fs.existsSync(potentialPath)) {
+        registryPath = potentialPath;
+        break;
+      }
+      cliDir = path.dirname(cliDir);
+    }
+  }
+
   if (!registryPath) {
     // If not found in monorepo fallback, assume it's missing (or we'd throw fetch error)
     return null;
