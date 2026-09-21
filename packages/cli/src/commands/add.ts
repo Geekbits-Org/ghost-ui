@@ -77,7 +77,7 @@ export async function add(componentName?: string, options: AddOptions = {}) {
   const configPath = path.join(cwd, 'components.json');
 
   if (!fs.existsSync(configPath)) {
-    console.error(chalk.red('components.json not found. Please run "ghost-ui init" first.'));
+    console.error(chalk.red('components.json not found. Please run "ghostui init" first.'));
     process.exit(1);
   }
 

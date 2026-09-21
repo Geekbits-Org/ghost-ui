@@ -35,12 +35,12 @@ Ghost UI allows Ghost theme creators and developers to install production-ready,
 Run the `init` command from the root of any Ghost theme (must have `engines.ghost` in its `package.json`):
 
 ```bash
-npx @ghost-ui/cli init
+npx ghostui init
 ```
 
 Or pass `-y` to use default paths non-interactively:
 ```bash
-npx @ghost-ui/cli init -y
+npx ghostui init -y
 ```
 
 This creates a `components.json` configuration file:
@@ -59,24 +59,24 @@ This creates a `components.json` configuration file:
 List all available components in the Ghost UI registry:
 
 ```bash
-npx @ghost-ui/cli list
+npx ghostui list
 ```
 
 ### 3. Add Components
 
 Add a specific component:
 ```bash
-npx @ghost-ui/cli add newsletter-form
+npx ghostui add newsletter-form
 ```
 
 Or run `add` without arguments to pick interactively from a multi-select list:
 ```bash
-npx @ghost-ui/cli add
+npx ghostui add
 ```
 
 To overwrite existing files without prompts:
 ```bash
-npx @ghost-ui/cli add newsletter-form -y
+npx ghostui add newsletter-form -y
 ```
 
 ### 4. Use in your Theme
@@ -107,7 +107,7 @@ Include the installed partial anywhere in your Handlebars templates:
 
 ```text
 ??? packages/
-?   ??? cli/                # @ghost-ui/cli (Commander, Prompts, TypeScript, tests)
+?   ??? cli/                # ghostui (Commander, Prompts, TypeScript, tests)
 ??? registry/
 ?   ??? index.json          # Registry catalog index
 ?   ??? components/         # Component manifests and templates

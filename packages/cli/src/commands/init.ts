@@ -76,5 +76,5 @@ export async function init(options: InitOptions = {}) {
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 
   console.log(chalk.green('\nSuccess! Configuration written to components.json.'));
-  console.log(`You can now add components using ${chalk.cyan('npx @ghost-ui/cli add <component>')}`);
+  console.log(`You can now add components using ${chalk.cyan('npx ghostui add <component>')}`);
 }

@@ -1,10 +1,11 @@
 {
-  "name": "@ghost-ui/cli",
+  "name": "ghostui",
   "version": "1.0.0",
   "description": "Component distribution system for Ghost CMS themes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
+    "ghostui": "./dist/index.js",
     "ghost-ui": "./dist/index.js"
   },
   "files": [
