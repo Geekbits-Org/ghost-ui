@@ -3,14 +3,41 @@
   "version": "1.0.0",
   "description": "Component distribution system for Ghost CMS themes",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "bin": {
     "ghost-ui": "./dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "start": "ts-node src/index.ts",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "test": "node --test dist/test/*.test.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Geekbits-Org/ghost-ui.git",
+    "directory": "packages/cli"
+  },
+  "keywords": [
+    "ghost",
+    "ghost-cms",
+    "ghost-theme",
+    "theme",
+    "components",
+    "shadcn",
+    "cli",
+    "handlebars"
+  ],
+  "author": "Geekbits Org",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Geekbits-Org/ghost-ui/issues"
+  },
+  "homepage": "https://github.com/Geekbits-Org/ghost-ui#readme",
   "dependencies": {
     "chalk": "^4.1.2",
     "commander": "^12.0.0",

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "newsletter-form",
+    "description": "A native Ghost members subscription form.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "newsletter-form.hbs",
+      "newsletter-form.css"
+    ]
+  },
+  {
+    "name": "pricing-table",
+    "description": "Membership tiers and pricing plans with native Ghost Portal checkout triggers.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "pricing-table.hbs",
+      "pricing-table.css"
+    ]
+  },
+  {
+    "name": "author-card",
+    "description": "Author bio box featuring avatar, biography, social links, and post counts.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "author-card.hbs",
+      "author-card.css"
+    ]
+  },
+  {
+    "name": "post-card",
+    "description": "Post preview card with feature image, primary tag, excerpt, and reading time.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "post-card.hbs",
+      "post-card.css"
+    ]
+  }
+]

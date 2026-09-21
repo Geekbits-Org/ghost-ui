@@ -1,0 +1,27 @@
+{
+  "name": "author-card",
+  "type": "components:ui",
+  "description": "Author bio box featuring avatar, biography, social links, and post counts.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "author-card.hbs",
+      "type": "partial",
+      "target": "partials/components/author-card.hbs",
+      "content": "{{!-- \n  Component: Author Card\n  Usage: In post context {{> \"components/author-card\"}} or {{#primary_author}}{{> \"components/author-card\"}}{{/primary_author}}\n--}}\n<section class=\"gh-author-card bg-slate-50 border border-slate-200 rounded-xl p-6 my-8 max-w-2xl mx-auto flex flex-col sm:flex-row items-center sm:items-start gap-5\">\n    {{#if profile_image}}\n    <img src=\"{{img_url profile_image size=\"m\"}}\" alt=\"{{name}}\" class=\"gh-author-avatar w-20 h-20 rounded-full object-cover border-2 border-white shadow\" />\n    {{else}}\n    <div class=\"gh-author-avatar-fallback w-20 h-20 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-2xl border-2 border-white shadow\">\n        {{name.[0]}}\n    </div>\n    {{/if}}\n\n    <div class=\"gh-author-details flex-1 text-center sm:text-left\">\n        <div class=\"flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2\">\n            <h4 class=\"gh-author-name text-xl font-bold text-slate-900\">\n                <a href=\"{{url}}\" class=\"hover:text-indigo-600 transition-colors\">{{name}}</a>\n            </h4>\n            {{#if count.posts}}\n            <span class=\"gh-author-post-count text-xs text-slate-500 bg-slate-200 px-2.5 py-1 rounded-full font-medium\">\n                {{plural count.posts empty=\"0 posts\" singular=\"% post\" plural=\"% posts\"}}\n            </span>\n            {{/if}}\n        </div>\n\n        {{#if bio}}\n        <p class=\"gh-author-bio text-slate-600 text-sm mb-4 leading-relaxed\">{{bio}}</p>\n        {{/if}}\n\n        <div class=\"gh-author-meta flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-slate-500\">\n            {{#if location}}\n            <span class=\"gh-author-location flex items-center gap-1\">?? {{location}}</span>\n            {{/if}}\n            {{#if website}}\n            <a href=\"{{website}}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"gh-author-link text-indigo-600 hover:underline\">Website</a>\n            {{/if}}\n            {{#if (social_url type=\"twitter\")}}\n            <a href=\"{{social_url type=\"twitter\"}}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"gh-author-link text-indigo-600 hover:underline\">Twitter/X</a>\n            {{/if}}\n            {{#if (social_url type=\"facebook\")}}\n            <a href=\"{{social_url type=\"facebook\"}}\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"gh-author-link text-indigo-600 hover:underline\">Facebook</a>\n            {{/if}}\n        </div>\n    </div>\n</section>"
+    },
+    {
+      "name": "author-card.css",
+      "type": "style",
+      "target": "assets/css/components/author-card.css",
+      "content": "/* Ghost UI: Author Card Styles (Vanilla CSS fallback) */\n.gh-author-card {\n    background-color: var(--ghost-card-bg, #f8fafc);\n    border: 1px solid var(--ghost-border, #e2e8f0);\n    border-radius: 0.75rem;\n    padding: 1.5rem;\n    margin: 2rem auto;\n    max-width: 42rem;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    gap: 1.25rem;\n}\n\n@media (min-width: 640px) {\n    .gh-author-card {\n        flex-direction: row;\n        align-items: flex-start;\n    }\n}\n\n.gh-author-avatar {\n    width: 5rem;\n    height: 5rem;\n    border-radius: 9999px;\n    object-fit: cover;\n    border: 2px solid #ffffff;\n    box-shadow: 0 1px 3px rgba(0,0,0,0.1);\n}\n\n.gh-author-avatar-fallback {\n    width: 5rem;\n    height: 5rem;\n    border-radius: 9999px;\n    background-color: #e0e7ff;\n    color: #4f46e5;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    font-size: 1.5rem;\n    font-weight: 700;\n}\n\n.gh-author-details {\n    flex: 1;\n    text-align: center;\n}\n\n@media (min-width: 640px) {\n    .gh-author-details {\n        text-align: left;\n    }\n}\n\n.gh-author-name {\n    font-size: 1.25rem;\n    font-weight: 700;\n    margin: 0;\n}\n\n.gh-author-name a {\n    color: var(--ghost-heading-color, #0f172a);\n    text-decoration: none;\n}\n\n.gh-author-name a:hover {\n    color: var(--ghost-accent-color, #4f46e5);\n}\n\n.gh-author-bio {\n    color: var(--ghost-text-muted, #475569);\n    font-size: 0.875rem;\n    line-height: 1.5;\n    margin: 0.5rem 0 1rem;\n}\n\n.gh-author-meta {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 1rem;\n    font-size: 0.75rem;\n    color: #64748b;\n}\n\n.gh-author-meta a {\n    color: var(--ghost-accent-color, #4f46e5);\n    text-decoration: none;\n}\n\n.gh-author-meta a:hover {\n    text-decoration: underline;\n}"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses standard Ghost author helpers (profile_image, img_url, plural, url, bio)."
+  }
+}

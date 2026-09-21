@@ -1,0 +1,45 @@
+{{!-- 
+  Component: Author Card
+  Usage: In post context {{> "components/author-card"}} or {{#primary_author}}{{> "components/author-card"}}{{/primary_author}}
+--}}
+<section class="gh-author-card bg-slate-50 border border-slate-200 rounded-xl p-6 my-8 max-w-2xl mx-auto flex flex-col sm:flex-row items-center sm:items-start gap-5">
+    {{#if profile_image}}
+    <img src="{{img_url profile_image size="m"}}" alt="{{name}}" class="gh-author-avatar w-20 h-20 rounded-full object-cover border-2 border-white shadow" />
+    {{else}}
+    <div class="gh-author-avatar-fallback w-20 h-20 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-2xl border-2 border-white shadow">
+        {{name.[0]}}
+    </div>
+    {{/if}}
+
+    <div class="gh-author-details flex-1 text-center sm:text-left">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+            <h4 class="gh-author-name text-xl font-bold text-slate-900">
+                <a href="{{url}}" class="hover:text-indigo-600 transition-colors">{{name}}</a>
+            </h4>
+            {{#if count.posts}}
+            <span class="gh-author-post-count text-xs text-slate-500 bg-slate-200 px-2.5 py-1 rounded-full font-medium">
+                {{plural count.posts empty="0 posts" singular="% post" plural="% posts"}}
+            </span>
+            {{/if}}
+        </div>
+
+        {{#if bio}}
+        <p class="gh-author-bio text-slate-600 text-sm mb-4 leading-relaxed">{{bio}}</p>
+        {{/if}}
+
+        <div class="gh-author-meta flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-slate-500">
+            {{#if location}}
+            <span class="gh-author-location flex items-center gap-1">?? {{location}}</span>
+            {{/if}}
+            {{#if website}}
+            <a href="{{website}}" target="_blank" rel="noopener noreferrer" class="gh-author-link text-indigo-600 hover:underline">Website</a>
+            {{/if}}
+            {{#if (social_url type="twitter")}}
+            <a href="{{social_url type="twitter"}}" target="_blank" rel="noopener noreferrer" class="gh-author-link text-indigo-600 hover:underline">Twitter/X</a>
+            {{/if}}
+            {{#if (social_url type="facebook")}}
+            <a href="{{social_url type="facebook"}}" target="_blank" rel="noopener noreferrer" class="gh-author-link text-indigo-600 hover:underline">Facebook</a>
+            {{/if}}
+        </div>
+    </div>
+</section>

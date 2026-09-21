@@ -1,0 +1,85 @@
+/* Ghost UI: Post Card Styles (Vanilla CSS fallback) */
+.gh-post-card {
+    background-color: var(--ghost-card-bg, #ffffff);
+    border: 1px solid var(--ghost-border, #e2e8f0);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gh-post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.gh-post-card-image {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    display: block;
+    background-color: #f1f5f9;
+}
+
+.gh-post-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gh-post-card:hover .gh-post-card-image img {
+    transform: scale(1.03);
+}
+
+.gh-post-card-content {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.gh-post-card-tag {
+    color: var(--ghost-accent-color, #4f46e5);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.gh-post-card-tag:hover {
+    text-decoration: underline;
+}
+
+.gh-post-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    line-height: 1.35;
+}
+
+.gh-post-card-title a {
+    color: var(--ghost-heading-color, #0f172a);
+    text-decoration: none;
+}
+
+.gh-post-card-title a:hover {
+    color: var(--ghost-accent-color, #4f46e5);
+}
+
+.gh-post-card-excerpt {
+    color: var(--ghost-text-muted, #475569);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.gh-post-card-footer {
+    padding-top: 1rem;
+    border-top: 1px solid var(--ghost-border, #f1f5f9);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #64748b;
+}

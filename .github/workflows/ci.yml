@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build & Test (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x, 22.x]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: 'packages/cli/package-lock.json'
+
+      - name: Install dependencies
+        run: npm --prefix packages/cli ci
+
+      - name: Build CLI
+        run: npm --prefix packages/cli run build
+
+      - name: Run Unit Tests
+        run: npm --prefix packages/cli test
+
+      - name: Verify CLI list command
+        run: node packages/cli/dist/index.js list
+
+      - name: Run End-to-End Ghost Theme Validation
+        run: |
+          cd example-theme
+          node ../packages/cli/dist/index.js init -y
+          node ../packages/cli/dist/index.js add newsletter-form -y
+          node ../packages/cli/dist/index.js add pricing-table -y
+          node ../packages/cli/dist/index.js add author-card -y
+          node ../packages/cli/dist/index.js add post-card -y
+          npx gscan .

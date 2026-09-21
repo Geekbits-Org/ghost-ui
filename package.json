@@ -1,16 +1,24 @@
 {
-  "name": "ghost",
+  "name": "ghost-ui",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Component distribution system for Ghost CMS themes",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm --prefix packages/cli run build",
+    "test": "npm --prefix packages/cli test",
+    "generate:registry": "node scripts/generate-registry.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "keywords": [
+    "ghost",
+    "ghost-theme",
+    "components"
+  ],
+  "author": "Geekbits Org",
+  "license": "MIT",
   "engines": {
-    "ghost": ">=5.0.0"
+    "node": ">=18.0.0"
   }
 }

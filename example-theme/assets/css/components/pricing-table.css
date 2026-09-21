@@ -1,0 +1,91 @@
+/* Ghost UI: Pricing Table Styles (Vanilla CSS fallback) */
+.gh-pricing {
+    max-width: 64rem;
+    margin: 2rem auto;
+    padding: 2rem 1rem;
+}
+
+.gh-pricing-title {
+    font-size: 1.875rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--ghost-heading-color, #0f172a);
+    margin-bottom: 0.75rem;
+}
+
+.gh-pricing-desc {
+    text-align: center;
+    color: var(--ghost-text-muted, #475569);
+    margin-bottom: 2.5rem;
+}
+
+.gh-pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .gh-pricing-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.gh-pricing-card {
+    border: 1px solid var(--ghost-border, #e2e8f0);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    background-color: var(--ghost-card-bg, #f8fafc);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+.gh-pricing-card-featured {
+    border: 2px solid var(--ghost-accent-color, #4f46e5);
+    background-color: #ffffff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.gh-pricing-badge {
+    position: absolute;
+    top: -0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--ghost-accent-color, #4f46e5);
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+}
+
+.gh-pricing-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.625rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+    background-color: #ffffff;
+    margin-top: 1.5rem;
+    transition: background-color 0.15s ease;
+}
+
+.gh-pricing-btn:hover {
+    background-color: #f1f5f9;
+}
+
+.gh-pricing-btn-primary {
+    background-color: var(--ghost-accent-color, #4f46e5);
+    border-color: var(--ghost-accent-color, #4f46e5);
+    color: #ffffff;
+}
+
+.gh-pricing-btn-primary:hover {
+    opacity: 0.9;
+}

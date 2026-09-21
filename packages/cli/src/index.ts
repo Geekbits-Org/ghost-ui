@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { init } from './commands/init';
 import { add } from './commands/add';
+import { list } from './commands/list';
 import packageJson from '../package.json';
 
 function main() {
@@ -17,9 +18,14 @@ function main() {
     .action(init);
 
   program
+    .command('list')
+    .description('List all available components in the Ghost UI registry')
+    .action(list);
+
+  program
     .command('add')
-    .description('Add a component to your Ghost theme')
-    .argument('<component>', 'The component to add')
+    .description('Add one or more components to your Ghost theme')
+    .argument('[component]', 'The component to add (leave blank for interactive selection)')
     .option('-y, --yes', 'Overwrite existing files without prompting')
     .action(add);
 

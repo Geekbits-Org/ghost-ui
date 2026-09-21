@@ -1,4 +1,4 @@
-﻿{{!< default}}
+{{!< default}}
 
 {{#post}}
 <article class="post">
@@ -6,5 +6,9 @@
     <div class="content">
         {{content}}
     </div>
+
+    {{#primary_author}}
+        {{> "components/author-card"}}
+    {{/primary_author}}
 </article>
 {{/post}}

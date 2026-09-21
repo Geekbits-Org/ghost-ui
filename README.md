@@ -2,16 +2,29 @@
 
 > A `shadcn/ui`-style component distribution system designed specifically for **Ghost CMS** themes.
 
-Ghost UI allows Ghost theme creators and developers to install production-ready, copy-pasteable Handlebars (`.hbs`) partials, stylesheets, and scripts directly into their themes without cumbersome plugins or monolithic dependencies.
+Ghost UI allows Ghost theme creators and developers to install production-ready, copy-pasteable Handlebars (`.hbs`) partials, stylesheets (`.css`), and scripts directly into their themes without cumbersome plugins or monolithic dependencies.
 
 ---
 
 ## Features
 
-- **Theme-Native**: Installs raw Handlebars partials and CSS directly into your Ghost theme folders.
-- **Ghost Members API Ready**: Native support for Ghost attributes such as `data-members-form="subscribe"`.
-- **gscan Validated**: All components strictly adhere to Ghost theme guidelines and pass official `gscan` checks.
-- **Customizable**: Full ownership of the code?modify HTML, Tailwind classes, and CSS after installation.
+- **Theme-Native Distribution**: Injects raw Handlebars partials and CSS directly into your Ghost theme folders.
+- **Remote CDN Registry**: Fetches live component manifests over HTTPS directly from the official registry.
+- **Interactive Multi-Select**: Run `ghost-ui add` without arguments to select and batch-install multiple components interactively.
+- **Styling Parity**: Complete Vanilla CSS stylesheets provided alongside modern Tailwind CSS utility classes.
+- **Ghost Members API Native**: Built-in support for Ghost attributes like `data-members-form="subscribe"` and Portal checkout links.
+- **100% gscan Validated**: All components strictly adhere to Ghost theme guidelines and pass official `gscan` checks with 0 errors.
+
+---
+
+## Available Components
+
+| Component | Description | Files |
+| :--- | :--- | :--- |
+| **`newsletter-form`** | Native Ghost members subscription form with success/error states | `.hbs`, `.css` |
+| **`pricing-table`** | Membership tiers (Free, Monthly, Annual) with Portal checkout links | `.hbs`, `.css` |
+| **`author-card`** | Author bio box with avatar, biography, social links, and post counts | `.hbs`, `.css` |
+| **`post-card`** | Post loop preview card with feature image, tags, excerpt, and reading time | `.hbs`, `.css` |
 
 ---
 
@@ -19,13 +32,13 @@ Ghost UI allows Ghost theme creators and developers to install production-ready,
 
 ### 1. Initialize your Ghost Theme
 
-Run the init command from the root of any Ghost theme (must have `engines.ghost` in its `package.json`):
+Run the `init` command from the root of any Ghost theme (must have `engines.ghost` in its `package.json`):
 
 ```bash
 npx @ghost-ui/cli init
 ```
 
-Or pass `-y` to use default paths:
+Or pass `-y` to use default paths non-interactively:
 ```bash
 npx @ghost-ui/cli init -y
 ```
@@ -41,54 +54,90 @@ This creates a `components.json` configuration file:
 }
 ```
 
-### 2. Add Components
+### 2. Browse Components
 
-Add any component from the registry to your theme:
+List all available components in the Ghost UI registry:
 
+```bash
+npx @ghost-ui/cli list
+```
+
+### 3. Add Components
+
+Add a specific component:
 ```bash
 npx @ghost-ui/cli add newsletter-form
 ```
 
-### 3. Use in your Theme
+Or run `add` without arguments to pick interactively from a multi-select list:
+```bash
+npx @ghost-ui/cli add
+```
+
+To overwrite existing files without prompts:
+```bash
+npx @ghost-ui/cli add newsletter-form -y
+```
+
+### 4. Use in your Theme
 
 Include the installed partial anywhere in your Handlebars templates:
 
 ```handlebars
+{{!-- Newsletter Form --}}
 {{> "components/newsletter-form" title="Subscribe to our Newsletter"}}
+
+{{!-- Pricing Table --}}
+{{> "components/pricing-table" title="Choose your membership"}}
+
+{{!-- Author Card --}}
+{{#primary_author}}
+    {{> "components/author-card"}}
+{{/primary_author}}
+
+{{!-- Post Loop --}}
+{{#foreach posts}}
+    {{> "components/post-card"}}
+{{/foreach}}
 ```
 
 ---
 
 ## Project Structure
 
-```
+```text
 ??? packages/
-?   ??? cli/                # @ghost-ui/cli (Commander, Prompts, TypeScript)
+?   ??? cli/                # @ghost-ui/cli (Commander, Prompts, TypeScript, tests)
 ??? registry/
+?   ??? index.json          # Registry catalog index
 ?   ??? components/         # Component manifests and templates
 ??? example-theme/          # Sample Ghost theme showing integration
+??? .github/workflows/      # Automated CI pipeline
 ```
 
 ---
 
-## Contributing & Local Development
+## Development & Testing
 
-1. Install dependencies:
+1. **Install Dependencies**:
    ```bash
    cd packages/cli
    npm install
    ```
 
-2. Build the CLI:
+2. **Build TypeScript**:
    ```bash
    npm run build
    ```
 
-3. Test in local theme:
+3. **Run Unit Tests**:
+   ```bash
+   npm test
+   ```
+
+4. **Verify with Ghost Validator (`gscan`)**:
    ```bash
    cd ../../example-theme
-   node ../packages/cli/dist/index.js init -y
-   node ../packages/cli/dist/index.js add newsletter-form -y
    npx gscan .
    ```
 

@@ -1,7 +1,83 @@
-/* If the user is using Tailwind, they don't necessarily need this file. 
-   But we can include fallback generic CSS or Tailwind `@apply` rules if desired. 
-   For now, this component uses Tailwind utility classes inline. 
-*/
+/* Ghost UI: Newsletter Form Styles (Vanilla CSS fallback) */
 .gh-newsletter-form {
-    /* Add custom scoped overrides here if needed */
+    background-color: var(--ghost-accent-bg, #f8fafc);
+    border: 1px solid var(--ghost-border, #e2e8f0);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+    max-width: 42rem;
+    margin: 2rem auto;
+}
+
+.gh-newsletter-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--ghost-heading-color, #0f172a);
+}
+
+.gh-newsletter-desc {
+    color: var(--ghost-text-muted, #475569);
+    margin-bottom: 1.5rem;
+}
+
+.gh-newsletter-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-width: 28rem;
+    margin: 0 auto;
+    position: relative;
+}
+
+@media (min-width: 640px) {
+    .gh-newsletter-fields {
+        flex-direction: row;
+    }
+}
+
+.gh-newsletter-input {
+    flex: 1;
+    padding: 0.625rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.gh-newsletter-input:focus {
+    border-color: var(--ghost-accent-color, #4f46e5);
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.gh-newsletter-btn {
+    background-color: var(--ghost-accent-color, #4f46e5);
+    color: #ffffff;
+    padding: 0.625rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.gh-newsletter-btn:hover {
+    opacity: 0.9;
+}
+
+.gh-newsletter-msg-success,
+.gh-newsletter-msg-error {
+    position: absolute;
+    bottom: -2rem;
+    left: 0;
+    right: 0;
+    font-size: 0.875rem;
+}
+
+.gh-newsletter-msg-success {
+    color: #16a34a;
+}
+
+.gh-newsletter-msg-error {
+    color: #dc2626;
 }

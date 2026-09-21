@@ -1,9 +1,17 @@
-﻿{{!< default}}
+{{!< default}}
 
 <section class="hero">
     <h1>Welcome to {{@site.title}}</h1>
     <p>{{@site.description}}</p>
 </section>
 
-{{!-- Ghost UI Component Insertion Point --}}
-{{> "components/newsletter-form" title="Subscribe to our test publication"}}
+{{!-- Post Loop --}}
+<section class="posts-grid">
+    {{#foreach posts}}
+        {{> "components/post-card"}}
+    {{/foreach}}
+</section>
+
+{{!-- Ghost UI Components --}}
+{{> "components/pricing-table" title="Choose your membership"}}
+{{> "components/newsletter-form" title="Stay informed with our newsletter"}}

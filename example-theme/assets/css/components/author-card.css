@@ -1,0 +1,92 @@
+/* Ghost UI: Author Card Styles (Vanilla CSS fallback) */
+.gh-author-card {
+    background-color: var(--ghost-card-bg, #f8fafc);
+    border: 1px solid var(--ghost-border, #e2e8f0);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 2rem auto;
+    max-width: 42rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .gh-author-card {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+}
+
+.gh-author-avatar {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 9999px;
+    object-fit: cover;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.gh-author-avatar-fallback {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 9999px;
+    background-color: #e0e7ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.gh-author-details {
+    flex: 1;
+    text-align: center;
+}
+
+@media (min-width: 640px) {
+    .gh-author-details {
+        text-align: left;
+    }
+}
+
+.gh-author-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.gh-author-name a {
+    color: var(--ghost-heading-color, #0f172a);
+    text-decoration: none;
+}
+
+.gh-author-name a:hover {
+    color: var(--ghost-accent-color, #4f46e5);
+}
+
+.gh-author-bio {
+    color: var(--ghost-text-muted, #475569);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin: 0.5rem 0 1rem;
+}
+
+.gh-author-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.gh-author-meta a {
+    color: var(--ghost-accent-color, #4f46e5);
+    text-decoration: none;
+}
+
+.gh-author-meta a:hover {
+    text-decoration: underline;
+}

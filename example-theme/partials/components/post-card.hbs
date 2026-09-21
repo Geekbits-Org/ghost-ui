@@ -1,0 +1,40 @@
+{{!-- 
+  Component: Post Card
+  Usage: Inside {{#foreach posts}} ... {{> "components/post-card"}} ... {{/foreach}}
+--}}
+<article class="gh-post-card group bg-white border border-slate-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 flex flex-col">
+    {{#if feature_image}}
+    <a href="{{url}}" class="gh-post-card-image block aspect-video overflow-hidden bg-slate-100">
+        <img src="{{img_url feature_image size="m"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+    </a>
+    {{/if}}
+
+    <div class="gh-post-card-content p-5 flex-1 flex flex-col justify-between">
+        <div>
+            <div class="flex items-center gap-2 mb-2 text-xs font-semibold">
+                {{#if primary_tag}}
+                <a href="{{primary_tag.url}}" class="gh-post-card-tag text-indigo-600 uppercase tracking-wider hover:underline">{{primary_tag.name}}</a>
+                <span class="text-slate-300">&bull;</span>
+                {{/if}}
+                <span class="gh-post-card-reading-time text-slate-500">{{reading_time}}</span>
+            </div>
+
+            <h3 class="gh-post-card-title text-xl font-bold text-slate-900 mb-2 leading-snug group-hover:text-indigo-600 transition-colors">
+                <a href="{{url}}">{{title}}</a>
+            </h3>
+
+            {{#if excerpt}}
+            <p class="gh-post-card-excerpt text-slate-600 text-sm line-clamp-3 mb-4 leading-relaxed">{{excerpt words="25"}}</p>
+            {{/if}}
+        </div>
+
+        <div class="gh-post-card-footer pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <div class="flex items-center gap-2">
+                {{#primary_author}}
+                <span>{{name}}</span>
+                {{/primary_author}}
+            </div>
+            <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMM YYYY"}}</time>
+        </div>
+    </div>
+</article>
