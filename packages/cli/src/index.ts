@@ -7,8 +7,8 @@ import packageJson from '../package.json';
 
 function main() {
   const program = new Command()
-    .name('ghostui')
-    .description('Component distribution system for Ghost CMS themes')
+    .name('ghostcn')
+    .description('The shadcn/ui for Ghost CMS themes')
     .version(packageJson.version || '1.0.0');
 
   program

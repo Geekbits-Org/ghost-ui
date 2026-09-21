@@ -1,11 +1,11 @@
 {
-  "name": "ghostui",
+  "name": "ghostcn",
   "version": "1.0.0",
-  "description": "Component distribution system for Ghost CMS themes",
+  "description": "The shadcn/ui for Ghost CMS themes - component distribution system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "ghostui": "dist/index.js",
+    "ghostcn": "dist/index.js",
     "ghost-ui": "dist/index.js"
   },
   "files": [

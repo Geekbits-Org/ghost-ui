@@ -24,8 +24,8 @@ export async function list() {
       console.log('');
     }
 
-    console.log(`Install any component using: ${chalk.green('ghostui add <component>')}`);
-    console.log(`Or run ${chalk.green('ghostui add')} to select interactively.\n`);
+    console.log(`Install any component using: ${chalk.green('ghostcn add <component>')}`);
+    console.log(`Or run ${chalk.green('ghostcn add')} to select interactively.\n`);
   } catch (err: any) {
     spinner.fail(`Failed to fetch component catalog: ${err.message || err}`);
   }
