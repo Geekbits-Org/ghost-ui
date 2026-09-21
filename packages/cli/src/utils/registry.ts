@@ -52,6 +52,16 @@ async function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<Response
 }
 
 function findLocalRegistryDir(): string | null {
+  const bundledCandidates = [
+    path.join(__dirname, 'registry'),
+    path.join(__dirname, '..', 'registry')
+  ];
+  for (const cand of bundledCandidates) {
+    if (fs.existsSync(cand) && fs.statSync(cand).isDirectory()) {
+      return cand;
+    }
+  }
+
   const searchStarts = [process.cwd(), __dirname];
   for (const start of searchStarts) {
     let currentDir = start;

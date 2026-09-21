@@ -1,6 +1,6 @@
 {
   "name": "ghostcn",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The shadcn/ui for Ghost CMS themes - component distribution system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,7 +12,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node -e \"const fs=require('fs'); const path=require('path'); const src=path.resolve('../../registry'); const dest=path.resolve('dist/registry'); if(fs.existsSync(src)){fs.cpSync(src, dest, {recursive:true});}\"",
     "prepublishOnly": "npm run build",
     "start": "ts-node src/index.ts",
     "dev": "ts-node src/index.ts",
