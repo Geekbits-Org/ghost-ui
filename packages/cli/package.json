@@ -1,6 +1,6 @@
 {
   "name": "ghostcn",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "The shadcn/ui for Ghost CMS themes - component distribution system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

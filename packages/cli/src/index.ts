@@ -19,7 +19,7 @@ function main() {
 
   program
     .command('list')
-    .description('List all available components in the Ghost UI registry')
+    .description('List all available components in the ghostcn registry')
     .action(list);
 
   program

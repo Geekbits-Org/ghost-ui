@@ -3,7 +3,7 @@ import ora from 'ora';
 import { getRegistryIndex } from '../utils/registry';
 
 export async function list() {
-  const spinner = ora('Fetching available components from Ghost UI registry...').start();
+  const spinner = ora('Fetching available components from ghostcn registry...').start();
 
   try {
     const items = await getRegistryIndex();
@@ -13,7 +13,7 @@ export async function list() {
       return;
     }
 
-    spinner.succeed(`Found ${items.length} components in Ghost UI registry:\n`);
+    spinner.succeed(`Found ${items.length} components in ghostcn registry:\n`);
 
     for (const item of items) {
       console.log(`  ${chalk.bold.cyan(item.name)}`);
@@ -24,8 +24,8 @@ export async function list() {
       console.log('');
     }
 
-    console.log(`Install any component using: ${chalk.green('ghostcn add <component>')}`);
-    console.log(`Or run ${chalk.green('ghostcn add')} to select interactively.\n`);
+    console.log(`Install any component using: ${chalk.green('npx ghostcn add <component>')}`);
+    console.log(`Or run ${chalk.green('npx ghostcn add')} to select interactively.\n`);
   } catch (err: any) {
     spinner.fail(`Failed to fetch component catalog: ${err.message || err}`);
   }

@@ -27,12 +27,12 @@ You own the code. You customize the classes. Zero vendor lock-in.
 
 ## Features
 
-- ?? **Theme-Native**: Directly installs raw Handlebars partials and CSS into your theme folders.
-- ? **Zero Latency**: Bundled offline registry ensures blazing fast installation even without internet.
-- ?? **Interactive Multi-Select**: Run `npx ghostcn add` without arguments to select and batch-install multiple components interactively.
-- ?? **Tailwind & Vanilla CSS**: Pre-styled with utility classes and full Vanilla CSS stylesheets with Ghost CSS custom properties.
-- ?? **Ghost Members API**: Native support for Ghost attributes (`data-members-form="subscribe"`, Portal checkout triggers).
-- ??? **100% gscan Validated**: All components strictly adhere to Ghost theme guidelines and pass official `gscan` checks with 0 errors.
+- 📦 **Theme-Native**: Directly installs raw Handlebars partials and CSS into your theme folders.
+- ⚡ **Zero Latency**: Bundled offline registry ensures blazing fast installation even without internet.
+- 🎯 **Interactive Multi-Select**: Run `npx ghostcn add` without arguments to select and batch-install multiple components interactively.
+- 🎨 **Tailwind & Vanilla CSS**: Pre-styled with utility classes and full Vanilla CSS stylesheets with Ghost CSS custom properties.
+- 🔑 **Ghost Members API**: Native support for Ghost attributes (`data-members-form="subscribe"`, Portal checkout triggers).
+- 🛡️ **100% gscan Validated**: All components strictly adhere to Ghost theme guidelines and pass official `gscan` checks with 0 errors.
 
 ---
 
@@ -125,13 +125,14 @@ Include the installed partial anywhere in your Handlebars templates:
 ## Project Structure
 
 ```text
-??? packages/
-?   ??? cli/                # ghostcn CLI (Commander, Prompts, TypeScript, tests)
-??? registry/
-?   ??? index.json          # Registry catalog index
-?   ??? components/         # Component manifests and templates
-??? example-theme/          # Sample Ghost theme showing integration
-??? .github/workflows/      # Automated CI pipeline
+ghostcn/
+├── packages/
+│   └── cli/                # ghostcn CLI (Commander, Prompts, TypeScript, tests)
+├── registry/
+│   ├── index.json          # Registry catalog index
+│   └── components/         # Component manifests and templates
+├── example-theme/          # Sample Ghost theme showing integration
+└── .github/workflows/      # Automated CI pipeline
 ```
 
 ---
@@ -155,6 +156,16 @@ npx gscan .
 
 ---
 
+## Troubleshooting
+
+### Clearing npx cache
+If you've previously run an older version of `ghostcn`, npx may cache it locally. To always run the latest version:
+```bash
+npx ghostcn@latest <command>
+```
+
+---
+
 ## License
 
-MIT ? [Geekbits Org](https://github.com/Geekbits-Org)
+MIT © [Geekbits Org](https://github.com/Geekbits-Org)

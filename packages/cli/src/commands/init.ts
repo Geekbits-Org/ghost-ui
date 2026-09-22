@@ -9,7 +9,7 @@ export interface InitOptions {
 }
 
 export async function init(options: InitOptions = {}) {
-  console.log(chalk.blue('Initializing Ghost UI component system...'));
+  console.log(chalk.blue('Initializing ghostcn component system...'));
 
   const cwd = process.cwd();
   
