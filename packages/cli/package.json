@@ -1,6 +1,6 @@
 {
   "name": "ghostcn",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The shadcn/ui for Ghost CMS themes - component distribution system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,10 +9,11 @@
     "ghost-ui": "dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "scripts": {
-    "build": "tsc && node -e \"const fs=require('fs'); const path=require('path'); const src=path.resolve('../../registry'); const dest=path.resolve('dist/registry'); if(fs.existsSync(src)){fs.cpSync(src, dest, {recursive:true});}\"",
+    "build": "tsc && node -e \"const fs=require('fs'); const path=require('path'); if(fs.existsSync('../../registry')){fs.cpSync('../../registry', 'dist/registry', {recursive:true});} if(fs.existsSync('../../README.md')){fs.copyFileSync('../../README.md', 'README.md');}\"",
     "prepublishOnly": "npm run build",
     "start": "ts-node src/index.ts",
     "dev": "ts-node src/index.ts",
