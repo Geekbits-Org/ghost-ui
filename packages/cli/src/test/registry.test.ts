@@ -26,13 +26,19 @@ describe('Ghost UI Registry Utils', () => {
     test('returns list of available components', async () => {
       const items = await getRegistryIndex();
       assert.ok(Array.isArray(items));
-      assert.ok(items.length >= 4, `Expected at least 4 components, got ${items.length}`);
+      assert.ok(items.length >= 10, `Expected at least 10 components, got ${items.length}`);
 
       const names = items.map(i => i.name);
       assert.ok(names.includes('newsletter-form'));
       assert.ok(names.includes('pricing-table'));
       assert.ok(names.includes('author-card'));
       assert.ok(names.includes('post-card'));
+      assert.ok(names.includes('site-header'));
+      assert.ok(names.includes('site-footer'));
+      assert.ok(names.includes('featured-posts'));
+      assert.ok(names.includes('pagination'));
+      assert.ok(names.includes('post-header'));
+      assert.ok(names.includes('member-cta'));
     });
   });
 

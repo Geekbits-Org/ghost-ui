@@ -1,0 +1,27 @@
+{
+  "name": "site-footer",
+  "type": "components:layout",
+  "description": "Publication footer with secondary navigation, social links, and Ghost attribution.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "site-footer.hbs",
+      "type": "partial",
+      "target": "partials/components/site-footer.hbs",
+      "content": "{{!-- Component: Site Footer | Usage: {{> \"components/site-footer\"}} --}}\n<footer class=\"ghcn-footer\">\n    <div class=\"ghcn-footer__inner ghcn-container\">\n        <div class=\"ghcn-footer__brand\">\n            <a href=\"{{@site.url}}\">{{@site.title}}</a>\n            {{#if @site.description}}<p>{{@site.description}}</p>{{/if}}\n        </div>\n        <nav class=\"ghcn-footer__nav\" aria-label=\"Footer navigation\">{{navigation type=\"secondary\"}}</nav>\n        <div class=\"ghcn-footer__social\">\n            {{#if @site.facebook}}<a href=\"{{social_url type=\"facebook\"}}\" target=\"_blank\" rel=\"noopener\">Facebook</a>{{/if}}\n            {{#if @site.twitter}}<a href=\"{{social_url type=\"twitter\"}}\" target=\"_blank\" rel=\"noopener\">X</a>{{/if}}\n            <a href=\"{{@site.url}}/rss/\">RSS</a>\n        </div>\n    </div>\n    <div class=\"ghcn-footer__legal ghcn-container\">\n        <span>&copy; {{date format=\"YYYY\"}} {{@site.title}}</span>\n        <span>Published with <a href=\"https://ghost.org\" target=\"_blank\" rel=\"noopener\">Ghost</a></span>\n    </div>\n</footer>"
+    },
+    {
+      "name": "site-footer.css",
+      "type": "style",
+      "target": "assets/css/components/site-footer.css",
+      "content": "/* ghostcn: Site Footer */\n.ghcn-footer { box-sizing: border-box; border-top: 1px solid var(--border); color: var(--foreground); background: var(--card); font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }\n.ghcn-footer *, .ghcn-footer *::before, .ghcn-footer *::after { box-sizing: border-box; }\n.ghcn-footer__inner { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) auto; gap: 3em; padding-block: 3em; }\n.ghcn-footer__brand a { color: var(--foreground); font-size: 1.125em; font-weight: 800; text-decoration: none; }\n.ghcn-footer__brand p { max-width: 30em; margin: 0.5em 0 0; color: var(--muted-foreground); font-size: 0.875em; }\n.ghcn-footer .nav { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0.5em 1.5em; margin: 0; padding: 0; list-style: none; }\n.ghcn-footer a { color: var(--muted-foreground); font-size: 0.875em; text-decoration: none; }\n.ghcn-footer a:hover { color: var(--foreground); }\n.ghcn-footer__social { display: flex; flex-direction: column; gap: 0.5em; }\n.ghcn-footer__legal { display: flex; justify-content: space-between; gap: 1em; border-top: 1px solid var(--border); padding-block: 1.25em; color: var(--muted-foreground); font-size: 0.75em; }\n@media (max-width: 720px) { .ghcn-footer__inner { grid-template-columns: 1fr; gap: 2em; } .ghcn-footer__social { flex-direction: row; flex-wrap: wrap; } }\n@media (max-width: 480px) { .ghcn-footer__legal { align-items: flex-start; flex-direction: column; } }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses Ghost secondary navigation and site globals."
+  }
+}

@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import { init } from './commands/init';
 import { add } from './commands/add';
 import { list } from './commands/list';
+import { create } from './commands/create';
 import packageJson from '../package.json';
 
 function main() {
@@ -10,6 +11,14 @@ function main() {
     .name('ghostcn')
     .description('The shadcn/ui for Ghost CMS themes')
     .version(packageJson.version || '1.0.0');
+
+  program
+    .command('create')
+    .description('Create a complete Ghost theme with ghostcn components')
+    .argument('[theme-name]', 'Directory and package name for the new theme')
+    .option('-y, --yes', 'Skip prompts and use recommended defaults')
+    .option('--skip-install', 'Generate the theme without installing dependencies')
+    .action(create);
 
   program
     .command('init')

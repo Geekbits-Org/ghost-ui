@@ -1,0 +1,28 @@
+{
+  "name": "pagination",
+  "type": "components:navigation",
+  "description": "Accessible, responsive replacement for Ghost’s native pagination markup.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "pagination.hbs",
+      "type": "partial",
+      "target": "partials/pagination.hbs",
+      "placement": "theme",
+      "content": "<nav class=\"ghcn-pagination\" role=\"navigation\" aria-label=\"Pagination\">\n    <div class=\"ghcn-pagination__side\">{{#if prev}}<a class=\"ghcn-button ghcn-button--outline\" href=\"{{page_url prev}}\" rel=\"prev\"><span aria-hidden=\"true\">&larr;</span> Newer</a>{{/if}}</div>\n    <span class=\"ghcn-pagination__status\">Page <strong>{{page}}</strong> of <strong>{{pages}}</strong></span>\n    <div class=\"ghcn-pagination__side ghcn-pagination__side--end\">{{#if next}}<a class=\"ghcn-button ghcn-button--outline\" href=\"{{page_url next}}\" rel=\"next\">Older <span aria-hidden=\"true\">&rarr;</span></a>{{/if}}</div>\n</nav>"
+    },
+    {
+      "name": "pagination.css",
+      "type": "style",
+      "target": "assets/css/components/pagination.css",
+      "content": "/* ghostcn: Pagination */\n.ghcn-pagination { box-sizing: border-box; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1em; width: min(100% - 2em,72em); margin: 3em auto; color: var(--foreground); font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }\n.ghcn-pagination *, .ghcn-pagination *::before, .ghcn-pagination *::after { box-sizing: border-box; }\n.ghcn-pagination__side { display: flex; }\n.ghcn-pagination__side--end { justify-content: flex-end; }\n.ghcn-pagination__status { color: var(--muted-foreground); font-size: 0.8125em; }\n@media (max-width: 480px) { .ghcn-pagination { grid-template-columns: 1fr 1fr; } .ghcn-pagination__status { grid-column: 1 / -1; grid-row: 1; text-align: center; } }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Installs as partials/pagination.hbs so the native pagination helper uses it."
+  }
+}

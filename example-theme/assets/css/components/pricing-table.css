@@ -1,4 +1,4 @@
-/* Ghost UI: Pricing Table Styles (Vanilla CSS fallback) */
+/* ghostcn: Pricing Table Styles */
 .gh-pricing {
     max-width: 64rem;
     margin: 2rem auto;
@@ -8,14 +8,15 @@
 .gh-pricing-title {
     font-size: 1.875rem;
     font-weight: 800;
+    letter-spacing: -0.025em;
     text-align: center;
-    color: var(--ghost-heading-color, #0f172a);
+    color: var(--foreground, #09090b);
     margin-bottom: 0.75rem;
 }
 
 .gh-pricing-desc {
     text-align: center;
-    color: var(--ghost-text-muted, #475569);
+    color: var(--muted-foreground, #71717a);
     margin-bottom: 2.5rem;
 }
 
@@ -32,19 +33,25 @@
 }
 
 .gh-pricing-card {
-    border: 1px solid var(--ghost-border, #e2e8f0);
-    border-radius: 1rem;
+    border: 1px solid var(--border, #e4e4e7);
+    border-radius: min(var(--radius, 0.5rem), 1.5rem);
     padding: 1.5rem;
-    background-color: var(--ghost-card-bg, #f8fafc);
+    background-color: var(--card, #ffffff);
+    color: var(--card-foreground, #09090b);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s ease;
+}
+
+.gh-pricing-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .gh-pricing-card-featured {
-    border: 2px solid var(--ghost-accent-color, #4f46e5);
-    background-color: #ffffff;
+    border: 2px solid var(--primary, var(--ghost-accent-color, #18181b));
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
@@ -53,12 +60,14 @@
     top: -0.75rem;
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--ghost-accent-color, #4f46e5);
-    color: #ffffff;
+    background-color: var(--primary, var(--ghost-accent-color, #18181b));
+    color: var(--primary-foreground, #ffffff);
     font-size: 0.75rem;
     font-weight: 600;
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 .gh-pricing-btn {
@@ -66,24 +75,26 @@
     width: 100%;
     text-align: center;
     padding: 0.625rem 1rem;
-    border-radius: 0.5rem;
+    border-radius: var(--radius, 0.5rem);
+    font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
-    border: 1px solid #cbd5e1;
-    color: #334155;
-    background-color: #ffffff;
+    border: 1px solid var(--input, #e4e4e7);
+    color: var(--foreground, #09090b);
+    background-color: var(--background, #ffffff);
     margin-top: 1.5rem;
     transition: background-color 0.15s ease;
 }
 
 .gh-pricing-btn:hover {
-    background-color: #f1f5f9;
+    background-color: var(--muted, #f4f4f5);
 }
 
 .gh-pricing-btn-primary {
-    background-color: var(--ghost-accent-color, #4f46e5);
-    border-color: var(--ghost-accent-color, #4f46e5);
-    color: #ffffff;
+    background-color: var(--primary, var(--ghost-accent-color, #18181b));
+    border-color: var(--primary, var(--ghost-accent-color, #18181b));
+    color: var(--primary-foreground, #ffffff);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .gh-pricing-btn-primary:hover {

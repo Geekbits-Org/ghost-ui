@@ -7,6 +7,7 @@ export interface ComponentFile {
   name: string;
   type: 'partial' | 'style' | 'js';
   target: string;
+  placement?: 'alias' | 'theme';
   content: string;
 }
 
@@ -105,23 +106,32 @@ export function findLocalManifest(componentName: string): ComponentManifest | nu
 }
 
 export async function getRegistryIndex(): Promise<RegistryItem[]> {
-  const registryBaseUrl = process.env.GHOST_UI_REGISTRY_URL || DEFAULT_REGISTRY_URL;
-
-  // 1. Try remote fetch
-  try {
-    const res = await fetchWithTimeout(`${registryBaseUrl}/index.json`);
-    if (res.ok) {
-      const data = await res.json();
-      return data as RegistryItem[];
+  // If custom registry URL explicitly configured, try remote first
+  if (process.env.GHOST_UI_REGISTRY_URL) {
+    try {
+      const res = await fetchWithTimeout(`${process.env.GHOST_UI_REGISTRY_URL}/index.json`);
+      if (res.ok) {
+        return (await res.json()) as RegistryItem[];
+      }
+    } catch {
+      // Fallback to local
     }
-  } catch {
-    // Network or abort error, continue to fallback
   }
 
-  // 2. Fallback to local
+  // 1. Try local bundled registry first (zero-latency, offline-first)
   const localIndex = findLocalIndex();
-  if (localIndex) {
+  if (localIndex && localIndex.length > 0) {
     return localIndex;
+  }
+
+  // 2. Fallback to default remote registry
+  try {
+    const res = await fetchWithTimeout(`${DEFAULT_REGISTRY_URL}/index.json`);
+    if (res.ok) {
+      return (await res.json()) as RegistryItem[];
+    }
+  } catch {
+    // Network or abort error
   }
 
   return [];
@@ -129,19 +139,32 @@ export async function getRegistryIndex(): Promise<RegistryItem[]> {
 
 export async function getComponent(componentName: string): Promise<ComponentManifest | null> {
   const sanitized = sanitizeComponentName(componentName);
-  const registryBaseUrl = process.env.GHOST_UI_REGISTRY_URL || DEFAULT_REGISTRY_URL;
 
-  // 1. Try remote fetch
-  try {
-    const res = await fetchWithTimeout(`${registryBaseUrl}/components/${sanitized}.json`);
-    if (res.ok) {
-      const data = await res.json();
-      return data as ComponentManifest;
+  // If custom registry URL explicitly configured, try remote first
+  if (process.env.GHOST_UI_REGISTRY_URL) {
+    try {
+      const res = await fetchWithTimeout(`${process.env.GHOST_UI_REGISTRY_URL}/components/${sanitized}.json`);
+      if (res.ok) {
+        return (await res.json()) as ComponentManifest;
+      }
+    } catch {
+      // Fallback to local
     }
-  } catch {
-    // Network or abort error, continue to fallback
   }
 
-  // 2. Fallback to local
-  return findLocalManifest(sanitized);
+  // 1. Try local bundled registry first (zero-latency, offline-first)
+  const local = findLocalManifest(sanitized);
+  if (local) return local;
+
+  // 2. Fallback to default remote registry
+  try {
+    const res = await fetchWithTimeout(`${DEFAULT_REGISTRY_URL}/components/${sanitized}.json`);
+    if (res.ok) {
+      return (await res.json()) as ComponentManifest;
+    }
+  } catch {
+    // Network or abort error
+  }
+
+  return null;
 }

@@ -1,12 +1,14 @@
-/* Ghost UI: Post Card Styles (Vanilla CSS fallback) */
+/* ghostcn: Post Card Styles */
 .gh-post-card {
-    background-color: var(--ghost-card-bg, #ffffff);
-    border: 1px solid var(--ghost-border, #e2e8f0);
-    border-radius: 0.75rem;
+    background-color: var(--card, #ffffff);
+    color: var(--card-foreground, #09090b);
+    border: 1px solid var(--border, #e4e4e7);
+    border-radius: min(var(--radius, 0.5rem), 1.5rem);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 .gh-post-card:hover {
@@ -18,7 +20,7 @@
     aspect-ratio: 16 / 9;
     overflow: hidden;
     display: block;
-    background-color: #f1f5f9;
+    background-color: var(--muted, #f4f4f5);
 }
 
 .gh-post-card-image img {
@@ -41,11 +43,12 @@
 }
 
 .gh-post-card-tag {
-    color: var(--ghost-accent-color, #4f46e5);
+    color: var(--primary, var(--ghost-accent-color, #18181b));
     font-size: 0.75rem;
     font-weight: 600;
     text-decoration: none;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .gh-post-card-tag:hover {
@@ -55,21 +58,23 @@
 .gh-post-card-title {
     font-size: 1.25rem;
     font-weight: 700;
+    letter-spacing: -0.025em;
     margin: 0.5rem 0;
     line-height: 1.35;
 }
 
 .gh-post-card-title a {
-    color: var(--ghost-heading-color, #0f172a);
+    color: var(--foreground, #09090b);
     text-decoration: none;
+    transition: color 0.15s ease;
 }
 
 .gh-post-card-title a:hover {
-    color: var(--ghost-accent-color, #4f46e5);
+    color: var(--primary, var(--ghost-accent-color, #18181b));
 }
 
 .gh-post-card-excerpt {
-    color: var(--ghost-text-muted, #475569);
+    color: var(--muted-foreground, #71717a);
     font-size: 0.875rem;
     line-height: 1.5;
     margin-bottom: 1rem;
@@ -77,9 +82,9 @@
 
 .gh-post-card-footer {
     padding-top: 1rem;
-    border-top: 1px solid var(--ghost-border, #f1f5f9);
+    border-top: 1px solid var(--border, #e4e4e7);
     display: flex;
     justify-content: space-between;
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--muted-foreground, #71717a);
 }

@@ -3,13 +3,15 @@ import path from 'path';
 import prompts from 'prompts';
 import chalk from 'chalk';
 import ora from 'ora';
-import { getComponent, getRegistryIndex, sanitizeComponentName } from '../utils/registry';
+import { getRegistryIndex, sanitizeComponentName } from '../utils/registry';
+import { installComponent } from '../utils/component-installer';
+import { GhostcnConfig } from '../utils/theme-project';
 
 export interface AddOptions {
   yes?: boolean;
 }
 
-async function installSingleComponent(componentName: string, config: any, options: AddOptions) {
+async function installSingleComponent(componentName: string, config: GhostcnConfig, options: AddOptions) {
   let sanitizedName: string;
   try {
     sanitizedName = sanitizeComponentName(componentName);
@@ -21,53 +23,47 @@ async function installSingleComponent(componentName: string, config: any, option
   const cwd = process.cwd();
   const spinner = ora(`Fetching component "${sanitizedName}"...`).start();
 
-  const manifest = await getComponent(sanitizedName);
-
-  if (!manifest) {
-    spinner.fail(`Component "${sanitizedName}" not found in the registry.`);
+  let result;
+  try {
+    result = await installComponent({
+      themeRoot: cwd,
+      componentName: sanitizedName,
+      config,
+      overwrite: options.yes,
+      shouldOverwrite: async relativePath => {
+        const response = await prompts(
+          {
+            type: 'confirm',
+            name: 'overwrite',
+            message: `File ${relativePath} already exists. Overwrite?`,
+            initial: false
+          },
+          {
+            onCancel: () => {
+              console.log(chalk.yellow('\nOperation cancelled.'));
+              process.exit(0);
+            }
+          }
+        );
+        return Boolean(response.overwrite);
+      }
+    });
+  } catch (error: any) {
+    spinner.fail(chalk.red(error.message));
     return false;
   }
 
   spinner.succeed(`Found "${sanitizedName}"!`);
+  for (const installed of result.installed) console.log(chalk.green(`  ✓ Installed ${installed}`));
+  for (const skipped of result.skipped) console.log(chalk.yellow(`  - Skipped ${skipped}`));
 
-  for (const file of manifest.files) {
-    let targetDirAlias = '';
-    if (file.type === 'partial') targetDirAlias = config.aliases?.partials || 'partials/components';
-    else if (file.type === 'style') targetDirAlias = config.aliases?.styles || 'assets/css/components';
-    else if (file.type === 'js') targetDirAlias = config.aliases?.js || 'assets/js/components';
-
-    if (!targetDirAlias) continue;
-
-    const targetDir = path.join(cwd, targetDirAlias);
-    const targetPath = path.join(targetDir, file.name);
-
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true });
-    }
-
-    if (fs.existsSync(targetPath) && !options.yes) {
-      const response = await prompts({
-        type: 'confirm',
-        name: 'overwrite',
-        message: `File ${targetDirAlias}/${file.name} already exists. Overwrite?`,
-        initial: false
-      });
-
-      if (!response.overwrite) {
-        console.log(chalk.yellow(`Skipped ${file.name}.`));
-        continue;
-      }
-    }
-
-    fs.writeFileSync(targetPath, file.content, 'utf8');
-    console.log(chalk.green(`Installed ${file.name} to ${targetDirAlias}/${file.name}`));
+  if (result.styleSync?.status === 'missing-template') {
+    console.warn(chalk.yellow('  ⚠ default.hbs was not found, so component styles could not be linked automatically.'));
+  } else if (result.styleSync?.status === 'updated') {
+    console.log(chalk.green('  ✓ Updated the managed stylesheet links in default.hbs'));
   }
 
-  console.log(chalk.blue(`Component "${sanitizedName}" successfully installed!`));
-
-  if (manifest.files.some(f => f.type === 'style')) {
-    console.log(chalk.yellow(`Note: Import ${config.aliases?.styles || 'assets/css/components'}/<style>.css into your main stylesheet if using Vanilla CSS.`));
-  }
+  console.log(chalk.bold.blue(`Component "${sanitizedName}" successfully installed!`));
 
   return true;
 }
@@ -81,7 +77,7 @@ export async function add(componentName?: string, options: AddOptions = {}) {
     process.exit(1);
   }
 
-  let config: any;
+  let config: GhostcnConfig;
   try {
     const raw = fs.readFileSync(configPath, 'utf8').replace(/^\uFEFF/, '');
     config = JSON.parse(raw);
@@ -107,16 +103,24 @@ export async function add(componentName?: string, options: AddOptions = {}) {
     process.exit(1);
   }
 
-  const response = await prompts({
-    type: 'multiselect',
-    name: 'selected',
-    message: 'Which components would you like to install?',
-    choices: availableItems.map(item => ({
-      title: `${item.name.padEnd(18)} ${chalk.dim(item.description)}`,
-      value: item.name
-    })),
-    hint: '- Space to select. Return to submit'
-  });
+  const response = await prompts(
+    {
+      type: 'multiselect',
+      name: 'selected',
+      message: 'Which components would you like to install?',
+      choices: availableItems.map(item => ({
+        title: `${item.name.padEnd(18)} ${chalk.dim(item.description)}`,
+        value: item.name
+      })),
+      hint: '- Space to select. Return to submit'
+    },
+    {
+      onCancel: () => {
+        console.log(chalk.yellow('\nCancelled.'));
+        process.exit(0);
+      }
+    }
+  );
 
   if (!response.selected || response.selected.length === 0) {
     console.log(chalk.yellow('No components selected. Exiting.'));
@@ -130,5 +134,5 @@ export async function add(componentName?: string, options: AddOptions = {}) {
     console.log('');
   }
 
-  console.log(chalk.green('All selected components have been installed!'));
+  console.log(chalk.bold.green('All selected components have been installed!'));
 }

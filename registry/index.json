@@ -1,7 +1,7 @@
 [
   {
     "name": "newsletter-form",
-    "description": "A native Ghost members subscription form.",
+    "description": "A native Ghost members subscription form with state handling.",
     "category": "components:ui",
     "ghost_version": ">=5.0.0",
     "files": [
@@ -37,6 +37,66 @@
     "files": [
       "post-card.hbs",
       "post-card.css"
+    ]
+  },
+  {
+    "name": "site-header",
+    "description": "Responsive Ghost navigation with search, member actions, and an accessible mobile menu.",
+    "category": "components:layout",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "site-header.hbs",
+      "site-header.css"
+    ]
+  },
+  {
+    "name": "site-footer",
+    "description": "Publication footer with secondary navigation, social links, and Ghost attribution.",
+    "category": "components:layout",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "site-footer.hbs",
+      "site-footer.css"
+    ]
+  },
+  {
+    "name": "featured-posts",
+    "description": "Responsive homepage hero populated from Ghost featured posts.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "featured-posts.hbs",
+      "featured-posts.css"
+    ]
+  },
+  {
+    "name": "pagination",
+    "description": "Accessible, responsive replacement for Ghost’s native pagination markup.",
+    "category": "components:navigation",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "pagination.hbs",
+      "pagination.css"
+    ]
+  },
+  {
+    "name": "post-header",
+    "description": "Editorial post heading with tags, author metadata, reading time, and responsive feature image.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "post-header.hbs",
+      "post-header.css"
+    ]
+  },
+  {
+    "name": "member-cta",
+    "description": "Context-aware member CTA for visitors, free members, paid members, and protected posts.",
+    "category": "components:members",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "member-cta.hbs",
+      "member-cta.css"
     ]
   }
 ]

@@ -1,7 +1,14 @@
 {
+  "$schema": "https://ghostcn.com/schema.json",
   "style": "tailwind",
+  "theme": {
+    "baseColor": "zinc",
+    "accentColor": "ghost",
+    "radius": "0.5rem"
+  },
   "aliases": {
     "partials": "partials/components",
     "styles": "assets/css/components"
-  }
+  },
+  "cssFile": "assets/css/ghostcn.css"
 }

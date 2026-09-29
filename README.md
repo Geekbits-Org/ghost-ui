@@ -44,10 +44,41 @@ You own the code. You customize the classes. Zero vendor lock-in.
 | **`pricing-table`** | Membership tiers (Free, Monthly, Annual) with native Portal checkout triggers | `pricing-table.hbs`, `pricing-table.css` |
 | **`author-card`** | Author bio box with avatar, biography, social links, and post counts | `author-card.hbs`, `author-card.css` |
 | **`post-card`** | Post loop preview card with feature image, tags, excerpt, and reading time | `post-card.hbs`, `post-card.css` |
+| **`site-header`** | Responsive navigation with search, mobile menu, sign-in, and subscribe actions | `site-header.hbs`, `site-header.css` |
+| **`site-footer`** | Secondary navigation, publication information, social links, and attribution | `site-footer.hbs`, `site-footer.css` |
+| **`featured-posts`** | Homepage hero grid backed by Ghost featured posts | `featured-posts.hbs`, `featured-posts.css` |
+| **`pagination`** | Accessible replacement for Ghost’s native pagination partial | `partials/pagination.hbs`, `pagination.css` |
+| **`post-header`** | Editorial post heading, author metadata, reading time, and responsive image | `post-header.hbs`, `post-header.css` |
+| **`member-cta`** | Context-aware calls to action for visitors, free members, and paid members | `member-cta.hbs`, `member-cta.css` |
 
 ---
 
 ## Quick Start
+
+### Create a complete Ghost theme
+
+Start a new, production-ready theme with an interactive setup:
+
+```bash
+npx ghostcn create my-theme
+```
+
+The wizard configures Tailwind CSS or vanilla CSS, design tokens, color mode, package manager, optional components, and dependency installation. The generated theme includes Ghost templates for the home page, posts, pages, tags, and authors; responsive navigation; member flows; build scripts; and gscan validation.
+
+Use recommended defaults without installing dependencies:
+
+```bash
+npx ghostcn create my-theme -y --skip-install
+```
+
+Tailwind themes include a complete Tailwind CLI build and watch pipeline. Vanilla themes include a zero-dependency CSS copy/watch pipeline. In both cases:
+
+```bash
+cd my-theme
+npm run dev
+```
+
+Generated themes also include `npm test` for offline scaffold checks and `npm run validate` for official, pinned gscan validation. The validator is downloaded only when requested, keeping validator-only dependencies out of the day-to-day theme install.
 
 ### 1. Initialize your Ghost Theme
 
@@ -62,16 +93,35 @@ Or pass `-y` to use default paths non-interactively:
 npx ghostcn init -y
 ```
 
-This creates a `components.json` configuration file:
+This prompts you to choose your styling system (`tailwind` or `css`), base color palette (`zinc`, `slate`, `stone`, `gray`, `neutral`), accent color (`ghost` native dynamic accent, `indigo`, `violet`, etc.), and border radius (`none`, `sm`, `md`, `lg`, `full`).
+
+It generates `assets/css/ghostcn.css` with semantic design tokens, creates `components.json`, and adds a managed stylesheet block to `default.hbs`:
 ```json
 {
+  "$schema": "https://ghostcn.com/schema.json",
   "style": "tailwind",
+  "theme": {
+    "baseColor": "zinc",
+    "accentColor": "ghost",
+    "radius": "0.5rem"
+  },
   "aliases": {
     "partials": "partials/components",
     "styles": "assets/css/components"
-  }
+  },
+  "cssFile": "assets/css/ghostcn.css"
 }
 ```
+
+The CLI keeps the token stylesheet and every installed component stylesheet linked automatically:
+```handlebars
+{{!-- ghostcn:styles:start --}}
+<link rel="stylesheet" href="{{asset "css/ghostcn.css"}}" />
+{{!-- Component styles are added here by `ghostcn add` --}}
+{{!-- ghostcn:styles:end --}}
+```
+
+If a theme uses a layout other than `default.hbs`, the CLI leaves the layout untouched and prints the link you need to add manually.
 
 ### 2. Browse Components
 

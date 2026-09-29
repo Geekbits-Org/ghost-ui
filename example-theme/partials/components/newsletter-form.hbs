@@ -1,32 +1,38 @@
-{{!-- 
+{{!--
   Component: Newsletter Form
-  Usage: {{> "components/newsletter-form" title="Subscribe!"}} 
+  Usage: {{> "components/newsletter-form" title="Subscribe to our newsletter" description="Get the latest posts delivered right to your inbox."}}
 --}}
-<section class="gh-newsletter-form bg-slate-50 border border-slate-200 p-8 rounded-xl text-center max-w-2xl mx-auto my-8">
-    <h3 class="gh-newsletter-title text-2xl font-bold mb-2 text-slate-900">{{#if title}}{{title}}{{else}}Subscribe to our newsletter{{/if}}</h3>
-    <p class="gh-newsletter-desc text-slate-600 mb-6">{{#if description}}{{description}}{{else}}Get the latest posts delivered right to your inbox.{{/if}}</p>
-    
+<section class="gh-newsletter-form bg-card text-card-foreground border border-border p-8 rounded-ghostcn text-center max-w-2xl mx-auto my-8 shadow-sm">
+    <div class="mb-6">
+        <h3 class="gh-newsletter-title text-2xl font-bold tracking-tight mb-2 text-foreground">
+            {{#if title}}{{title}}{{else}}Subscribe to our newsletter{{/if}}
+        </h3>
+        <p class="gh-newsletter-desc text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">
+            {{#if description}}{{description}}{{else}}Get the latest stories, news, and perspectives delivered directly to your inbox.{{/if}}
+        </p>
+    </div>
+
     {{!-- Ghost native members form handling --}}
     <form data-members-form="subscribe" class="gh-newsletter-fields flex flex-col sm:flex-row gap-3 max-w-md mx-auto relative">
         <label for="gh-email" class="sr-only">Email address</label>
-        <input 
-            data-members-email 
-            type="email" 
-            id="gh-email" 
-            required 
-            placeholder="jamie@example.com" 
-            class="gh-newsletter-input flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+        <input
+            data-members-email
+            type="email"
+            id="gh-email"
+            required
+            placeholder="jamie@example.com"
+            class="gh-newsletter-input flex-1 px-4 py-2.5 bg-background text-foreground border border-input rounded-ghostcn text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
         />
-        <button type="submit" class="gh-newsletter-btn bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center justify-center">
+        <button type="submit" class="gh-newsletter-btn bg-primary text-primary-foreground px-6 py-2.5 rounded-ghostcn text-sm font-medium hover:opacity-90 transition-opacity flex items-center justify-center shadow-sm">
             <span class="button-text">Subscribe</span>
         </button>
-        
+
         {{!-- Ghost automatic states (hidden by default, shown via Ghost Portal JS) --}}
-        <div class="gh-newsletter-msg-success message-success hidden absolute -bottom-8 left-0 right-0 text-sm text-green-600 font-medium" data-members-success>
-            Success! Check your inbox to confirm.
+        <div class="gh-newsletter-msg-success message-success hidden absolute -bottom-7 left-0 right-0 text-xs text-green-600 dark:text-green-400 font-medium" data-members-success>
+            ✓ Check your inbox to confirm your subscription!
         </div>
-        <div class="gh-newsletter-msg-error message-error hidden absolute -bottom-8 left-0 right-0 text-sm text-red-600 font-medium" data-members-error>
-            Please enter a valid email address.
+        <div class="gh-newsletter-msg-error message-error hidden absolute -bottom-7 left-0 right-0 text-xs text-red-600 dark:text-red-400 font-medium" data-members-error>
+            ✕ Please enter a valid email address.
         </div>
     </form>
 </section>

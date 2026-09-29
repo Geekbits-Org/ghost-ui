@@ -1,0 +1,102 @@
+/* 
+  ghostcn Design Tokens & Theming System
+  Base: zinc | Accent: ghost | Radius: 0.5rem | System: tailwind
+*/
+
+:root {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+  --primary: var(--ghost-accent-color, #18181b);
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #ef4444;
+  --destructive-foreground: #fafafa;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: var(--ghost-accent-color, #18181b);
+  --radius: 0.5rem;
+
+  /* Ghost Native Compatibility Fallbacks */
+  --ghost-card-bg: var(--card);
+  --ghost-border: var(--border);
+  --ghost-heading-color: var(--foreground);
+  --ghost-text-muted: var(--muted-foreground);
+}
+
+.dark, .dark-mode, [data-theme="dark"] {
+  color-scheme: dark;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #09090b;
+  --card-foreground: #fafafa;
+  --popover: #09090b;
+  --popover-foreground: #fafafa;
+  --primary: var(--ghost-accent-color, #fafafa);
+  --primary-foreground: #09090b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: var(--ghost-accent-color, #d4d4d8);
+}
+
+/* Casper and other Ghost themes use .auto-color for OS-level dark mode. */
+@media (prefers-color-scheme: dark) {
+  .auto-color {
+  color-scheme: dark;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #09090b;
+  --card-foreground: #fafafa;
+  --popover: #09090b;
+  --popover-foreground: #fafafa;
+  --primary: var(--ghost-accent-color, #fafafa);
+  --primary-foreground: #09090b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #7f1d1d;
+  --destructive-foreground: #fafafa;
+  --border: #27272a;
+  --input: #27272a;
+  --ring: var(--ghost-accent-color, #d4d4d8);
+  }
+}
+
+/* ghostcn Semantic Utilities (Guarantees zero-breakage across Tailwind & Vanilla CSS) */
+.bg-background { background-color: var(--background); }
+.text-foreground { color: var(--foreground); }
+.bg-card { background-color: var(--card); }
+.text-card-foreground { color: var(--card-foreground); }
+.bg-popover { background-color: var(--popover); }
+.text-popover-foreground { color: var(--popover-foreground); }
+.bg-primary { background-color: var(--primary); }
+.text-primary-foreground { color: var(--primary-foreground); }
+.bg-secondary { background-color: var(--secondary); }
+.text-secondary-foreground { color: var(--secondary-foreground); }
+.bg-muted { background-color: var(--muted); }
+.text-muted-foreground { color: var(--muted-foreground); }
+.bg-accent { background-color: var(--accent); }
+.text-accent-foreground { color: var(--accent-foreground); }
+.border-border { border-color: var(--border); }
+.border-input { border-color: var(--input); }
+.rounded-ghostcn { border-radius: var(--radius); }

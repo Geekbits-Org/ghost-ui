@@ -1,0 +1,27 @@
+{
+  "name": "member-cta",
+  "type": "components:members",
+  "description": "Context-aware member CTA for visitors, free members, paid members, and protected posts.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "member-cta.hbs",
+      "type": "partial",
+      "target": "partials/components/member-cta.hbs",
+      "content": "{{!-- Component: Member CTA | Usage: inside {{#post}} after {{content}} --}}\n<aside class=\"ghcn-member-cta\">\n    {{#if access}}\n        {{#if @member}}\n            <span class=\"ghcn-badge\">Member access</span>\n            <h2>You’re all caught up</h2>\n            <p>Manage your subscription, email preferences, and account details in Portal.</p>\n            <a class=\"ghcn-button ghcn-button--outline\" href=\"#/portal/account\" data-portal=\"account\">Manage account</a>\n        {{else}}\n            <span class=\"ghcn-badge\">Join the publication</span>\n            <h2>Enjoying this story?</h2>\n            <p>Subscribe for new posts and member updates delivered directly to your inbox.</p>\n            <div class=\"ghcn-member-cta__actions\"><a class=\"ghcn-button\" href=\"#/portal/signup\" data-portal=\"signup\">Subscribe</a><a class=\"ghcn-button ghcn-button--ghost\" href=\"#/portal/signin\" data-portal=\"signin\">Sign in</a></div>\n        {{/if}}\n    {{else}}\n        {{#if @member.paid}}\n            <span class=\"ghcn-badge\">Account required</span>\n            <h2>This post isn’t included in your plan</h2>\n            <p>Open your account to review your membership and available plans.</p>\n            <a class=\"ghcn-button\" href=\"#/portal/account/plans\" data-portal=\"account/plans\">View plans</a>\n        {{else if @member}}\n            <span class=\"ghcn-badge\">Paid members</span>\n            <h2>Upgrade to continue reading</h2>\n            <p>Become a paid member to unlock this post and the complete archive.</p>\n            <a class=\"ghcn-button\" href=\"#/portal/account/plans\" data-portal=\"account/plans\">Upgrade membership</a>\n        {{else}}\n            <span class=\"ghcn-badge\">Members only</span>\n            <h2>Continue reading with a membership</h2>\n            <p>Sign up to unlock this post. Already a member? Sign in to continue.</p>\n            <div class=\"ghcn-member-cta__actions\"><a class=\"ghcn-button\" href=\"#/portal/signup\" data-portal=\"signup\">Become a member</a><a class=\"ghcn-button ghcn-button--outline\" href=\"#/portal/signin\" data-portal=\"signin\">Sign in</a></div>\n        {{/if}}\n    {{/if}}\n</aside>"
+    },
+    {
+      "name": "member-cta.css",
+      "type": "style",
+      "target": "assets/css/components/member-cta.css",
+      "content": "/* ghostcn: Member CTA */\n.ghcn-member-cta { box-sizing: border-box; max-width: 44em; margin: 3em auto; overflow: hidden; border: 1px solid var(--border); border-radius: min(var(--radius),1.25em); padding: clamp(1.5em,5vw,3em); color: var(--card-foreground); background: radial-gradient(circle at top right,color-mix(in srgb,var(--primary) 18%,transparent),transparent 48%),var(--card); text-align: center; font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }\n.ghcn-member-cta *, .ghcn-member-cta *::before, .ghcn-member-cta *::after { box-sizing: border-box; }\n.ghcn-member-cta h2 { margin: 1em 0 0.625em; color: var(--foreground); font-size: clamp(1.5em,4vw,2.25em); line-height: 1.1; letter-spacing: -0.035em; }\n.ghcn-member-cta p { max-width: 34em; margin: 0 auto 1.5em; color: var(--muted-foreground); }\n.ghcn-member-cta__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75em; }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses post access, member state, paid status, and native Portal triggers."
+  }
+}

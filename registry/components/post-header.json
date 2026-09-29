@@ -1,0 +1,27 @@
+{
+  "name": "post-header",
+  "type": "components:content",
+  "description": "Editorial post heading with tags, author metadata, reading time, and responsive feature image.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "post-header.hbs",
+      "type": "partial",
+      "target": "partials/components/post-header.hbs",
+      "content": "{{!-- Component: Post Header | Usage: inside {{#post}} --}}\n<header class=\"ghcn-post-header ghcn-container\">\n    {{#if primary_tag}}<a class=\"ghcn-badge\" href=\"{{primary_tag.url}}\">{{primary_tag.name}}</a>{{/if}}\n    <h1>{{title}}</h1>\n    {{#if custom_excerpt}}<p class=\"ghcn-post-header__excerpt\">{{custom_excerpt}}</p>{{/if}}\n    <div class=\"ghcn-post-header__meta\">\n        {{#primary_author}}\n            <a class=\"ghcn-post-header__author\" href=\"{{url}}\">\n                {{#if profile_image}}<img class=\"ghcn-avatar\" src=\"{{img_url profile_image size=\"xs\"}}\" alt=\"\" />{{/if}}\n                <span>{{name}}</span>\n            </a>\n        {{/primary_author}}\n        <span aria-hidden=\"true\">&bull;</span>\n        <time datetime=\"{{date format=\"YYYY-MM-DD\"}}\">{{date format=\"D MMM YYYY\"}}</time>\n        <span aria-hidden=\"true\">&bull;</span>\n        <span>{{reading_time}}</span>\n    </div>\n    {{#if feature_image}}\n        <figure class=\"ghcn-post-header__media\">\n            <img srcset=\"{{img_url feature_image size=\"s\"}} 400w, {{img_url feature_image size=\"m\"}} 750w, {{img_url feature_image size=\"l\"}} 1200w, {{img_url feature_image size=\"xl\"}} 2000w\" sizes=\"(min-width: 1200px) 1120px, 92vw\" src=\"{{img_url feature_image size=\"xl\"}}\" alt=\"{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}\" />\n            {{#if feature_image_caption}}<figcaption>{{feature_image_caption}}</figcaption>{{/if}}\n        </figure>\n    {{/if}}\n</header>"
+    },
+    {
+      "name": "post-header.css",
+      "type": "style",
+      "target": "assets/css/components/post-header.css",
+      "content": "/* ghostcn: Post Header */\n.ghcn-post-header { box-sizing: border-box; margin-block: 4em 2.5em; color: var(--foreground); text-align: center; font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }\n.ghcn-post-header *, .ghcn-post-header *::before, .ghcn-post-header *::after { box-sizing: border-box; }\n.ghcn-post-header h1 { max-width: 58em; margin: 1em auto; font-size: clamp(2.5em,7vw,5em); line-height: 0.98; letter-spacing: -0.055em; text-wrap: balance; }\n.ghcn-post-header__excerpt { max-width: 44em; margin: 1.25em auto; color: var(--muted-foreground); font-size: clamp(1.05em,2vw,1.25em); }\n.ghcn-post-header__meta, .ghcn-post-header__author { display: flex; align-items: center; justify-content: center; gap: 0.625em; }\n.ghcn-post-header__meta { flex-wrap: wrap; color: var(--muted-foreground); font-size: 0.8125em; }\n.ghcn-post-header__author { color: var(--foreground); font-weight: 700; text-decoration: none; }\n.ghcn-post-header__author .ghcn-avatar { width: 2em; height: 2em; }\n.ghcn-post-header__media { margin: 3em 0 0; }\n.ghcn-post-header__media img { display: block; width: 100%; max-height: 44em; border-radius: min(var(--radius),1.25em); object-fit: cover; }\n.ghcn-post-header__media figcaption { margin-top: 0.75em; color: var(--muted-foreground); font-size: 0.75em; }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native post, author, image, tag, date, and reading-time data."
+  }
+}
