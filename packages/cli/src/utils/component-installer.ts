@@ -3,6 +3,7 @@ import path from 'path';
 import { getComponent, sanitizeComponentName } from './registry';
 import { GhostcnConfig } from './theme-project';
 import { resolveWithinTheme, StyleSyncResult, syncGhostcnStyles } from './theme-files';
+import { componentCss } from './styles';
 
 export interface InstallComponentOptions {
   themeRoot: string;
@@ -57,7 +58,7 @@ export async function installComponent(options: InstallComponentOptions): Promis
     }
 
     fs.mkdirSync(path.dirname(targetPath), { recursive: true });
-    fs.writeFileSync(targetPath, file.content, 'utf8');
+    fs.writeFileSync(targetPath, file.type === 'style' ? componentCss(file.content, options.config.style) : file.content, 'utf8');
     result.installed.push(relativeTarget);
   }
 

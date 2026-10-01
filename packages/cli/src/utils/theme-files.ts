@@ -107,9 +107,12 @@ export function syncGhostcnStyles(options: StyleSyncOptions): StyleSyncResult {
   const withoutManagedBlock = original.replace(managedBlockPattern, '');
   const withoutOwnedLinks = removeOwnedStylesheetLinks(withoutManagedBlock, assetPaths);
   const ghostHeadPattern = /^([ \t]*)\{\{ghost_head\}\}/m;
+  const overrideAnchor = /^([ \t]*)\{\{!-- ghostcn:theme-styles --\}\}/m;
 
   let updated: string;
-  if (ghostHeadPattern.test(withoutOwnedLinks)) {
+  if (overrideAnchor.test(withoutOwnedLinks)) {
+    updated = withoutOwnedLinks.replace(overrideAnchor, (match, indent: string) => `${indentBlock(block, indent, newline)}${newline}${match}`);
+  } else if (ghostHeadPattern.test(withoutOwnedLinks)) {
     updated = withoutOwnedLinks.replace(ghostHeadPattern, (_match, indent: string) => {
       return `${indentBlock(block, indent, newline)}${newline}${indent}{{ghost_head}}`;
     });

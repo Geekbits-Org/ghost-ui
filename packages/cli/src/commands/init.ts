@@ -189,4 +189,9 @@ export async function init(options: InitOptions = {}) {
   }
   console.log(`     ${chalk.cyan('npx ghostcn add')}`);
   console.log(`     ${chalk.cyan('npx ghostcn add newsletter-form')}\n`);
+  if (style === 'tailwind') {
+    console.log('Component defaults use @layer components so normal Tailwind utilities can override them.');
+    console.log('For Tailwind v4 semantic utilities, import ghostcn-tailwind.css from your Tailwind source.');
+    console.log('Existing themes must already have a Tailwind build scanning their .hbs files; init does not replace their build system.');
+  }
 }

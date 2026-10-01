@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x, 24.x]
 
     steps:
       - name: Checkout repository
@@ -24,10 +24,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: 'packages/cli/package-lock.json'
+          cache-dependency-path: 'package-lock.json'
 
       - name: Install dependencies
-        run: npm --prefix packages/cli ci
+        run: npm ci
 
       - name: Build CLI
         run: npm --prefix packages/cli run build
@@ -46,4 +46,4 @@ jobs:
           node ../packages/cli/dist/index.js add pricing-table -y
           node ../packages/cli/dist/index.js add author-card -y
           node ../packages/cli/dist/index.js add post-card -y
-          npx gscan .
+          npx --yes gscan@6.4.2 .

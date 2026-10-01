@@ -24,11 +24,17 @@ const siteHeader = {
 
         <div class="ghcn-header__actions">
             {{search}}
+            {{#if @site.members_enabled}}
             {{#if @member}}
                 <a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Account</a>
             {{else}}
                 <a class="ghcn-header__signin" href="#/portal/signin" data-portal="signin">Sign in</a>
+                {{#unless @site.members_invite_only}}
+                {{#if @site.allow_self_signup}}
                 <a class="ghcn-button" href="#/portal/signup" data-portal="signup">Subscribe</a>
+                {{/if}}
+                {{/unless}}
+            {{/if}}
             {{/if}}
         </div>
 
@@ -40,11 +46,17 @@ const siteHeader = {
                 <nav aria-label="Mobile navigation">{{navigation}}</nav>
                 <div class="ghcn-header__mobile-actions">
                     {{search}}
+                    {{#if @site.members_enabled}}
                     {{#if @member}}
                         <a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Account</a>
                     {{else}}
                         <a class="ghcn-button ghcn-button--outline" href="#/portal/signin" data-portal="signin">Sign in</a>
+                        {{#unless @site.members_invite_only}}
+                        {{#if @site.allow_self_signup}}
                         <a class="ghcn-button" href="#/portal/signup" data-portal="signup">Subscribe</a>
+                        {{/if}}
+                        {{/unless}}
+                    {{/if}}
                     {{/if}}
                 </div>
             </div>
@@ -67,7 +79,7 @@ const siteHeader = {
 .ghcn-header .nav a, .ghcn-header__signin { color: var(--muted-foreground); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
 .ghcn-header .nav a:hover, .ghcn-header .nav-current a, .ghcn-header__signin:hover { color: var(--foreground); }
 .ghcn-header__actions { display: flex; align-items: center; gap: 0.75rem; }
-.ghcn-header__actions .gh-search-icon { color: var(--foreground) !important; }
+.ghcn-header .gh-search-icon:focus-visible { border-radius: var(--radius); box-shadow: 0 0 0 2px var(--ring); }
 .ghcn-header__mobile { display: none; margin-left: auto; }
 .ghcn-header__mobile summary { list-style: none; }
 .ghcn-header__mobile summary::-webkit-details-marker { display: none; }
@@ -287,6 +299,7 @@ const memberCta = {
     {
       name: 'member-cta.hbs', type: 'partial', target: 'partials/components/member-cta.hbs',
       content: `{{!-- Component: Member CTA | Usage: inside {{#post}} after {{content}} --}}
+{{#if @site.members_enabled}}
 <aside class="ghcn-member-cta">
     {{#if access}}
         {{#if @member}}
@@ -295,30 +308,46 @@ const memberCta = {
             <p>Manage your subscription, email preferences, and account details in Portal.</p>
             <a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Manage account</a>
         {{else}}
+            {{#if @site.allow_self_signup}}
             <span class="ghcn-badge">Join the publication</span>
             <h2>Enjoying this story?</h2>
             <p>Subscribe for new posts and member updates delivered directly to your inbox.</p>
             <div class="ghcn-member-cta__actions"><a class="ghcn-button" href="#/portal/signup" data-portal="signup">Subscribe</a><a class="ghcn-button ghcn-button--ghost" href="#/portal/signin" data-portal="signin">Sign in</a></div>
+            {{else}}
+            <h2>Already a member?</h2>
+            <a class="ghcn-button ghcn-button--outline" href="#/portal/signin" data-portal="signin">Sign in</a>
+            {{/if}}
         {{/if}}
     {{else}}
         {{#if @member.paid}}
             <span class="ghcn-badge">Account required</span>
             <h2>This post isn’t included in your plan</h2>
             <p>Open your account to review your membership and available plans.</p>
-            <a class="ghcn-button" href="#/portal/account/plans" data-portal="account/plans">View plans</a>
+            <a class="ghcn-button" href="#/portal/account" data-portal="account">Manage account</a>
         {{else if @member}}
+            {{#if @site.paid_members_enabled}}
+            {{#if @site.allow_self_signup}}
             <span class="ghcn-badge">Paid members</span>
             <h2>Upgrade to continue reading</h2>
-            <p>Become a paid member to unlock this post and the complete archive.</p>
+            <p>Review the available plans to find one that includes this post.</p>
             <a class="ghcn-button" href="#/portal/account/plans" data-portal="account/plans">Upgrade membership</a>
+            {{else}}
+            <h2>This post requires a different membership</h2>
+            <a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Manage account</a>
+            {{/if}}
+            {{else}}
+            <h2>This post is not available with your membership</h2>
+            <a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Manage account</a>
+            {{/if}}
         {{else}}
             <span class="ghcn-badge">Members only</span>
             <h2>Continue reading with a membership</h2>
-            <p>Sign up to unlock this post. Already a member? Sign in to continue.</p>
-            <div class="ghcn-member-cta__actions"><a class="ghcn-button" href="#/portal/signup" data-portal="signup">Become a member</a><a class="ghcn-button ghcn-button--outline" href="#/portal/signin" data-portal="signin">Sign in</a></div>
+            <p>This post requires a membership with access. Already a member? Sign in to continue.</p>
+            <div class="ghcn-member-cta__actions">{{#if @site.allow_self_signup}}<a class="ghcn-button" href="#/portal/signup" data-portal="signup">View memberships</a>{{/if}}<a class="ghcn-button ghcn-button--outline" href="#/portal/signin" data-portal="signin">Sign in</a></div>
         {{/if}}
     {{/if}}
-</aside>`
+</aside>
+{{/if}}`
     },
     {
       name: 'member-cta.css', type: 'style', target: 'assets/css/components/member-cta.css',

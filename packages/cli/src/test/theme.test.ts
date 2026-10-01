@@ -104,9 +104,10 @@ describe('ghostcn Theming System', () => {
       const manifest = await getComponent('pricing-table');
       assert.ok(manifest !== null);
       const hbs = manifest?.files.find(f => f.type === 'partial')?.content || '';
-      assert.ok(hbs.includes('rounded-ghostcn'));
-      assert.ok(hbs.includes('border-primary'));
-      assert.ok(hbs.includes('data-portal="signup/monthly"'));
+      assert.ok(hbs.includes('gh-pricing-card'));
+      assert.ok(hbs.includes('{{price monthly_price currency=currency}}'));
+      assert.ok(hbs.includes('visibility:public'));
+      assert.ok(hbs.includes('data-portal="signup/{{id}}/monthly"'));
       assert.ok(hbs.includes('data-portal="signup/free"'));
     });
 

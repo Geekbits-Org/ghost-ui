@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 import { resolveWithinTheme } from './theme-files';
+import { tailwindTheme } from './styles';
+import { themeToolPath } from './theme-tooling';
 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun';
 export type ColorScheme = 'Light' | 'Dark' | 'Auto';
@@ -56,6 +58,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 img { max-width: 100%; }
+/* Ghost comments paints its own text colors inside a transparent iframe.
+   Match the embedded document's native scheme so dark mode does not force a white canvas. */
+iframe[title="comments-frame"] { color-scheme: normal; }
 h1, h2, h3, h4, h5, h6 { font-family: var(--gh-font-heading, inherit); }
 .ghcn-main { min-height: 65vh; }
 .ghcn-page-heading { width: min(100% - 2rem, 72rem); margin: 4rem auto 2rem; }
@@ -83,6 +88,7 @@ function defaultTemplate(_colorScheme: ColorScheme): string {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{meta_title}}</title>
+    {{!-- ghostcn:theme-styles --}}
     <link rel="stylesheet" href="{{asset "built/screen.css"}}" />
     {{ghost_head}}
 </head>
@@ -133,7 +139,7 @@ function postTemplate(options: ScaffoldThemeOptions): string {
     <article class="ghcn-article {{post_class}}">
         <div class="ghcn-article-content">{{content}}</div>
     </article>
-    {{> "components/member-cta"}}
+    {{#if access}}{{> "components/member-cta"}}{{/if}}
 ${author}    {{comments}}
 {{/post}}
 `;
@@ -179,15 +185,19 @@ function packageJson(options: ScaffoldThemeOptions): string {
         dev: 'tailwindcss -i ./assets/css/source.css -o ./assets/built/screen.css --watch',
         build: 'tailwindcss -i ./assets/css/source.css -o ./assets/built/screen.css --minify',
         test: 'node ./scripts/check.mjs',
+        zip: 'npm run build && node ./scripts/zip.mjs',
         validate: gscanCommand[options.packageManager]
       }
     : {
         dev: 'node ./scripts/dev.mjs',
         build: 'node ./scripts/build.mjs',
         test: 'node ./scripts/check.mjs',
+        zip: 'npm run build && node ./scripts/zip.mjs',
         validate: gscanCommand[options.packageManager]
       };
   const devDependencies: Record<string, string> = {};
+  // Use the selected package manager for the build preceding archive creation.
+  scripts.zip = `${options.packageManager} run build && node ./scripts/zip.mjs`;
   if (options.style === 'tailwind') {
     devDependencies.tailwindcss = '^4.1.0';
     devDependencies['@tailwindcss/cli'] = '^4.1.0';
@@ -201,7 +211,7 @@ function packageJson(options: ScaffoldThemeOptions): string {
       name: options.authorName || 'Theme Author',
       email: options.authorEmail || 'hello@example.com'
     },
-    engines: { ghost: '>=5.0.0' },
+    engines: { ghost: '>=5.54.1', node: options.style === 'tailwind' ? '>=20.0.0' : '>=18.0.0' },
     license: 'MIT',
     keywords: ['ghost-theme', 'ghost', 'ghostcn'],
     scripts,
@@ -232,7 +242,36 @@ ${run} dev
 
 Use \`${run} build\` for a production stylesheet, \`${run} test\` for offline scaffold checks, and \`${run} validate\` for official gscan validation (downloads the pinned validator on demand).
 
-Components are copied into \`partials/components\` and \`assets/css/components\`, so you own and can customize every file. Put durable overrides in \`assets/css/source.css\`.
+The dev command only watches CSS. It does not start Ghost or serve this theme.
+Use Node 22.13.1+ or Node 24 for official gscan validation. ${options.style === 'tailwind' ? 'The Tailwind build requires Node 20 or later.' : 'The vanilla build needs Node 18 or later.'}
+
+## Preview in Ghost
+
+1. Install and start a local Ghost development site using the [official guide](https://docs.ghost.org/install/local/).
+2. Place this entire theme folder under that site's \`content/themes\` directory. Run the commands above from the moved folder.
+3. From the Ghost installation directory, run \`ghost restart\` so Ghost discovers the new theme.
+4. Open your site's \`/ghost/\` admin, go to Settings → Design → Change theme, and activate this theme.
+5. Open the site's URL (usually http://localhost:2368). Keep \`${run} dev\` running and refresh the browser after edits. If Ghost is not running, use \`ghost start\` from its installation directory.
+
+Do not edit or replace Ghost's own installation files. For remote Ghost or Ghost(Pro), upload a ZIP instead of using the local preview steps.
+
+## Customize
+
+You own the files in \`partials/components\` and \`assets/css/components\`. ${options.style === 'tailwind'
+    ? 'Add normal Tailwind classes to the markup, for example `ghcn-button bg-purple-600 hover:bg-purple-700 text-white`. No important modifier is needed for ghostcn defaults. Semantic utilities such as `bg-primary` and `border-border` are configured in `assets/css/ghostcn-tailwind.css`. Put additional CSS in `assets/css/source.css`.'
+    : 'Edit the component CSS directly, or put token and selector overrides in `assets/css/source.css`. The built stylesheet loads after ghostcn, so equal-specificity overrides win.'}
+
+Membership UI follows Ghost's enabled/invite-only/paid settings. Pricing comes from public tiers configured in Ghost Admin; payments must be configured before paid plans appear. The custom \`partials/content-cta.hbs\` renders one paywall for protected posts without exposing restricted content.
+
+## Package for upload
+
+\`\`\`bash
+${run} test
+${run} validate
+${run} zip
+\`\`\`
+
+The zip command builds first, then writes \`dist/${options.themeName}-1.0.0.zip\` (the filename follows package.json's version). It contains runtime templates and assets, not node_modules, scripts, lockfiles, or repository metadata. Re-running replaces that generated ZIP. Upload it in Ghost Admin → Settings → Design → Change theme → Upload theme. Offline checks do not replace gscan or testing on your target Ghost version (minimum 5.54.1).
 `;
 }
 
@@ -253,25 +292,6 @@ watch(source, () => {
 });
 `;
 
-const checkScript = `import { existsSync, readFileSync } from 'node:fs';
-const required = ['package.json', 'default.hbs', 'index.hbs', 'post.hbs', 'page.hbs', 'assets/css/ghostcn.css', 'assets/built/screen.css'];
-const missing = required.filter(file => !existsSync(new URL('../' + file, import.meta.url)));
-if (missing.length) {
-  console.error('Missing required theme files:', missing.join(', '));
-  process.exit(1);
-}
-const layout = readFileSync(new URL('../default.hbs', import.meta.url), 'utf8');
-if (!layout.includes('{{ghost_head}}') || !layout.includes('{{ghost_foot}}')) {
-  console.error('default.hbs must include {{ghost_head}} and {{ghost_foot}}.');
-  process.exit(1);
-}
-const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
-if (!pkg.engines?.ghost || !pkg.author?.email) {
-  console.error('package.json must define engines.ghost and author.email.');
-  process.exit(1);
-}
-console.log('Theme scaffold checks passed.');
-`;
 
 export function scaffoldTheme(options: ScaffoldThemeOptions): ScaffoldThemeResult {
   const themeName = sanitizeThemeName(options.themeName);
@@ -287,19 +307,22 @@ export function scaffoldTheme(options: ScaffoldThemeOptions): ScaffoldThemeResul
 
   const css = baseThemeCss();
   const sourceCss = options.style === 'tailwind'
-    ? `@import "tailwindcss";\n@source "../../**/*.hbs";\n\n${css}`
+    ? `@import "tailwindcss";\n@source "../../**/*.hbs";\n@import "./ghostcn-tailwind.css";\n\n@layer base {\n${css}}\n`
     : css;
   const files: Record<string, string> = {
     'package.json': packageJson({ ...options, themeName }),
     'default.hbs': defaultTemplate(options.colorScheme),
     'index.hbs': indexTemplate(options),
     'post.hbs': postTemplate(options),
+    'partials/content-cta.hbs': '{{{html}}}\n{{> "components/member-cta"}}\n',
     'page.hbs': pageTemplate(),
     'tag.hbs': archiveTemplate('tag'),
     'author.hbs': archiveTemplate('author'),
     'assets/css/source.css': sourceCss,
     'assets/built/screen.css': css,
-    'scripts/check.mjs': checkScript,
+    'scripts/check.mjs': "import { fileURLToPath } from 'node:url';\nimport { reportTheme } from './theme-tools.mjs';\nif (!reportTheme(fileURLToPath(new URL('../', import.meta.url)))) process.exitCode = 1;\n",
+    'scripts/zip.mjs': "import { fileURLToPath } from 'node:url';\nimport { packageTheme } from './theme-tools.mjs';\nconsole.log('Created ' + packageTheme(fileURLToPath(new URL('../', import.meta.url))).output);\n",
+    'scripts/theme-tools.mjs': fs.readFileSync(themeToolPath(), 'utf8'),
     '.gitignore': 'node_modules\n*.zip\n.DS_Store\n',
     'README.md': readme(options)
   };
@@ -307,6 +330,7 @@ export function scaffoldTheme(options: ScaffoldThemeOptions): ScaffoldThemeResul
     files['scripts/build.mjs'] = vanillaBuildScript;
     files['scripts/dev.mjs'] = vanillaDevScript;
   }
+  if (options.style === 'tailwind') files['assets/css/ghostcn-tailwind.css'] = tailwindTheme();
 
   for (const [relativePath, content] of Object.entries(files)) {
     const target = resolveWithinTheme(themeRoot, relativePath);

@@ -9,7 +9,6 @@
   <a href="https://www.npmjs.com/package/ghostcn"><img src="https://img.shields.io/npm/v/ghostcn?color=6366f1&style=flat-square" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/ghostcn"><img src="https://img.shields.io/npm/dm/ghostcn?color=3b82f6&style=flat-square" alt="npm downloads" /></a>
   <a href="https://ghost.org"><img src="https://img.shields.io/badge/Ghost-%3E%3D5.0.0-15171a?style=flat-square" alt="Ghost Version" /></a>
-  <a href="https://gscan.ghost.org"><img src="https://img.shields.io/badge/gscan-100%25%20valid-22c55e?style=flat-square" alt="gscan validation" /></a>
   <a href="https://github.com/Geekbits-Org/ghost-ui/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License" /></a>
 </p>
 
@@ -32,7 +31,7 @@ You own the code. You customize the classes. Zero vendor lock-in.
 - 🎯 **Interactive Multi-Select**: Run `npx ghostcn add` without arguments to select and batch-install multiple components interactively.
 - 🎨 **Tailwind & Vanilla CSS**: Pre-styled with utility classes and full Vanilla CSS stylesheets with Ghost CSS custom properties.
 - 🔑 **Ghost Members API**: Native support for Ghost attributes (`data-members-form="subscribe"`, Portal checkout triggers).
-- 🛡️ **100% gscan Validated**: All components strictly adhere to Ghost theme guidelines and pass official `gscan` checks with 0 errors.
+- 🛡️ **Theme validation**: Generated themes include offline diagnostics and official gscan validation. Validate your customized theme against your target Ghost version before shipping.
 
 ---
 
@@ -41,7 +40,7 @@ You own the code. You customize the classes. Zero vendor lock-in.
 | Component | Description | Files |
 | :--- | :--- | :--- |
 | **`newsletter-form`** | Native Ghost members subscription form with success/error states | `newsletter-form.hbs`, `newsletter-form.css` |
-| **`pricing-table`** | Membership tiers (Free, Monthly, Annual) with native Portal checkout triggers | `pricing-table.hbs`, `pricing-table.css` |
+| **`pricing-table`** | Public Ghost tiers with live prices, currencies, benefits and tier-specific Portal checkout | `pricing-table.hbs`, `pricing-table.css` |
 | **`author-card`** | Author bio box with avatar, biography, social links, and post counts | `author-card.hbs`, `author-card.css` |
 | **`post-card`** | Post loop preview card with feature image, tags, excerpt, and reading time | `post-card.hbs`, `post-card.css` |
 | **`site-header`** | Responsive navigation with search, mobile menu, sign-in, and subscribe actions | `site-header.hbs`, `site-header.css` |
@@ -79,6 +78,48 @@ npm run dev
 ```
 
 Generated themes also include `npm test` for offline scaffold checks and `npm run validate` for official, pinned gscan validation. The validator is downloaded only when requested, keeping validator-only dependencies out of the day-to-day theme install.
+
+`npm run dev` watches CSS; it does **not** start Ghost. To preview, place the theme folder under a local Ghost installation's `content/themes`, restart Ghost from its installation directory, activate the theme in Ghost Admin → Settings → Design → Change theme, then visit your site's URL. Follow the [local Ghost setup guide](https://docs.ghost.org/install/local/) if you do not have an installation yet. Generated starters require Ghost 5.54.1+; use Node 22.13.1+ or Node 24 for gscan (Tailwind builds need Node 20+).
+
+Build, validate and package for a remote site:
+
+```bash
+npm test
+npm run validate
+npm run zip
+```
+
+The ZIP is written to `dist/<theme-name>-<version>.zip`, with runtime templates and assets at its root. It excludes dependencies, scripts, lockfiles and repository metadata. Upload it in Ghost Admin's theme picker. Re-running replaces the generated ZIP.
+
+For an existing theme, run `npx ghostcn doctor` to check configuration, linked assets, partials and Ghost hooks. After running **your theme's build**, `npx ghostcn pack` packages it without invoking or changing its build system. Doctor is an offline diagnostic, not a replacement for gscan or browser testing.
+
+### Styling components
+
+For a generated Tailwind theme, customize the markup with ordinary utilities:
+
+```handlebars
+<a class="ghcn-button bg-purple-600 hover:bg-purple-700 text-white" href="#/portal/signup" data-portal="signup">Subscribe</a>
+```
+
+No `!` modifier is required to override ghostcn defaults. Component styles and primitives use Tailwind's `components` layer; utilities take precedence, even if a component stylesheet loads later. Semantic colors (`bg-primary`, `text-muted-foreground`, `border-border`, `ring-ring`) and `rounded-ghostcn` are mapped by `assets/css/ghostcn-tailwind.css`. Ghost's explicit and automatic dark modes are supported.
+
+For **existing Tailwind v4 themes**, import the generated `ghostcn-tailwind.css` into your Tailwind source and make sure the build scans `.hbs` files. For example, when using `assets/css/source.css`:
+
+```css
+@import "tailwindcss";
+@import "./ghostcn-tailwind.css";
+@source "../../**/*.hbs";
+```
+
+`init` and `add` do not replace an existing theme's build pipeline. Unlayered host CSS can still override layered styles; place such host rules in an appropriate lower layer or adjust your theme deliberately. Older Tailwind builds must configure their own semantic token mappings.
+
+Vanilla themes ship standalone CSS: edit component files or put token and selector overrides in `assets/css/source.css`. The generated build stylesheet loads after ghostcn defaults. On an existing theme, link your override stylesheet after the managed ghostcn block.
+
+Membership components respect disabled, invite-only and self-signup settings. Paid pricing is shown only when Ghost enables paid membership, using active public tiers configured in Ghost Admin—not sample amounts or invented benefits. The starter uses `partials/content-cta.hbs` for one custom paywall; adding `member-cta` below native `{{content}}` on an existing protected post can otherwise duplicate Ghost's paywall. Follow the starter pattern rather than rendering both.
+
+### Updating an existing ghostcn theme
+
+Your copied files are yours; an npm update does not silently rewrite them. Back up or commit your theme first. Compare the new components in a fresh throwaway theme, then merge the changes you want. To replace unmodified files directly, run `ghostcn init` with your existing palette/paths and re-add the relevant components. Initialization regenerates tokens; `add -y` overwrites component customizations, so use it only deliberately. Existing Tailwind styles from older ghostcn releases are unlayered and need the new token/component CSS for ordinary utility overrides to work.
 
 ### 1. Initialize your Ghost Theme
 

@@ -90,4 +90,17 @@ describe('ghostcn theme scaffolding', () => {
     }), /not empty/);
     assert.strictEqual(fs.readFileSync(path.join(target, 'keep.txt'), 'utf8'), 'keep');
   });
+
+  for (const style of ['css', 'tailwind'] as const) {
+    test(`${style} starter preserves the Ghost comments iframe canvas without changing other embeds`, () => {
+      const { themeRoot } = scaffoldTheme({
+        parentDirectory: temporaryParent(), themeName: 'comments-starter', style,
+        colorScheme: 'Dark', packageManager: 'npm'
+      });
+      const css = fs.readFileSync(path.join(themeRoot, 'assets/css/source.css'), 'utf8');
+      assert.match(css, /iframe\[title="comments-frame"\]\s*\{\s*color-scheme:\s*normal;\s*\}/);
+      assert.doesNotMatch(css, /(?:^|\n)iframe\s*\{/);
+      assert.ok(fs.readFileSync(path.join(themeRoot, 'post.hbs'), 'utf8').includes('{{comments}}'));
+    });
+  }
 });

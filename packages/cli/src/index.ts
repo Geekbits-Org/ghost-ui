@@ -4,6 +4,8 @@ import { init } from './commands/init';
 import { add } from './commands/add';
 import { list } from './commands/list';
 import { create } from './commands/create';
+import { doctor } from './commands/doctor';
+import { pack } from './commands/pack';
 import packageJson from '../package.json';
 
 function main() {
@@ -37,6 +39,9 @@ function main() {
     .argument('[component]', 'The component to add (leave blank for interactive selection)')
     .option('-y, --yes', 'Overwrite existing files without prompting')
     .action(add);
+
+  program.command('doctor').description('Check theme configuration, local assets, partials and build readiness').action(doctor);
+  program.command('pack').description('Package built theme runtime files as a Ghost-uploadable ZIP').action(pack);
 
   program.parse();
 }

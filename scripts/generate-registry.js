@@ -23,6 +23,10 @@ const newsletterForm = {
   Component: Newsletter Form
   Usage: {{> "components/newsletter-form" title="Subscribe to our newsletter" description="Get the latest posts delivered right to your inbox."}}
 --}}
+{{#if @site.members_enabled}}
+{{#unless @site.members_invite_only}}
+{{#if @site.allow_self_signup}}
+{{#unless @member}}
 <section class="gh-newsletter-form bg-card text-card-foreground border border-border p-8 rounded-ghostcn text-center max-w-2xl mx-auto my-8 shadow-sm">
     <div class="mb-6">
         <h3 class="gh-newsletter-title text-2xl font-bold tracking-tight mb-2 text-foreground">
@@ -34,12 +38,15 @@ const newsletterForm = {
     </div>
 
     {{!-- Ghost native members form handling --}}
+    {{#if @site.portal_signup_checkbox_required}}
+    <a class="ghcn-button" href="#/portal/signup" data-portal="signup">Subscribe</a>
+    {{else}}
     <form data-members-form="subscribe" class="gh-newsletter-fields flex flex-col sm:flex-row gap-3 max-w-md mx-auto relative">
-        <label for="gh-email" class="sr-only">Email address</label>
         <input
             data-members-email
             type="email"
-            id="gh-email"
+            aria-label="Email address"
+            autocomplete="email"
             required
             placeholder="jamie@example.com"
             class="gh-newsletter-input flex-1 px-4 py-2.5 bg-background text-foreground border border-input rounded-ghostcn text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
@@ -49,14 +56,19 @@ const newsletterForm = {
         </button>
 
         {{!-- Ghost automatic states (hidden by default, shown via Ghost Portal JS) --}}
-        <div class="gh-newsletter-msg-success message-success hidden absolute -bottom-7 left-0 right-0 text-xs text-green-600 dark:text-green-400 font-medium" data-members-success>
+        <div class="gh-newsletter-msg-success message-success absolute -bottom-7 left-0 right-0 text-xs text-green-600 dark:text-green-400 font-medium" role="status" data-members-success>
             ✓ Check your inbox to confirm your subscription!
         </div>
-        <div class="gh-newsletter-msg-error message-error hidden absolute -bottom-7 left-0 right-0 text-xs text-red-600 dark:text-red-400 font-medium" data-members-error>
+        <div class="gh-newsletter-msg-error message-error absolute -bottom-7 left-0 right-0 text-xs text-red-600 dark:text-red-400 font-medium" role="alert" data-members-error>
             ✕ Please enter a valid email address.
         </div>
     </form>
-</section>`
+    {{/if}}
+</section>
+{{/unless}}
+{{/if}}
+{{/unless}}
+{{/if}}`
     },
     {
       name: "newsletter-form.css",
@@ -196,212 +208,7 @@ const newsletterForm = {
 };
 
 // 2. pricing-table
-const pricingTable = {
-  name: "pricing-table",
-  type: "components:ui",
-  description: "Membership tiers and pricing plans with native Ghost Portal checkout triggers.",
-  dependencies: [],
-  ghost_version: ">=5.0.0",
-  files: [
-    {
-      name: "pricing-table.hbs",
-      type: "partial",
-      target: "partials/components/pricing-table.hbs",
-      content: `{{!--
-  Component: Pricing Table
-  Usage: {{> "components/pricing-table" title="Choose your plan"}}
---}}
-<section class="gh-pricing bg-background py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto my-8">
-    <div class="text-center mb-12">
-        <h2 class="gh-pricing-title text-3xl font-extrabold tracking-tight text-foreground mb-3">
-            {{#if title}}{{title}}{{else}}Choose the right plan for you{{/if}}
-        </h2>
-        <p class="gh-pricing-desc text-muted-foreground text-base max-w-xl mx-auto">
-            {{#if description}}{{description}}{{else}}Unlock unlimited access to exclusive content, newsletters, and member-only discussions.{{/if}}
-        </p>
-    </div>
-
-    <div class="gh-pricing-grid grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
-        {{!-- Free Tier --}}
-        <div class="gh-pricing-card bg-card text-card-foreground border border-border rounded-ghostcn p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
-            <div>
-                <h3 class="text-xl font-bold text-foreground mb-1">Free</h3>
-                <p class="text-muted-foreground text-sm mb-4">Preview public posts</p>
-                <div class="text-3xl font-extrabold text-foreground mb-6">$0 <span class="text-sm font-normal text-muted-foreground">/ forever</span></div>
-                <ul class="space-y-3 text-sm text-muted-foreground mb-6">
-                    <li class="flex items-center gap-2"><span class="text-primary font-bold">✓</span> Access to public posts</li>
-                    <li class="flex items-center gap-2"><span class="text-primary font-bold">✓</span> Regular email newsletters</li>
-                </ul>
-            </div>
-            <a href="#/portal/signup/free" data-portal="signup/free" class="gh-pricing-btn block w-full text-center py-2.5 px-4 rounded-ghostcn text-sm font-medium border border-input text-foreground bg-background hover:bg-muted transition-colors">
-                Sign up free
-            </a>
-        </div>
-
-        {{!-- Monthly Tier (Featured) --}}
-        <div class="gh-pricing-card gh-pricing-card-featured bg-card text-card-foreground border-2 border-primary rounded-ghostcn p-6 flex flex-col justify-between shadow-lg relative">
-            <span class="gh-pricing-badge absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
-                Most Popular
-            </span>
-            <div>
-                <h3 class="text-xl font-bold text-foreground mb-1">Monthly</h3>
-                <p class="text-muted-foreground text-sm mb-4">Full access billed monthly</p>
-                <div class="text-3xl font-extrabold text-primary mb-6">$5 <span class="text-sm font-normal text-muted-foreground">/ month</span></div>
-                <ul class="space-y-3 text-sm text-muted-foreground mb-6">
-                    <li class="flex items-center gap-2"><span class="text-primary font-bold">✓</span> Full archive access</li>
-                    <li class="flex items-center gap-2"><span class="text-primary font-bold">✓</span> Member-only newsletter</li>
-                    <li class="flex items-center gap-2"><span class="text-primary font-bold">✓</span> Community discussions</li>
-                </ul>
-            </div>
-            <a href="#/portal/signup/monthly" data-portal="signup/monthly" class="gh-pricing-btn gh-pricing-btn-primary block w-full text-center py-2.5 px-4 rounded-ghostcn text-sm font-medium text-primary-foreground bg-primary hover:opacity-90 transition-opacity shadow-sm">
-                Subscribe monthly
-            </a>
-        </div>
-
-        {{!-- Annual Tier --}}
-        <div class="gh-pricing-card bg-card text-card-foreground border border-border rounded-ghostcn p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
-            <div>
-                <h3 class="text-xl font-bold text-foreground mb-1">Annual</h3>
-                <p class="text-muted-foreground text-sm mb-4">Save 20% with annual billing</p>
-                <div class="text-3xl font-extrabold text-foreground mb-6">$48 <span class="text-sm font-normal text-muted-foreground">/ year</span></div>
-                <ul class="space-y-3 text-sm text-muted-foreground mb-6">
-                    <li class="flex items-center gap-2"><span class="text-primary font-bold">✓</span> Everything in Monthly</li>
-                    <li class="flex items-center gap-2"><span class="text-primary font-bold">✓</span> 2 months free included</li>
-                    <li class="flex items-center gap-2"><span class="text-primary font-bold">✓</span> VIP priority support</li>
-                </ul>
-            </div>
-            <a href="#/portal/signup/yearly" data-portal="signup/yearly" class="gh-pricing-btn block w-full text-center py-2.5 px-4 rounded-ghostcn text-sm font-medium border border-input text-foreground bg-background hover:bg-muted transition-colors">
-                Subscribe yearly
-            </a>
-        </div>
-    </div>
-</section>`
-    },
-    {
-      name: "pricing-table.css",
-      type: "style",
-      target: "assets/css/components/pricing-table.css",
-      content: `/* ghostcn: Pricing Table Styles */
-.gh-pricing {
-    box-sizing: border-box;
-    font-family: inherit;
-    font-size: 16px;
-    line-height: 1.5;
-    isolation: isolate;
-    max-width: 64rem;
-    margin: 2rem auto;
-    padding: 2rem 1rem;
-}
-
-.gh-pricing *,
-.gh-pricing *::before,
-.gh-pricing *::after {
-    box-sizing: border-box;
-}
-
-.gh-pricing-title {
-    font-size: 1.875rem;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    text-align: center;
-    color: var(--foreground, #09090b);
-    margin-bottom: 0.75rem;
-}
-
-.gh-pricing-desc {
-    text-align: center;
-    color: var(--muted-foreground, #71717a);
-    margin-bottom: 2.5rem;
-}
-
-.gh-pricing-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-}
-
-@media (min-width: 768px) {
-    .gh-pricing-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-.gh-pricing-card {
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: min(var(--radius, 0.5rem), 1.5rem);
-    padding: 1.5rem;
-    background-color: var(--card, #ffffff);
-    color: var(--card-foreground, #09090b);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.2s ease;
-}
-
-.gh-pricing-card:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.gh-pricing-card-featured {
-    border: 2px solid var(--primary, var(--ghost-accent-color, #18181b));
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-.gh-pricing-badge {
-    position: absolute;
-    top: -0.75rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--primary, var(--ghost-accent-color, #18181b));
-    color: var(--primary-foreground, #ffffff);
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-}
-
-.gh-pricing-btn {
-    display: block;
-    width: 100%;
-    text-align: center;
-    padding: 0.625rem 1rem;
-    border-radius: var(--radius, 0.5rem);
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-decoration: none;
-    border: 1px solid var(--input, #e4e4e7);
-    color: var(--foreground, #09090b);
-    background-color: var(--background, #ffffff);
-    margin-top: 1.5rem;
-    transition: background-color 0.15s ease;
-}
-
-.gh-pricing-btn:hover {
-    background-color: var(--muted, #f4f4f5);
-}
-
-.gh-pricing-btn-primary {
-    background-color: var(--primary, var(--ghost-accent-color, #18181b));
-    border-color: var(--primary, var(--ghost-accent-color, #18181b));
-    color: var(--primary-foreground, #ffffff);
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.gh-pricing-btn-primary:hover {
-    opacity: 0.9;
-}
-`
-    }
-  ],
-  gscan: {
-    rules_satisfied: ["GS010-PJ-VALID"],
-    notes: "Uses Ghost native data-portal attributes for seamless checkout without third-party scripts."
-  }
-};
+const pricingTable = require('./pricing-table');
 
 // 3. author-card
 const authorCard = {

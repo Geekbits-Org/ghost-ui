@@ -1,3 +1,5 @@
+import { componentCss } from './styles';
+
 export type BaseColor = 'zinc' | 'slate' | 'stone' | 'gray' | 'neutral';
 export type AccentColor = 'ghost' | 'zinc' | 'indigo' | 'violet' | 'blue' | 'emerald' | 'rose' | 'orange';
 export type Radius = '0' | '0.25rem' | '0.5rem' | '0.75rem' | '1rem' | '9999px';
@@ -304,7 +306,7 @@ export function generateThemeCss(config: ThemeConfig): string {
   --input: ${base.dark.input};
   --ring: ${accent.dark.ring || base.dark.ring};`;
 
-  return `/* 
+  const css = `/*
   ghostcn Design Tokens & Theming System
   Base: ${config.baseColor} | Accent: ${config.accentColor} | Radius: ${radius} | System: ${config.style}
 */
@@ -348,7 +350,7 @@ export function generateThemeCss(config: ThemeConfig): string {
   }
 }
 
-/* ghostcn Semantic Utilities (Guarantees zero-breakage across Tailwind & Vanilla CSS) */
+/* Semantic fallbacks; Tailwind utilities can override these defaults. */
 .bg-background { background-color: var(--background); }
 .text-foreground { color: var(--foreground); }
 .bg-card { background-color: var(--card); }
@@ -457,4 +459,5 @@ export function generateThemeCss(config: ThemeConfig): string {
   border: 0;
 }
 `;
+  return componentCss(css, config.style);
 }

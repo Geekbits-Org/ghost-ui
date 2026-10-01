@@ -101,15 +101,22 @@ export async function create(themeNameArgument?: string, options: CreateOptions 
         shell: process.platform === 'win32'
       });
       if (installed.status !== 0) {
+        process.exitCode = 1;
+        installDependencies = false;
         console.warn(chalk.yellow(`Dependency installation did not finish. The generated theme is intact; run "${packageManager} install" inside it.`));
       }
     }
 
     const run = packageManager === 'npm' ? 'npm run' : `${packageManager} run`;
-    console.log(`\n${chalk.bold.green('Your Ghost theme is ready.')}`);
+    console.log(`\n${chalk.bold.green('Your Ghost theme files are ready.')}`);
     console.log(`  ${chalk.cyan(`cd ${path.basename(scaffold.themeRoot)}`)}`);
     if (!installDependencies) console.log(`  ${chalk.cyan(`${packageManager} install`)}`);
     console.log(`  ${chalk.cyan(`${run} dev`)}\n`);
+    console.log('The dev command watches CSS; it does not start Ghost.');
+    console.log('Move this folder into your local Ghost content/themes directory, restart Ghost,');
+    console.log('then activate the theme in Ghost Admin → Settings → Design → Change theme.');
+    console.log(`Open your Ghost site to preview. See README.md for the full workflow.`);
+    console.log(`For upload: ${run} test → ${run} validate → ${run} zip.\n`);
   } catch (error: any) {
     spinner.fail(chalk.red(error.message));
     process.exitCode = 1;
