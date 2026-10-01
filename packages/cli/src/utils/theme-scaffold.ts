@@ -261,6 +261,18 @@ You own the files in \`partials/components\` and \`assets/css/components\`. ${op
     ? 'Add normal Tailwind classes to the markup, for example `ghcn-button bg-purple-600 hover:bg-purple-700 text-white`. No important modifier is needed for ghostcn defaults. Semantic utilities such as `bg-primary` and `border-border` are configured in `assets/css/ghostcn-tailwind.css`. Put additional CSS in `assets/css/source.css`.'
     : 'Edit the component CSS directly, or put token and selector overrides in `assets/css/source.css`. The built stylesheet loads after ghostcn, so equal-specificity overrides win.'}
 
+Prefer per-instance styling parameters over modifying the shared partial:
+
+\`\`\`handlebars
+{{> "components/pricing-table"
+    class="${options.style === 'tailwind' ? 'mx-auto my-12 w-full max-w-md' : 'membership'}"
+    cardClass="${options.style === 'tailwind' ? 'rounded-2xl bg-card p-8 shadow-lg' : 'membership-card'}"
+    buttonClass="${options.style === 'tailwind' ? 'bg-purple-600 hover:bg-purple-700 text-white' : 'membership-button'}"
+}}
+\`\`\`
+
+Every component accepts \`class\` for its root; named slots (such as \`buttonClass\`, \`titleClass\` and \`inputClass\`) apply to the corresponding internal elements when present. Available slots are listed in the installed partial's opening comment and in the ghostcn documentation. Pricing also accepts \`titleClass\` and \`gridClass\`. ${options.style === 'tailwind' ? 'Keep classes as complete literal strings in scanned .hbs files and keep the dev watcher running.' : 'Define your custom class selectors in assets/css/source.css, matching default specificity where needed.'} Re-adding a component can overwrite its partial/CSS but does not overwrite styling kept in calling templates or source.css. These parameters do not style Ghost-owned Portal, search or comments UI.
+
 Membership UI follows Ghost's enabled/invite-only/paid settings. Pricing comes from public tiers configured in Ghost Admin; payments must be configured before paid plans appear. The custom \`partials/content-cta.hbs\` renders one paywall for protected posts without exposing restricted content.
 
 ## Package for upload

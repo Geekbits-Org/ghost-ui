@@ -9,7 +9,7 @@
       "name": "featured-posts.hbs",
       "type": "partial",
       "target": "partials/components/featured-posts.hbs",
-      "content": "{{!-- Component: Featured Posts | Usage: {{> \"components/featured-posts\"}} --}}\n{{#get \"posts\" filter=\"featured:true\" limit=\"3\" include=\"authors,tags\"}}\n{{#if posts}}\n<section class=\"ghcn-featured ghcn-container\" aria-labelledby=\"ghcn-featured-title\">\n    <div class=\"ghcn-featured__heading\">\n        <div><span class=\"ghcn-badge\">Featured</span><h2 id=\"ghcn-featured-title\">Editor’s picks</h2></div>\n        <a href=\"{{@site.url}}\">View all posts <span aria-hidden=\"true\">&rarr;</span></a>\n    </div>\n    <div class=\"ghcn-featured__grid\">\n        {{#foreach posts}}\n        <article class=\"ghcn-featured__card{{#has index=\"0\"}} ghcn-featured__card--lead{{/has}}\">\n            <a class=\"ghcn-featured__image\" href=\"{{url}}\">\n                {{#if feature_image}}<img src=\"{{img_url feature_image size=\"l\"}}\" alt=\"{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}\" loading=\"{{#has index=\"0\"}}eager{{else}}lazy{{/has}}\" />{{/if}}\n            </a>\n            <div class=\"ghcn-featured__content\">\n                <div class=\"ghcn-featured__meta\">{{#if primary_tag}}<a href=\"{{primary_tag.url}}\">{{primary_tag.name}}</a><span>&bull;</span>{{/if}}<span>{{reading_time}}</span></div>\n                <h3><a href=\"{{url}}\">{{title}}</a></h3>\n                {{#has index=\"0\"}}{{#if excerpt}}<p>{{excerpt words=\"30\"}}</p>{{/if}}{{/has}}\n            </div>\n        </article>\n        {{/foreach}}\n    </div>\n</section>\n{{/if}}\n{{/get}}"
+      "content": "{{!-- Styling parameters: class, titleClass, gridClass, cardClass, contentClass --}}\n{{#with this as |ghostcnStyles|}}\n{{!-- Component: Featured Posts | Usage: {{> \"components/featured-posts\"}} --}}\n{{#get \"posts\" filter=\"featured:true\" limit=\"3\" include=\"authors,tags\"}}\n{{#if posts}}\n<section class=\"ghcn-featured{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}} ghcn-container\" aria-label=\"Featured posts\">\n    <div class=\"ghcn-featured__heading\">\n        <div><span class=\"ghcn-badge\">Featured</span><h2 class=\"ghcn-featured__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">Editor’s picks</h2></div>\n        <a href=\"{{@site.url}}\">View all posts <span aria-hidden=\"true\">&rarr;</span></a>\n    </div>\n    <div class=\"ghcn-featured__grid{{#if ghostcnStyles.gridClass}} {{ghostcnStyles.gridClass}}{{/if}}\">\n        {{#foreach posts}}\n        <article class=\"ghcn-featured__card{{#if ghostcnStyles.cardClass}} {{ghostcnStyles.cardClass}}{{/if}}{{#has index=\"0\"}} ghcn-featured__card--lead{{/has}}\">\n            <a class=\"ghcn-featured__image\" href=\"{{url}}\">\n                {{#if feature_image}}<img src=\"{{img_url feature_image size=\"l\"}}\" alt=\"{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}\" loading=\"{{#has index=\"0\"}}eager{{else}}lazy{{/has}}\" />{{/if}}\n            </a>\n            <div class=\"ghcn-featured__content{{#if ghostcnStyles.contentClass}} {{ghostcnStyles.contentClass}}{{/if}}\">\n                <div class=\"ghcn-featured__meta\">{{#if primary_tag}}<a href=\"{{primary_tag.url}}\">{{primary_tag.name}}</a><span>&bull;</span>{{/if}}<span>{{reading_time}}</span></div>\n                <h3><a href=\"{{url}}\">{{title}}</a></h3>\n                {{#has index=\"0\"}}{{#if excerpt}}<p>{{excerpt words=\"30\"}}</p>{{/if}}{{/has}}\n            </div>\n        </article>\n        {{/foreach}}\n    </div>\n</section>\n{{/if}}\n{{/get}}\n{{/with}}"
     },
     {
       "name": "featured-posts.css",
@@ -23,5 +23,22 @@
       "GS010-PJ-VALID"
     ],
     "notes": "Uses the Ghost get helper and featured post filter."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-featured"
+    ],
+    "titleClass": [
+      ".ghcn-featured__title"
+    ],
+    "gridClass": [
+      ".ghcn-featured__grid"
+    ],
+    "cardClass": [
+      ".ghcn-featured__card"
+    ],
+    "contentClass": [
+      ".ghcn-featured__content"
+    ]
   }
 }

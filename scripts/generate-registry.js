@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const coreComponents = require('./core-components');
+const { applyStyleSlots } = require('./component-styling');
 
 const componentsDir = path.join(__dirname, '..', 'registry', 'components');
 if (!fs.existsSync(componentsDir)) {
@@ -28,7 +29,7 @@ const newsletterForm = {
 {{#if @site.allow_self_signup}}
 {{#unless @member}}
 <section class="gh-newsletter-form bg-card text-card-foreground border border-border p-8 rounded-ghostcn text-center max-w-2xl mx-auto my-8 shadow-sm">
-    <div class="mb-6">
+    <div class="gh-newsletter-heading">
         <h3 class="gh-newsletter-title text-2xl font-bold tracking-tight mb-2 text-foreground">
             {{#if title}}{{title}}{{else}}Subscribe to our newsletter{{/if}}
         </h3>
@@ -97,6 +98,8 @@ const newsletterForm = {
 .gh-newsletter-form *::after {
     box-sizing: border-box;
 }
+
+.gh-newsletter-heading { margin-bottom: 1.5rem; }
 
 .gh-newsletter-title {
     font-size: 1.5rem;
@@ -236,7 +239,7 @@ const authorCard = {
     {{/if}}
 
     <div class="gh-author-details flex-1 text-center sm:text-left">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+        <div class="gh-author-heading">
             <h4 class="gh-author-name text-xl font-bold tracking-tight text-foreground">
                 <a href="{{url}}" class="hover:text-primary transition-colors">{{name}}</a>
             </h4>
@@ -312,6 +315,7 @@ const authorCard = {
     border-radius: 9999px;
     object-fit: cover;
     border: 2px solid var(--border, #e4e4e7);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .gh-author-avatar-fallback {
@@ -326,6 +330,7 @@ const authorCard = {
     font-size: 1.5rem;
     font-weight: 700;
     border: 2px solid var(--border, #e4e4e7);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .gh-author-details {
@@ -344,15 +349,16 @@ const authorCard = {
     font-weight: 700;
     letter-spacing: -0.025em;
     margin: 0;
+    color: var(--foreground, #09090b);
 }
 
 .gh-author-name a {
-    color: var(--foreground, #09090b);
+    color: inherit;
     text-decoration: none;
     transition: color 0.15s ease;
 }
 
-.gh-author-name a:hover {
+.gh-author-name:hover {
     color: var(--primary, var(--ghost-accent-color, #18181b));
 }
 
@@ -366,6 +372,8 @@ const authorCard = {
 .gh-author-meta {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
     gap: 1rem;
     font-size: 0.75rem;
     color: var(--muted-foreground, #71717a);
@@ -379,6 +387,11 @@ const authorCard = {
 .gh-author-meta a:hover {
     text-decoration: underline;
 }
+
+.gh-author-heading { display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; }
+.gh-author-post-count { border-radius: 9999px; padding: 0.25rem 0.625rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.75rem; font-weight: 500; }
+.gh-author-location { display: inline-flex; align-items: center; gap: 0.25rem; }
+@media (min-width: 640px) { .gh-author-heading { flex-direction: row; align-items: center; } .gh-author-meta { justify-content: flex-start; } }
 `
     }
   ],
@@ -407,16 +420,16 @@ const postCard = {
 <article class="gh-post-card group bg-card text-card-foreground border border-border rounded-ghostcn overflow-hidden hover:shadow-lg transition-all duration-200 flex flex-col">
     {{#if feature_image}}
     <a href="{{url}}" class="gh-post-card-image block aspect-video overflow-hidden bg-muted">
-        <img src="{{img_url feature_image size="m"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+        <img src="{{img_url feature_image size="m"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" class="gh-post-card-img" loading="lazy" />
     </a>
     {{/if}}
 
     <div class="gh-post-card-content p-5 flex-1 flex flex-col justify-between">
         <div>
-            <div class="flex items-center gap-2 mb-2 text-xs font-semibold">
+            <div class="gh-post-card-meta">
                 {{#if primary_tag}}
                 <a href="{{primary_tag.url}}" class="gh-post-card-tag text-primary uppercase tracking-wider hover:underline">{{primary_tag.name}}</a>
-                <span class="text-muted-foreground/40">&bull;</span>
+                <span class="gh-post-card-separator">&bull;</span>
                 {{/if}}
                 <span class="gh-post-card-reading-time text-muted-foreground">{{reading_time}}</span>
             </div>
@@ -431,7 +444,7 @@ const postCard = {
         </div>
 
         <div class="gh-post-card-footer pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-            <div class="flex items-center gap-2 font-medium">
+            <div class="gh-post-card-author">
                 {{#primary_author}}
                 <span>{{name}}</span>
                 {{/primary_author}}
@@ -519,19 +532,24 @@ const postCard = {
     letter-spacing: -0.025em;
     margin: 0.5rem 0;
     line-height: 1.35;
+    color: var(--foreground, #09090b);
 }
 
 .gh-post-card-title a {
-    color: var(--foreground, #09090b);
+    color: inherit;
     text-decoration: none;
     transition: color 0.15s ease;
 }
 
-.gh-post-card-title a:hover {
+.gh-post-card-title:hover {
     color: var(--primary, var(--ghost-accent-color, #18181b));
 }
 
 .gh-post-card-excerpt {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
     color: var(--muted-foreground, #71717a);
     font-size: 0.875rem;
     line-height: 1.5;
@@ -542,10 +560,16 @@ const postCard = {
     padding-top: 1rem;
     border-top: 1px solid var(--border, #e4e4e7);
     display: flex;
+    align-items: center;
     justify-content: space-between;
     font-size: 0.75rem;
     color: var(--muted-foreground, #71717a);
 }
+
+.gh-post-card-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 600; }
+.gh-post-card-reading-time { color: var(--muted-foreground); }
+.gh-post-card-separator { color: color-mix(in srgb, var(--muted-foreground) 40%, transparent); }
+.gh-post-card-author { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; }
 `
     }
   ],
@@ -566,6 +590,31 @@ function makeCssHostIndependent(component) {
 }
 
 const allComponents = [newsletterForm, pricingTable, authorCard, postCard, ...coreComponents];
+applyStyleSlots(pricingTable, {
+  class: ['gh-pricing'], titleClass: ['gh-pricing-title'], gridClass: ['gh-pricing-grid'],
+  cardClass: ['gh-pricing-card'], buttonClass: ['ghcn-button']
+});
+applyStyleSlots(newsletterForm, {
+  class: ['gh-newsletter-form'], titleClass: ['gh-newsletter-title'], descriptionClass: ['gh-newsletter-desc'],
+  formClass: ['gh-newsletter-fields'], inputClass: ['gh-newsletter-input'], buttonClass: ['gh-newsletter-btn', 'ghcn-button']
+}, { portableMarkup: true });
+applyStyleSlots(authorCard, {
+  class: ['gh-author-card'], avatarClass: ['gh-author-avatar', 'gh-author-avatar-fallback'],
+  contentClass: ['gh-author-details'], titleClass: ['gh-author-name'], descriptionClass: ['gh-author-bio'], metaClass: ['gh-author-meta']
+}, { portableMarkup: true });
+applyStyleSlots(postCard, {
+  class: ['gh-post-card'], imageClass: ['gh-post-card-img'], contentClass: ['gh-post-card-content'],
+  titleClass: ['gh-post-card-title'], descriptionClass: ['gh-post-card-excerpt'], metaClass: ['gh-post-card-meta'], footerClass: ['gh-post-card-footer']
+}, { portableMarkup: true });
+const coreStyleSlots = {
+  'site-header': { class: ['ghcn-header'], innerClass: ['ghcn-header__inner'], navClass: ['ghcn-header__nav', 'ghcn-header__mobile-nav'], buttonClass: ['ghcn-button'] },
+  'site-footer': { class: ['ghcn-footer'], innerClass: ['ghcn-footer__inner'], navClass: ['ghcn-footer__nav'], socialClass: ['ghcn-footer__social'] },
+  'featured-posts': { class: ['ghcn-featured'], titleClass: ['ghcn-featured__title'], gridClass: ['ghcn-featured__grid'], cardClass: ['ghcn-featured__card'], contentClass: ['ghcn-featured__content'] },
+  'pagination': { class: ['ghcn-pagination'], buttonClass: ['ghcn-button'], statusClass: ['ghcn-pagination__status'] },
+  'post-header': { class: ['ghcn-post-header'], titleClass: ['ghcn-post-header__title'], descriptionClass: ['ghcn-post-header__excerpt'], metaClass: ['ghcn-post-header__meta'], imageClass: ['ghcn-post-header__image'] },
+  'member-cta': { class: ['ghcn-member-cta'], titleClass: ['ghcn-member-cta__title'], descriptionClass: ['ghcn-member-cta__description'], buttonClass: ['ghcn-button'] }
+};
+for (const component of coreComponents) applyStyleSlots(component, coreStyleSlots[component.name]);
 allComponents.forEach(makeCssHostIndependent);
 
 fs.writeFileSync(path.join(componentsDir, 'newsletter-form.json'), JSON.stringify(newsletterForm, null, 2), 'utf8');

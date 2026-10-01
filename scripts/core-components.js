@@ -43,7 +43,7 @@ const siteHeader = {
                 <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             </summary>
             <div class="ghcn-header__panel">
-                <nav aria-label="Mobile navigation">{{navigation}}</nav>
+                <nav class="ghcn-header__mobile-nav" aria-label="Mobile navigation">{{navigation}}</nav>
                 <div class="ghcn-header__mobile-actions">
                     {{search}}
                     {{#if @site.members_enabled}}
@@ -156,9 +156,9 @@ const featuredPosts = {
       content: `{{!-- Component: Featured Posts | Usage: {{> "components/featured-posts"}} --}}
 {{#get "posts" filter="featured:true" limit="3" include="authors,tags"}}
 {{#if posts}}
-<section class="ghcn-featured ghcn-container" aria-labelledby="ghcn-featured-title">
+<section class="ghcn-featured ghcn-container" aria-label="Featured posts">
     <div class="ghcn-featured__heading">
-        <div><span class="ghcn-badge">Featured</span><h2 id="ghcn-featured-title">Editor’s picks</h2></div>
+        <div><span class="ghcn-badge">Featured</span><h2 class="ghcn-featured__title">Editor’s picks</h2></div>
         <a href="{{@site.url}}">View all posts <span aria-hidden="true">&rarr;</span></a>
     </div>
     <div class="ghcn-featured__grid">
@@ -248,7 +248,7 @@ const postHeader = {
       content: `{{!-- Component: Post Header | Usage: inside {{#post}} --}}
 <header class="ghcn-post-header ghcn-container">
     {{#if primary_tag}}<a class="ghcn-badge" href="{{primary_tag.url}}">{{primary_tag.name}}</a>{{/if}}
-    <h1>{{title}}</h1>
+    <h1 class="ghcn-post-header__title">{{title}}</h1>
     {{#if custom_excerpt}}<p class="ghcn-post-header__excerpt">{{custom_excerpt}}</p>{{/if}}
     <div class="ghcn-post-header__meta">
         {{#primary_author}}
@@ -264,7 +264,7 @@ const postHeader = {
     </div>
     {{#if feature_image}}
         <figure class="ghcn-post-header__media">
-            <img srcset="{{img_url feature_image size="s"}} 400w, {{img_url feature_image size="m"}} 750w, {{img_url feature_image size="l"}} 1200w, {{img_url feature_image size="xl"}} 2000w" sizes="(min-width: 1200px) 1120px, 92vw" src="{{img_url feature_image size="xl"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" />
+            <img class="ghcn-post-header__image" srcset="{{img_url feature_image size="s"}} 400w, {{img_url feature_image size="m"}} 750w, {{img_url feature_image size="l"}} 1200w, {{img_url feature_image size="xl"}} 2000w" sizes="(min-width: 1200px) 1120px, 92vw" src="{{img_url feature_image size="xl"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" />
             {{#if feature_image_caption}}<figcaption>{{feature_image_caption}}</figcaption>{{/if}}
         </figure>
     {{/if}}
@@ -304,45 +304,45 @@ const memberCta = {
     {{#if access}}
         {{#if @member}}
             <span class="ghcn-badge">Member access</span>
-            <h2>You’re all caught up</h2>
-            <p>Manage your subscription, email preferences, and account details in Portal.</p>
+            <h2 class="ghcn-member-cta__title">You’re all caught up</h2>
+            <p class="ghcn-member-cta__description">Manage your subscription, email preferences, and account details in Portal.</p>
             <a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Manage account</a>
         {{else}}
             {{#if @site.allow_self_signup}}
             <span class="ghcn-badge">Join the publication</span>
-            <h2>Enjoying this story?</h2>
-            <p>Subscribe for new posts and member updates delivered directly to your inbox.</p>
+            <h2 class="ghcn-member-cta__title">Enjoying this story?</h2>
+            <p class="ghcn-member-cta__description">Subscribe for new posts and member updates delivered directly to your inbox.</p>
             <div class="ghcn-member-cta__actions"><a class="ghcn-button" href="#/portal/signup" data-portal="signup">Subscribe</a><a class="ghcn-button ghcn-button--ghost" href="#/portal/signin" data-portal="signin">Sign in</a></div>
             {{else}}
-            <h2>Already a member?</h2>
+            <h2 class="ghcn-member-cta__title">Already a member?</h2>
             <a class="ghcn-button ghcn-button--outline" href="#/portal/signin" data-portal="signin">Sign in</a>
             {{/if}}
         {{/if}}
     {{else}}
         {{#if @member.paid}}
             <span class="ghcn-badge">Account required</span>
-            <h2>This post isn’t included in your plan</h2>
-            <p>Open your account to review your membership and available plans.</p>
+            <h2 class="ghcn-member-cta__title">This post isn’t included in your plan</h2>
+            <p class="ghcn-member-cta__description">Open your account to review your membership and available plans.</p>
             <a class="ghcn-button" href="#/portal/account" data-portal="account">Manage account</a>
         {{else if @member}}
             {{#if @site.paid_members_enabled}}
             {{#if @site.allow_self_signup}}
             <span class="ghcn-badge">Paid members</span>
-            <h2>Upgrade to continue reading</h2>
-            <p>Review the available plans to find one that includes this post.</p>
+            <h2 class="ghcn-member-cta__title">Upgrade to continue reading</h2>
+            <p class="ghcn-member-cta__description">Review the available plans to find one that includes this post.</p>
             <a class="ghcn-button" href="#/portal/account/plans" data-portal="account/plans">Upgrade membership</a>
             {{else}}
-            <h2>This post requires a different membership</h2>
+            <h2 class="ghcn-member-cta__title">This post requires a different membership</h2>
             <a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Manage account</a>
             {{/if}}
             {{else}}
-            <h2>This post is not available with your membership</h2>
+            <h2 class="ghcn-member-cta__title">This post is not available with your membership</h2>
             <a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Manage account</a>
             {{/if}}
         {{else}}
             <span class="ghcn-badge">Members only</span>
-            <h2>Continue reading with a membership</h2>
-            <p>This post requires a membership with access. Already a member? Sign in to continue.</p>
+            <h2 class="ghcn-member-cta__title">Continue reading with a membership</h2>
+            <p class="ghcn-member-cta__description">This post requires a membership with access. Already a member? Sign in to continue.</p>
             <div class="ghcn-member-cta__actions">{{#if @site.allow_self_signup}}<a class="ghcn-button" href="#/portal/signup" data-portal="signup">View memberships</a>{{/if}}<a class="ghcn-button ghcn-button--outline" href="#/portal/signin" data-portal="signin">Sign in</a></div>
         {{/if}}
     {{/if}}

@@ -88,11 +88,10 @@ describe('ghostcn Theming System', () => {
       const manifest = await getComponent('newsletter-form');
       assert.ok(manifest !== null);
       const hbs = manifest?.files.find(f => f.type === 'partial')?.content || '';
-      assert.ok(hbs.includes('rounded-ghostcn'), 'newsletter-form should use rounded-ghostcn');
-      assert.ok(hbs.includes('bg-card'), 'newsletter-form should use bg-card');
-      assert.ok(hbs.includes('text-foreground') || hbs.includes('text-card-foreground'), 'newsletter-form should use semantic text tokens');
-      assert.ok(hbs.includes('bg-primary'), 'newsletter-form button should use bg-primary');
+      assert.ok(hbs.includes('ghostcnStyles.class'), 'newsletter supports call-site root classes');
+      assert.ok(hbs.includes('ghostcnStyles.buttonClass'), 'newsletter supports call-site button classes');
       const css = manifest?.files.find(f => f.type === 'style')?.content || '';
+      assert.ok(css.includes('var(--card') && css.includes('var(--foreground') && css.includes('var(--primary'), 'defaults use semantic tokens in component CSS');
       assert.ok(css.includes('font-size: 16px'), 'component should establish a host-independent type scale');
       assert.ok(css.includes('.gh-newsletter-form .sr-only'), 'newsletter label should be visually hidden');
       assert.ok(css.includes('display: none'), 'newsletter status messages should be hidden by default');
@@ -116,9 +115,9 @@ describe('ghostcn Theming System', () => {
       const manifest = await getComponent('author-card');
       assert.ok(manifest !== null);
       const hbs = manifest?.files.find(f => f.type === 'partial')?.content || '';
-      assert.ok(hbs.includes('rounded-ghostcn'));
+      assert.ok(hbs.includes('ghostcnStyles.class'));
       assert.ok(hbs.includes('profile_image'));
-      assert.ok(hbs.includes('hover:text-primary'));
+      assert.ok(manifest?.files.some(f => f.type === 'style' && f.content.includes('.gh-author-name:hover')));
     });
 
     test('post-card uses semantic tokens and Ghost post helpers', async () => {
@@ -126,10 +125,10 @@ describe('ghostcn Theming System', () => {
       const manifest = await getComponent('post-card');
       assert.ok(manifest !== null);
       const hbs = manifest?.files.find(f => f.type === 'partial')?.content || '';
-      assert.ok(hbs.includes('rounded-ghostcn'));
+      assert.ok(hbs.includes('ghostcnStyles.class'));
       assert.ok(hbs.includes('{{url}}'));
       assert.ok(hbs.includes('{{title}}'));
-      assert.ok(hbs.includes('text-primary'));
+      assert.ok(manifest?.files.some(f => f.type === 'style' && f.content.includes('var(--primary')));
     });
 
     test('starter foundation components use native Ghost integration points', async () => {

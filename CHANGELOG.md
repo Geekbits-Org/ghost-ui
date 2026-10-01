@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.0 — 2026-10-01
+
+- All 10 components accept per-instance root `class`, with documented slots for internal cards, grids, titles, content, inputs and theme-owned buttons where applicable.
+- Styling parameters remain bound to the caller through Ghost `get`, `foreach` and author contexts. Multiple differently styled instances remain independent; class values are HTML-escaped.
+- Visual defaults for newsletter, author and post cards now live in component CSS, avoiding conflicting default Tailwind utilities. No custom Ghost helper or runtime dependency is needed.
+- Featured blocks no longer use a fixed heading ID, making repeated instances accessible without duplicate identifiers.
+- Added registry slot metadata, usage examples for Tailwind/vanilla, and regression coverage for nested contexts, styling overrides and reinstallation preserving call-site styles.
+- Existing copied components need a deliberate merge/re-add to gain parameter support. Theme-owned template/CSS customizations remain outside component overwrite targets.
+
 ## 1.2.0 — 2026-10-01
 
 - Ordinary Tailwind utilities now override component defaults without important modifiers. Every Tailwind stylesheet declares consistent layer order, preserving defaults against preflight regardless of link order.

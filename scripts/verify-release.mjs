@@ -27,6 +27,31 @@ if (commentsUrl) {
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'ghostcn-release-'));
 const roots = {};
 const components = [...REQUIRED_STARTER_COMPONENTS, 'newsletter-form', 'author-card', 'pricing-table'];
+// Real call-site fixtures: Tailwind scans complete literals in hash parameters.
+const stylingTemplate = `
+<div id="purple-pricing">{{> "components/pricing-table" title="Purple membership" class="mx-auto my-12 w-full max-w-4xl slot-root" titleClass="text-purple-600 slot-title" gridClass="gap-6 slot-grid" cardClass="rounded-2xl bg-purple-50 p-8 shadow-lg slot-card" buttonClass="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-8 slot-button"}}</div>
+<div id="green-pricing">{{> "components/pricing-table" title="Green membership" class="mx-auto my-12 max-w-4xl slot-root" cardClass="rounded-3xl bg-emerald-50 p-5 slot-card" buttonClass="bg-emerald-600 text-white slot-button"}}</div>
+<div id="default-pricing">{{> "components/pricing-table" title="Unchanged defaults"}}</div>
+<div id="styled-newsletter">{{> "components/newsletter-form" class="mx-auto max-w-4xl p-4 slot-root" titleClass="text-purple-600 slot-title" inputClass="border-purple-500 rounded-xl slot-input" buttonClass="bg-purple-600 text-white slot-button"}}</div>
+<div id="styled-author">{{#with primary_author}}{{> "components/author-card" class="mx-auto max-w-4xl p-4 slot-root" titleClass="text-fuchsia-600 slot-title"}}{{/with}}</div>
+<div id="styled-post">{{> "components/post-card" class="mx-auto max-w-sm rounded-2xl slot-root" titleClass="text-purple-600 hover:text-emerald-600 slot-title"}}</div>
+<div id="styled-cta">{{> "components/member-cta" class="mx-auto max-w-4xl slot-root" buttonClass="bg-purple-600 text-white rounded-xl slot-button"}}</div>
+<div id="styled-header">{{> "components/site-header" class="rounded-2xl slot-root" buttonClass="bg-purple-600 text-white slot-button"}}</div>
+<div id="styled-footer">{{> "components/site-footer" class="rounded-2xl slot-root" navClass="text-purple-600 slot-nav"}}</div>
+<div id="styled-pagination">{{> "pagination" pagination class="my-12 slot-root" buttonClass="bg-purple-600 text-white slot-button"}}</div>
+<div id="styled-featured">{{> "components/featured-posts" class="slot-root" cardClass="rounded-3xl slot-card" titleClass="text-purple-600 slot-title"}}</div>
+<div id="styled-post-header">{{> "components/post-header" class="slot-root" titleClass="text-purple-600 slot-title"}}</div>
+`;
+const vanillaSlotCss = `
+.slot-root { max-width: 56rem; margin: 3rem auto; }
+.slot-root .slot-title { color: #7c3aed; }
+.slot-root .slot-card { background: #f5f3ff; padding: 2rem; border-radius: 1rem; box-shadow: 0 8px 24px #0001; }
+.slot-root .slot-button { background: #7c3aed; color: #fff; border-radius: .75rem; padding-inline: 2rem; }
+#green-pricing .slot-card { background: #ecfdf5; }
+#green-pricing .slot-button { background: #059669; }
+#styled-newsletter .slot-root, #styled-author .slot-root { padding: 1rem; }
+.slot-root .slot-input { border-color: #a855f7; border-radius: .75rem; }
+`;
 const run = (cmd, argv, cwd) => {
     const result = spawnSync(cmd, argv, { cwd, encoding: 'utf8' });
     if (result.status !== 0) throw new Error(result.stderr || result.stdout || result.error?.message);
@@ -39,13 +64,17 @@ for (const style of ['css', 'tailwind']) {
     const config = buildGhostcnConfig({ style, baseColor: 'zinc', accentColor: 'violet', radius: '0.5rem' });
     initializeThemeProject({ themeRoot, config });
     for (const componentName of components) await installComponent({ themeRoot, config, componentName });
+    fs.writeFileSync(path.join(themeRoot, 'partials/styling-preview.hbs'), stylingTemplate);
     if (style === 'tailwind') {
         const tailwindRoot = path.dirname(require.resolve('tailwindcss/package.json'));
         fs.mkdirSync(path.join(themeRoot, 'node_modules'));
         fs.symlinkSync(tailwindRoot, path.join(themeRoot, 'node_modules/tailwindcss'), 'junction');
         fs.appendFileSync(path.join(themeRoot, 'index.hbs'), '<button class="ghcn-button bg-purple-600 hover:bg-purple-700 text-white px-8 rounded-xl dark:bg-purple-400">Override test</button>');
         run(process.execPath, [path.join(path.dirname(require.resolve('@tailwindcss/cli/package.json')), 'dist/index.mjs'), '-i', './assets/css/source.css', '-o', './assets/built/screen.css', '--minify'], themeRoot);
-    } else run(process.execPath, ['./scripts/build.mjs'], themeRoot);
+    } else {
+        fs.appendFileSync(path.join(themeRoot, 'assets/css/source.css'), vanillaSlotCss);
+        run(process.execPath, ['./scripts/build.mjs'], themeRoot);
+    }
     run(process.execPath, ['./scripts/check.mjs'], themeRoot);
     run(process.execPath, ['./scripts/zip.mjs'], themeRoot);
     if (ghostRoot) {
@@ -92,11 +121,12 @@ hbs.registerHelper('page_url', value => `/page/${value}/`);
 hbs.registerHelper('navigation', () => new hbs.SafeString('<ul class="nav"><li class="nav-current"><a href="/">Home</a></li><li><a href="/about/">About</a></li><li><a href="/archive/">Archive</a></li></ul>'));
 hbs.registerHelper('search', ghostRoot ? require(path.join(ghostRoot, 'core/frontend/helpers/search.js')) : () => new hbs.SafeString('<button class="ghcn-icon-button ghcn-button--ghost" aria-label="Search">⌕</button>'));
 hbs.registerHelper('price', ghostRoot ? require(path.join(ghostRoot, 'core/frontend/helpers/price.js')) : (amount, options) => new Intl.NumberFormat('en', { style: 'currency', currency: options.hash.currency }).format(amount / 100));
-function render(style, state, scheme, host, formState) {
+function render(style, state, scheme, host, formState, styling) {
     const root = roots[style];
     for (const component of components) {
         const file = component === 'pagination' ? 'partials/pagination.hbs' : `partials/components/${component}.hbs`;
         hbs.registerPartial(`components/${component}`, fs.readFileSync(path.join(root, file), 'utf8'));
+        if (component === 'pagination') hbs.registerPartial('pagination', fs.readFileSync(path.join(root, file), 'utf8'));
     }
     const site = { title: 'Ghostcn Journal', url: '/', description: 'Built with components you own.', members_enabled: state !== 'disabled', members_invite_only: state === 'invite', allow_self_signup: !['disabled', 'invite', 'restricted'].includes(state), paid_members_enabled: !['disabled', 'free-only'].includes(state), locale: 'en' };
     const member = ['free', 'paid'].includes(state) ? { paid: state === 'paid' } : undefined;
@@ -107,7 +137,7 @@ function render(style, state, scheme, host, formState) {
             ? html.replace('class="gh-newsletter-fields', `class="gh-newsletter-fields ${formState}`) : html;
     };
     const css = fs.readdirSync(path.join(root, 'assets/css/components')).map(file => `<link rel="stylesheet" href="/${style}/assets/css/components/${file}">`).join('');
-    const body = partial('site-header') + partial('featured-posts') + `<section class="ghcn-post-grid">${posts.map(p => partial('post-card', p)).join('')}</section>` + partial('pagination', { page: 2, pages: 4, prev: 1, next: 3 }) + partial('post-header') + partial('member-cta', { ...post, access: false }) + partial('newsletter-form', {}) + partial('pricing-table', {}) + partial('author-card', post.primary_author) + partial('site-footer');
+    const body = styling ? hbs.compile(stylingTemplate)({ ...post, pagination: { page: 2, pages: 4, prev: 1, next: 3 } }, { data }) : partial('site-header') + partial('featured-posts') + `<section class="ghcn-post-grid">${posts.map(p => partial('post-card', p)).join('')}</section>` + partial('pagination', { page: 2, pages: 4, prev: 1, next: 3 }) + partial('post-header') + partial('member-cta', { ...post, access: false }) + partial('newsletter-form', {}) + partial('pricing-table', {}) + partial('author-card', post.primary_author) + partial('site-footer');
     return `<!doctype html><html class="${scheme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ghostcn ${style} QA</title>${host ? '<link rel="stylesheet" href="/casper.css">' : ''}<link rel="stylesheet" href="/${style}/assets/css/ghostcn.css">${css}${host ? '' : `<link rel="stylesheet" href="/${style}/assets/built/screen.css">`}</head><body>${body}<div style="padding:32px"><button id="override" class="ghcn-button bg-purple-600 hover:bg-purple-700 text-white px-8 rounded-xl dark:bg-purple-400">Purple override</button><a id="semantic" class="ghcn-button bg-primary">Semantic primary</a></div></body></html>`;
 }
 const server = http.createServer((req, res) => {
@@ -143,7 +173,7 @@ const server = http.createServer((req, res) => {
         res.setHeader('Content-Type', 'text/css'); return res.end(css);
     }
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.end(render(url.searchParams.get('style') || 'tailwind', url.searchParams.get('state') || 'visitor', url.searchParams.get('scheme') || '', url.searchParams.has('casper'), url.searchParams.get('form')));
+    res.end(render(url.searchParams.get('style') || 'tailwind', url.searchParams.get('state') || 'visitor', url.searchParams.get('scheme') || '', url.searchParams.has('casper'), url.searchParams.get('form'), url.searchParams.has('slots')));
 });
 server.listen(4179, '127.0.0.1', () => console.log('QA preview: http://127.0.0.1:4179/?style=tailwind (state=disabled/invite/restricted/free/paid/free-only; scheme=dark-mode/auto-color; casper=1)'));
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => { server.close(); fs.rmSync(temporary, { recursive: true, force: true }); process.exit(0); });

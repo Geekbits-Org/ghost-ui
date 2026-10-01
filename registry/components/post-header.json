@@ -9,7 +9,7 @@
       "name": "post-header.hbs",
       "type": "partial",
       "target": "partials/components/post-header.hbs",
-      "content": "{{!-- Component: Post Header | Usage: inside {{#post}} --}}\n<header class=\"ghcn-post-header ghcn-container\">\n    {{#if primary_tag}}<a class=\"ghcn-badge\" href=\"{{primary_tag.url}}\">{{primary_tag.name}}</a>{{/if}}\n    <h1>{{title}}</h1>\n    {{#if custom_excerpt}}<p class=\"ghcn-post-header__excerpt\">{{custom_excerpt}}</p>{{/if}}\n    <div class=\"ghcn-post-header__meta\">\n        {{#primary_author}}\n            <a class=\"ghcn-post-header__author\" href=\"{{url}}\">\n                {{#if profile_image}}<img class=\"ghcn-avatar\" src=\"{{img_url profile_image size=\"xs\"}}\" alt=\"\" />{{/if}}\n                <span>{{name}}</span>\n            </a>\n        {{/primary_author}}\n        <span aria-hidden=\"true\">&bull;</span>\n        <time datetime=\"{{date format=\"YYYY-MM-DD\"}}\">{{date format=\"D MMM YYYY\"}}</time>\n        <span aria-hidden=\"true\">&bull;</span>\n        <span>{{reading_time}}</span>\n    </div>\n    {{#if feature_image}}\n        <figure class=\"ghcn-post-header__media\">\n            <img srcset=\"{{img_url feature_image size=\"s\"}} 400w, {{img_url feature_image size=\"m\"}} 750w, {{img_url feature_image size=\"l\"}} 1200w, {{img_url feature_image size=\"xl\"}} 2000w\" sizes=\"(min-width: 1200px) 1120px, 92vw\" src=\"{{img_url feature_image size=\"xl\"}}\" alt=\"{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}\" />\n            {{#if feature_image_caption}}<figcaption>{{feature_image_caption}}</figcaption>{{/if}}\n        </figure>\n    {{/if}}\n</header>"
+      "content": "{{!-- Styling parameters: class, titleClass, descriptionClass, metaClass, imageClass --}}\n{{#with this as |ghostcnStyles|}}\n{{!-- Component: Post Header | Usage: inside {{#post}} --}}\n<header class=\"ghcn-post-header{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}} ghcn-container\">\n    {{#if primary_tag}}<a class=\"ghcn-badge\" href=\"{{primary_tag.url}}\">{{primary_tag.name}}</a>{{/if}}\n    <h1 class=\"ghcn-post-header__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{title}}</h1>\n    {{#if custom_excerpt}}<p class=\"ghcn-post-header__excerpt{{#if ghostcnStyles.descriptionClass}} {{ghostcnStyles.descriptionClass}}{{/if}}\">{{custom_excerpt}}</p>{{/if}}\n    <div class=\"ghcn-post-header__meta{{#if ghostcnStyles.metaClass}} {{ghostcnStyles.metaClass}}{{/if}}\">\n        {{#primary_author}}\n            <a class=\"ghcn-post-header__author\" href=\"{{url}}\">\n                {{#if profile_image}}<img class=\"ghcn-avatar\" src=\"{{img_url profile_image size=\"xs\"}}\" alt=\"\" />{{/if}}\n                <span>{{name}}</span>\n            </a>\n        {{/primary_author}}\n        <span aria-hidden=\"true\">&bull;</span>\n        <time datetime=\"{{date format=\"YYYY-MM-DD\"}}\">{{date format=\"D MMM YYYY\"}}</time>\n        <span aria-hidden=\"true\">&bull;</span>\n        <span>{{reading_time}}</span>\n    </div>\n    {{#if feature_image}}\n        <figure class=\"ghcn-post-header__media\">\n            <img class=\"ghcn-post-header__image{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\" srcset=\"{{img_url feature_image size=\"s\"}} 400w, {{img_url feature_image size=\"m\"}} 750w, {{img_url feature_image size=\"l\"}} 1200w, {{img_url feature_image size=\"xl\"}} 2000w\" sizes=\"(min-width: 1200px) 1120px, 92vw\" src=\"{{img_url feature_image size=\"xl\"}}\" alt=\"{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}\" />\n            {{#if feature_image_caption}}<figcaption>{{feature_image_caption}}</figcaption>{{/if}}\n        </figure>\n    {{/if}}\n</header>\n{{/with}}"
     },
     {
       "name": "post-header.css",
@@ -23,5 +23,22 @@
       "GS010-PJ-VALID"
     ],
     "notes": "Uses native post, author, image, tag, date, and reading-time data."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-post-header"
+    ],
+    "titleClass": [
+      ".ghcn-post-header__title"
+    ],
+    "descriptionClass": [
+      ".ghcn-post-header__excerpt"
+    ],
+    "metaClass": [
+      ".ghcn-post-header__meta"
+    ],
+    "imageClass": [
+      ".ghcn-post-header__image"
+    ]
   }
 }

@@ -211,6 +211,66 @@ Include the installed partial anywhere in your Handlebars templates:
 {{/foreach}}
 ```
 
+### 5. Style each instance without changing the shared component
+
+Every component accepts `class` for its root element. Optional named slots style specific parts **inside** a component: `buttonClass` styles its theme-owned buttons, while `cardClass` styles nested pricing/featured cards. These are ordinary class strings, not new CSS syntax, and work with Tailwind or your own vanilla CSS.
+
+```handlebars
+{{> "components/pricing-table"
+    class="mx-auto my-12 w-full max-w-md"
+    cardClass="rounded-2xl bg-card p-8 shadow-lg"
+    buttonClass="bg-purple-600 hover:bg-purple-700 text-white"
+}}
+
+{{!-- Another independent instance; the shared partial stays unchanged --}}
+{{> "components/pricing-table"
+    class="mx-auto max-w-6xl"
+    cardClass="rounded-lg p-4 shadow-none"
+    buttonClass="bg-emerald-600 hover:bg-emerald-700 text-white"
+}}
+
+{{> "components/newsletter-form"
+    class="max-w-lg p-4 shadow-none"
+    inputClass="rounded-xl"
+    buttonClass="rounded-xl bg-purple-600 text-white"
+}}
+
+{{#foreach posts}}
+    {{> "components/post-card" class="rounded-xl shadow-none" titleClass="text-2xl"}}
+{{/foreach}}
+```
+
+All components keep their semantic identity classes and default CSS. Defaults live in the component layer for Tailwind, so normal utilities override them without `!` modifiers or a class-merging helper. Keep `npm run dev` running; classes must appear as complete literal strings in scanned `.hbs` files (do not construct `bg-{{color}}-600`). If you pass classes from runtime data, include their complete names in a scanned source or explicitly safelist them with Tailwind's `@source inline()`.
+
+| Component | Root | Additional styling parameters |
+| --- | --- | --- |
+| `pricing-table` | `class` | `titleClass`, `gridClass`, `cardClass`, `buttonClass` |
+| `newsletter-form` | `class` | `titleClass`, `descriptionClass`, `formClass`, `inputClass`, `buttonClass` |
+| `post-card` | `class` | `imageClass`, `contentClass`, `titleClass`, `descriptionClass`, `metaClass`, `footerClass` |
+| `author-card` | `class` | `avatarClass`, `contentClass`, `titleClass`, `descriptionClass`, `metaClass` |
+| `site-header` | `class` | `innerClass`, `navClass`, `buttonClass` |
+| `site-footer` | `class` | `innerClass`, `navClass`, `socialClass` |
+| `featured-posts` | `class` | `titleClass`, `gridClass`, `cardClass`, `contentClass` |
+| `pagination` | `class` | `buttonClass`, `statusClass` |
+| `post-header` | `class` | `titleClass`, `descriptionClass`, `metaClass`, `imageClass` |
+| `member-cta` | `class` | `titleClass`, `descriptionClass`, `buttonClass` |
+
+Slots only affect elements that render for the current content/member state. `buttonClass` applies to all theme-owned buttons in that component, not individual monthly/yearly actions and not Ghost-generated search/Portal/comments UI. Use scoped descendant selectors for more granular targeting. Root `class` does not automatically recolor children that have their own colors; use the corresponding slot. To customize pagination at the call site, use `{{> "pagination" pagination class="my-pagination"}}`; the native `{{pagination}}` helper retains its default appearance.
+
+For vanilla CSS, pass custom class names and define them in your theme-owned `assets/css/source.css`:
+
+```handlebars
+{{> "components/pricing-table" class="membership" cardClass="membership-card" buttonClass="membership-button"}}
+```
+
+```css
+.membership { max-width: 40rem; }
+.membership .membership-card { border-radius: 1.5rem; box-shadow: 0 8px 24px #0002; }
+.membership .membership-button { background: #7c3aed; color: white; }
+```
+
+Load custom CSS after component styles and match selector specificity where needed. Re-adding a component with `-y` still overwrites its copied partial/CSS, but **not** the calling page template or `source.css`. Back up first when upgrading old customized partials. Existing installations must merge or re-add the new partials to gain these parameters; updating the CLI alone does not rewrite your theme. A future component release may still require migration if it changes or removes a documented slot.
+
 ---
 
 ## Project Structure

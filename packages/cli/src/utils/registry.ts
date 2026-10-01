@@ -18,6 +18,7 @@ export interface ComponentManifest {
   dependencies?: string[];
   ghost_version?: string;
   files: ComponentFile[];
+  styleSlots?: Record<string, string[]>;
   gscan?: {
     rules_satisfied: string[];
     notes: string;

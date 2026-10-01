@@ -10,7 +10,7 @@
       "type": "partial",
       "target": "partials/pagination.hbs",
       "placement": "theme",
-      "content": "<nav class=\"ghcn-pagination\" role=\"navigation\" aria-label=\"Pagination\">\n    <div class=\"ghcn-pagination__side\">{{#if prev}}<a class=\"ghcn-button ghcn-button--outline\" href=\"{{page_url prev}}\" rel=\"prev\"><span aria-hidden=\"true\">&larr;</span> Newer</a>{{/if}}</div>\n    <span class=\"ghcn-pagination__status\">Page <strong>{{page}}</strong> of <strong>{{pages}}</strong></span>\n    <div class=\"ghcn-pagination__side ghcn-pagination__side--end\">{{#if next}}<a class=\"ghcn-button ghcn-button--outline\" href=\"{{page_url next}}\" rel=\"next\">Older <span aria-hidden=\"true\">&rarr;</span></a>{{/if}}</div>\n</nav>"
+      "content": "{{!-- Styling parameters: class, buttonClass, statusClass --}}\n{{#with this as |ghostcnStyles|}}\n<nav class=\"ghcn-pagination{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" role=\"navigation\" aria-label=\"Pagination\">\n    <div class=\"ghcn-pagination__side\">{{#if prev}}<a class=\"ghcn-button{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}} ghcn-button--outline\" href=\"{{page_url prev}}\" rel=\"prev\"><span aria-hidden=\"true\">&larr;</span> Newer</a>{{/if}}</div>\n    <span class=\"ghcn-pagination__status{{#if ghostcnStyles.statusClass}} {{ghostcnStyles.statusClass}}{{/if}}\">Page <strong>{{page}}</strong> of <strong>{{pages}}</strong></span>\n    <div class=\"ghcn-pagination__side ghcn-pagination__side--end\">{{#if next}}<a class=\"ghcn-button{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}} ghcn-button--outline\" href=\"{{page_url next}}\" rel=\"next\">Older <span aria-hidden=\"true\">&rarr;</span></a>{{/if}}</div>\n</nav>\n{{/with}}"
     },
     {
       "name": "pagination.css",
@@ -24,5 +24,16 @@
       "GS010-PJ-VALID"
     ],
     "notes": "Installs as partials/pagination.hbs so the native pagination helper uses it."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-pagination"
+    ],
+    "buttonClass": [
+      ".ghcn-button"
+    ],
+    "statusClass": [
+      ".ghcn-pagination__status"
+    ]
   }
 }

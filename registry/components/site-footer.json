@@ -9,7 +9,7 @@
       "name": "site-footer.hbs",
       "type": "partial",
       "target": "partials/components/site-footer.hbs",
-      "content": "{{!-- Component: Site Footer | Usage: {{> \"components/site-footer\"}} --}}\n<footer class=\"ghcn-footer\">\n    <div class=\"ghcn-footer__inner ghcn-container\">\n        <div class=\"ghcn-footer__brand\">\n            <a href=\"{{@site.url}}\">{{@site.title}}</a>\n            {{#if @site.description}}<p>{{@site.description}}</p>{{/if}}\n        </div>\n        <nav class=\"ghcn-footer__nav\" aria-label=\"Footer navigation\">{{navigation type=\"secondary\"}}</nav>\n        <div class=\"ghcn-footer__social\">\n            {{#if @site.facebook}}<a href=\"{{social_url type=\"facebook\"}}\" target=\"_blank\" rel=\"noopener\">Facebook</a>{{/if}}\n            {{#if @site.twitter}}<a href=\"{{social_url type=\"twitter\"}}\" target=\"_blank\" rel=\"noopener\">X</a>{{/if}}\n            <a href=\"{{@site.url}}/rss/\">RSS</a>\n        </div>\n    </div>\n    <div class=\"ghcn-footer__legal ghcn-container\">\n        <span>&copy; {{date format=\"YYYY\"}} {{@site.title}}</span>\n        <span>Published with <a href=\"https://ghost.org\" target=\"_blank\" rel=\"noopener\">Ghost</a></span>\n    </div>\n</footer>"
+      "content": "{{!-- Styling parameters: class, innerClass, navClass, socialClass --}}\n{{#with this as |ghostcnStyles|}}\n{{!-- Component: Site Footer | Usage: {{> \"components/site-footer\"}} --}}\n<footer class=\"ghcn-footer{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\">\n    <div class=\"ghcn-footer__inner{{#if ghostcnStyles.innerClass}} {{ghostcnStyles.innerClass}}{{/if}} ghcn-container\">\n        <div class=\"ghcn-footer__brand\">\n            <a href=\"{{@site.url}}\">{{@site.title}}</a>\n            {{#if @site.description}}<p>{{@site.description}}</p>{{/if}}\n        </div>\n        <nav class=\"ghcn-footer__nav{{#if ghostcnStyles.navClass}} {{ghostcnStyles.navClass}}{{/if}}\" aria-label=\"Footer navigation\">{{navigation type=\"secondary\"}}</nav>\n        <div class=\"ghcn-footer__social{{#if ghostcnStyles.socialClass}} {{ghostcnStyles.socialClass}}{{/if}}\">\n            {{#if @site.facebook}}<a href=\"{{social_url type=\"facebook\"}}\" target=\"_blank\" rel=\"noopener\">Facebook</a>{{/if}}\n            {{#if @site.twitter}}<a href=\"{{social_url type=\"twitter\"}}\" target=\"_blank\" rel=\"noopener\">X</a>{{/if}}\n            <a href=\"{{@site.url}}/rss/\">RSS</a>\n        </div>\n    </div>\n    <div class=\"ghcn-footer__legal ghcn-container\">\n        <span>&copy; {{date format=\"YYYY\"}} {{@site.title}}</span>\n        <span>Published with <a href=\"https://ghost.org\" target=\"_blank\" rel=\"noopener\">Ghost</a></span>\n    </div>\n</footer>\n{{/with}}"
     },
     {
       "name": "site-footer.css",
@@ -23,5 +23,19 @@
       "GS010-PJ-VALID"
     ],
     "notes": "Uses Ghost secondary navigation and site globals."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-footer"
+    ],
+    "innerClass": [
+      ".ghcn-footer__inner"
+    ],
+    "navClass": [
+      ".ghcn-footer__nav"
+    ],
+    "socialClass": [
+      ".ghcn-footer__social"
+    ]
   }
 }
