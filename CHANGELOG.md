@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.4.0 — 2026-10-02 (prepared; not published by this workflow)
+
+- Added `related-posts`, `post-navigation`, `table-of-contents`, and `tag-list`, with universal root classes and documented internal styling slots for Tailwind and vanilla CSS.
+- Reading components exclude the current story, hide internal tags, omit unavailable neighbors and empty results, and support repeated differently styled instances.
+- The TOC progressively enhances article H2/H3 headings, excludes editor-card UI headings, creates collision-safe anchors, and moves keyboard focus to the selected heading. Its deferred script is automatically linked in the default layout; other layouts receive manual linking instructions.
+- Added read-only `ghostcn diff [component]` with summary/JSON output, explicit remote `--latest` comparisons, installed content baselines, local-edit/conflict detection, and bounded line diffs. No automatic overwrite or merge is performed.
+- Installer and comparison share target resolution; unsafe and symlinked targets are rejected before writes. Skipped customizations do not become fabricated upstream baselines.
+- Added registry-driven documentation and customization previews for all 14 components, with setup, integration, and safe-update guides. The review website remains owner-private.
+- Added an isolated real-Ghost Chromium suite and CI job covering both styling systems, Light/Dark/Auto, desktop/mobile, Koenig cards, native comments, signed free/paid-member access, and disabled/invite-only membership. Payment/email writes are blocked; this is not live payment or codec validation.
+
+### Migration
+
+Updating the CLI does not replace existing component files. Commit your theme and run `ghostcn diff`; manually merge selected changes. Legacy installations without `.ghostcn/installed.json` are reported as untracked. Keep the baseline file with your theme. `add -y` remains an intentional overwrite, not a conflict-resolving update.
+
 ## 1.3.0 — 2026-10-01
 
 - All 10 components accept per-instance root `class`, with documented slots for internal cards, grids, titles, content, inputs and theme-owned buttons where applicable.

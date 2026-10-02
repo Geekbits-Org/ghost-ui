@@ -64,6 +64,11 @@ async function installSingleComponent(componentName: string, config: GhostcnConf
   }
 
   console.log(chalk.bold.blue(`Component "${sanitizedName}" successfully installed!`));
+  if (result.scriptSync?.status === 'updated') console.log(chalk.green('  ✓ Updated managed component script links in default.hbs'));
+  if (result.scriptSync?.status === 'missing-template') {
+    console.warn(chalk.yellow('  ⚠ Could not add script links automatically. Add these before </body> in your layout:'));
+    for (const asset of result.scriptSync.assetPaths) console.log(`<script defer src="{{asset "${asset}"}}"></script>`);
+  }
 
   return true;
 }

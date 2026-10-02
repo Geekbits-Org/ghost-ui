@@ -35,6 +35,17 @@ export function resolveWithinTheme(themeRoot: string, relativePath: string): str
   return target;
 }
 
+export function safeThemePath(themeRoot: string, relative: string): string {
+  const target = resolveWithinTheme(themeRoot, relative);
+  const root = path.resolve(themeRoot);
+  let current = target;
+  while (current !== root) {
+    if (fs.lstatSync(current, { throwIfNoEntry: false })?.isSymbolicLink()) throw new Error(`Symlinked theme path is not supported: ${relative}`);
+    current = path.dirname(current);
+  }
+  return target;
+}
+
 export function toGhostAssetPath(themeRelativePath: string): string {
   const normalized = normalizeRelativePath(themeRelativePath);
   if (!normalized.startsWith('assets/')) {
@@ -47,6 +58,28 @@ export function toGhostAssetPath(themeRelativePath: string): string {
   }
 
   return assetPath;
+}
+
+export function syncGhostcnScripts(themeRoot: string, scriptsDir: string): StyleSyncResult {
+  const templatePath = safeThemePath(themeRoot, 'default.hbs');
+  const directory = safeThemePath(themeRoot, scriptsDir);
+  const assetPaths = fs.existsSync(directory) ? fs.readdirSync(directory, { withFileTypes: true })
+    .filter(entry => entry.isFile() && entry.name.endsWith('.js'))
+    .map(entry => toGhostAssetPath(path.relative(themeRoot, path.join(directory, entry.name))))
+    .sort() : [];
+  if (!fs.existsSync(templatePath)) return { status: 'missing-template', templatePath, assetPaths };
+  if (!assetPaths.length) return { status: 'unchanged', templatePath, assetPaths };
+  const original = fs.readFileSync(templatePath, 'utf8');
+  const newline = original.includes('\r\n') ? '\r\n' : '\n';
+  const start = '{{!-- ghostcn:scripts:start --}}', end = '{{!-- ghostcn:scripts:end --}}';
+  const block = [start, ...assetPaths.map(asset => `<script defer src="{{asset "${asset}"}}"></script>`), end].join(newline);
+  let updated = original.replace(/\{\{!-- ghostcn:scripts:start --\}\}[\s\S]*?\{\{!-- ghostcn:scripts:end --\}\}/g, '');
+  // Preserve unrelated host scripts; deduplicate only these owned asset URLs.
+  updated = updated.replace(/<script\b[^>]*\bsrc=["'][^"']*\{\{asset\s+["']([^"']+)["']\}\}[^>]*>\s*<\/script>/gi, (tag, asset) => assetPaths.includes(asset) ? '' : tag);
+  if (!/<\/body\s*>/i.test(updated)) return { status: 'missing-template', templatePath, assetPaths };
+  updated = updated.replace(/[ \t]*(?:\r?\n)*[ \t]*<\/body\s*>/i, `${newline}${block}${newline}</body>`);
+  if (updated !== original) fs.writeFileSync(templatePath, updated, 'utf8');
+  return { status: updated === original ? 'unchanged' : 'updated', templatePath, assetPaths };
 }
 
 function stylesheetBlock(assetPaths: string[], newline: string): string {
@@ -74,9 +107,9 @@ function removeOwnedStylesheetLinks(template: string, assetPaths: string[]): str
 }
 
 export function syncGhostcnStyles(options: StyleSyncOptions): StyleSyncResult {
-  const templatePath = resolveWithinTheme(options.themeRoot, 'default.hbs');
-  const cssPath = resolveWithinTheme(options.themeRoot, options.cssFile);
-  const stylesDirPath = resolveWithinTheme(options.themeRoot, options.stylesDir);
+  const templatePath = safeThemePath(options.themeRoot, 'default.hbs');
+  const cssPath = safeThemePath(options.themeRoot, options.cssFile);
+  const stylesDirPath = safeThemePath(options.themeRoot, options.stylesDir);
 
   const assetPaths = [toGhostAssetPath(options.cssFile)];
   if (fs.existsSync(stylesDirPath)) {

@@ -6,6 +6,7 @@ import { list } from './commands/list';
 import { create } from './commands/create';
 import { doctor } from './commands/doctor';
 import { pack } from './commands/pack';
+import { diff } from './commands/diff';
 import packageJson from '../package.json';
 
 function main() {
@@ -41,6 +42,12 @@ function main() {
     .action(add);
 
   program.command('doctor').description('Check theme configuration, local assets, partials and build readiness').action(doctor);
+  program.command('diff').description('Review component changes without writing or overwriting any files')
+    .argument('[component]', 'Compare one component, or all installed components')
+    .option('--latest', 'Compare with the latest remote registry (main); fail if unavailable')
+    .option('--summary', 'Show file statuses without full diffs')
+    .option('--json', 'Return machine-readable comparisons with baseline, local and registry content')
+    .action(diff);
   program.command('pack').description('Package built theme runtime files as a Ghost-uploadable ZIP').action(pack);
 
   program.parse();

@@ -49,6 +49,10 @@ You own the code. You customize the classes. Zero vendor lock-in.
 | **`pagination`** | Accessible replacement for Ghost’s native pagination partial | `partials/pagination.hbs`, `pagination.css` |
 | **`post-header`** | Editorial post heading, author metadata, reading time, and responsive image | `post-header.hbs`, `post-header.css` |
 | **`member-cta`** | Context-aware calls to action for visitors, free members, and paid members | `member-cta.hbs`, `member-cta.css` |
+| **`related-posts`** | Related stories by primary tag, with an untagged fallback | `related-posts.hbs`, `related-posts.css` |
+| **`post-navigation`** | Chronological previous/next story links | `post-navigation.hbs`, `post-navigation.css` |
+| **`table-of-contents`** | Accessible article heading navigation with unique anchors | `table-of-contents.hbs`, `table-of-contents.css`, `table-of-contents.js` |
+| **`tag-list`** | Public post tags, with internal tags hidden | `tag-list.hbs`, `tag-list.css` |
 
 ---
 
@@ -119,7 +123,17 @@ Membership components respect disabled, invite-only and self-signup settings. Pa
 
 ### Updating an existing ghostcn theme
 
-Your copied files are yours; an npm update does not silently rewrite them. Back up or commit your theme first. Compare the new components in a fresh throwaway theme, then merge the changes you want. To replace unmodified files directly, run `ghostcn init` with your existing palette/paths and re-add the relevant components. Initialization regenerates tokens; `add -y` overwrites component customizations, so use it only deliberately. Existing Tailwind styles from older ghostcn releases are unlayered and need the new token/component CSS for ordinary utility overrides to work.
+Your copied files are yours; an npm update does not silently rewrite them. Back up or commit your theme first, then review changes without modifying any files:
+
+```bash
+npx ghostcn@latest diff
+npx ghostcn@latest diff pricing-table --latest
+npx ghostcn@latest diff pricing-table --json
+```
+
+By default, `diff` uses the bundled registry (or your configured registry). `--latest` explicitly checks the remote registry's current branch, which may be ahead of npm; a failed request is reported, not silently replaced by an older bundled version. It compares the installed baseline, your current file, and the incoming version. Review upstream changes and conflicts, then manually merge what you want. New installs record content baselines in `.ghostcn/installed.json`; older files without a baseline are labeled **untracked**, not presumed safe to overwrite. Keep this file with your theme to retain three-way comparison history.
+
+`diff` never installs, deletes, or merges files. `add -y` still deliberately overwrites component files. Initialization regenerates tokens, so preserve your chosen palette and paths. Existing Tailwind styles from older releases are unlayered and need the new token/component CSS for ordinary utility overrides.
 
 ### 1. Initialize your Ghost Theme
 
@@ -254,6 +268,10 @@ All components keep their semantic identity classes and default CSS. Defaults li
 | `pagination` | `class` | `buttonClass`, `statusClass` |
 | `post-header` | `class` | `titleClass`, `descriptionClass`, `metaClass`, `imageClass` |
 | `member-cta` | `class` | `titleClass`, `descriptionClass`, `buttonClass` |
+| `related-posts` | `class` | `titleClass`, `gridClass`, `cardClass`, `cardTitleClass`, `imageClass`, `contentClass`, `descriptionClass` |
+| `post-navigation` | `class` | `cardClass`, `titleClass`, `labelClass` |
+| `table-of-contents` | `class` | `titleClass`, `listClass`, `linkClass` |
+| `tag-list` | `class` | `listClass`, `linkClass` |
 
 Slots only affect elements that render for the current content/member state. `buttonClass` applies to all theme-owned buttons in that component, not individual monthly/yearly actions and not Ghost-generated search/Portal/comments UI. Use scoped descendant selectors for more granular targeting. Root `class` does not automatically recolor children that have their own colors; use the corresponding slot. To customize pagination at the call site, use `{{> "pagination" pagination class="my-pagination"}}`; the native `{{pagination}}` helper retains its default appearance.
 
@@ -289,6 +307,8 @@ ghostcn/
 ---
 
 ## Development & Testing
+
+The real-Ghost browser suite builds both styling systems in Light/Dark/Auto, exercises desktop/mobile layouts, reading navigation, real comments, and visitor/free/paid access. It runs an isolated database and content directory; it never changes your installed publication. See [the regression setup](tests/e2e/README.md) for prerequisites, commands, and coverage boundaries.
 
 ```bash
 # Install dependencies

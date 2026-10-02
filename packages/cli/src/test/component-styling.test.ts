@@ -10,7 +10,7 @@ import { buildGhostcnConfig, initializeThemeProject } from '../utils/theme-proje
 import { installComponent } from '../utils/component-installer';
 
 const author = { name: 'Jamie', url: '/author/jamie/', profile_image: '/author.jpg', bio: 'Author bio', location: 'Nairobi', website: 'https://example.com', count: { posts: 2 } };
-const post = { title: 'A real post', url: '/story/', feature_image: '/story.jpg', custom_excerpt: 'Intro', excerpt: 'Post excerpt', primary_author: author, primary_tag: { name: 'Design', url: '/tag/design/' }, access: true };
+const post = { title: 'A real post', url: '/story/', feature_image: '/story.jpg', custom_excerpt: 'Intro', excerpt: 'Post excerpt', primary_author: author, primary_tag: { name: 'Design', url: '/tag/design/' }, tags: [{ name: 'Design', url: '/tag/design/', visibility: 'public' }], access: true };
 const tiers = [{ id: 'free', name: 'Reader', type: 'free', benefits: ['Weekly posts'], cardClass: 'untrusted-tier-class' }, { id: 'paid', name: 'Supporter', type: 'paid', currency: 'USD', monthly_price: 1000, yearly_price: 10000 }];
 const data = { site: { title: 'Publication', url: '/', members_enabled: true, allow_self_signup: true, paid_members_enabled: true } };
 const roots: string[] = [];
@@ -20,7 +20,12 @@ async function renderer(name: string) {
   const manifest = (await getComponent(name))!;
   const hbs = Handlebars.create();
   hbs.registerPartial('component', manifest.files.find(file => file.type === 'partial')!.content);
-  hbs.registerHelper('foreach', (items, options) => (items || []).map((item: unknown, index: number) => options.fn(item, { data: { ...options.data, index } })).join(''));
+  hbs.registerHelper('foreach', (items, options) => {
+    const visible = (items || []).filter((item: any) => options.hash.visibility !== 'public' || item.visibility !== 'internal');
+    return visible.map((item: unknown, index: number) => options.fn(item, { data: { ...options.data, index, first: index === 0, last: index === visible.length - 1 } })).join('');
+  });
+  hbs.registerHelper('prev_post', options => options.fn({ ...post, title: 'Previous story' }, { data: options.data }));
+  hbs.registerHelper('next_post', options => options.fn({ ...post, title: 'Next story' }, { data: options.data }));
   hbs.registerHelper('get', (resource, options) => options.fn(resource === 'tiers' ? { tiers } : { posts: [post, { ...post, title: 'Another post', cardClass: 'untrusted-post-class' }] }, { data: options.data }));
   hbs.registerHelper('match', function (this: unknown, a, b, options) { return a === b ? options.fn(this) : options.inverse(this); });
   hbs.registerHelper('has', function (this: unknown, options) { return String(options.data?.index) === options.hash.index ? options.fn(this) : options.inverse(this); });
@@ -42,13 +47,17 @@ async function renderer(name: string) {
 }
 
 describe('call-site component styling', () => {
-  test('all 10 components expose a universal root class and render their declared slots', async () => {
+  test('all registry components expose a universal root class and render their declared slots', async () => {
     for (const item of await getRegistryIndex()) {
       const { manifest, hbs, context } = await renderer(item.name);
       assert.ok(manifest.styleSlots?.class, `${item.name} root class`);
       const parameters = Object.keys(manifest.styleSlots!).map(key => `${key}="custom-${key}"`).join(' ');
       const html = hbs.compile(`{{> component ${parameters}}}`)(context, { data });
       for (const [key, selectors] of Object.entries(manifest.styleSlots!)) {
+        if (item.name === 'table-of-contents' && key === 'linkClass') {
+          assert.ok(html.includes('data-link-class="custom-linkClass"'), 'dynamic link class is passed to the TOC script');
+          continue;
+        }
         // Some slots are conditional alternatives (e.g. a newsletter's Portal button).
         assert.ok(selectors.some(selector => new RegExp(`class="${selector.slice(1)} custom-${key}(?:[ "]|$)`).test(html)), `${item.name}.${key}`);
       }

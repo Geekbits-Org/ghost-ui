@@ -9,7 +9,13 @@
   "scripts": {
     "build": "npm --prefix packages/cli run build",
     "test": "npm --prefix packages/cli test",
-    "generate:registry": "node scripts/generate-registry.js"
+    "generate:registry": "node scripts/generate-registry.js",
+    "docs:build": "npm run build && node scripts/build-docs.mjs",
+    "docs:dev": "node scripts/serve-docs.mjs",
+    "docs:check": "node scripts/check-docs.mjs",
+    "docs:browser": "playwright test --config playwright.docs.config.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:preflight": "node tests/e2e/ghost-fixture.mjs"
   },
   "keywords": [
     "ghost",
@@ -20,5 +26,8 @@
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
   }
 }

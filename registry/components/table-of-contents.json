@@ -1,0 +1,47 @@
+{
+  "name": "table-of-contents",
+  "type": "components:content",
+  "description": "Progressively enhanced h2/h3 navigation with collision-safe anchors and keyboard focus.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "table-of-contents.hbs",
+      "type": "partial",
+      "target": "partials/components/table-of-contents.hbs",
+      "content": "{{!-- Styling parameters: class, titleClass, listClass --}}\n{{#with this as |ghostcnStyles|}}\n{{!-- add manages the deferred script in default.hbs. Set contentSelector for existing themes. --}}\n<nav class=\"ghcn-toc{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-ghcn-toc data-toc-content=\"{{#if contentSelector}}{{contentSelector}}{{else}}.ghcn-article-content{{/if}}\" data-link-class=\"{{linkClass}}\" aria-label=\"On this page\" hidden>\n  <h2 class=\"ghcn-toc__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{#if heading}}{{heading}}{{else}}On this page{{/if}}</h2>\n  <ol class=\"ghcn-toc__list{{#if ghostcnStyles.listClass}} {{ghostcnStyles.listClass}}{{/if}}\" data-toc-list></ol>\n</nav>\n{{/with}}"
+    },
+    {
+      "name": "table-of-contents.css",
+      "type": "style",
+      "target": "assets/css/components/table-of-contents.css",
+      "content": "\n.ghcn-toc { padding: 1.25em; margin-block: 1.5em; background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: var(--radius); }\n.ghcn-toc[hidden] { display: none; }\n.ghcn-toc__title { margin: 0 0 .75em; font-size: 1em; font-weight: 600; }\n.ghcn-toc__list { padding-left: 1.25em; margin: 0; }\n.ghcn-toc__item { padding-block: .25em; }\n.ghcn-toc__item--nested { margin-left: 1em; }\n.ghcn-toc__link { color: inherit; text-decoration: none; overflow-wrap: anywhere; }\n.ghcn-toc__link:hover { text-decoration: underline; }\n.ghcn-toc__link:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }\n"
+    },
+    {
+      "name": "table-of-contents.js",
+      "type": "js",
+      "target": "assets/js/components/table-of-contents.js",
+      "content": "/* ghostcn table of contents: no dependencies, no HTML injection, repeat-safe. */\n(() => {\n  const init = () => {\n    document.querySelectorAll('[data-ghcn-toc]').forEach(nav => {\n      if (nav.dataset.ghcnTocReady) return;\n      let content;\n      try { content = document.querySelector(nav.dataset.tocContent); } catch { return; }\n      if (!content) return;\n      // Editor card UI titles are not article sections (e.g. signup or product headings).\n      const headings = [...content.querySelectorAll('h2, h3')].filter(h => h.textContent.trim() && !h.closest('.kg-card'));\n      if (headings.length < 2) return;\n      const list = nav.querySelector('[data-toc-list]');\n      if (!list) return;\n      const used = new Set([...document.querySelectorAll('[id]')].map(el => el.id));\n      headings.forEach((heading, index) => {\n        if (!heading.id) {\n          const base = 'ghcn-' + (heading.textContent.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'section-' + (index + 1));\n          let id = base, suffix = 2;\n          while (used.has(id)) id = base + '-' + suffix++;\n          heading.id = id; used.add(id);\n        }\n        const item = document.createElement('li');\n        item.className = 'ghcn-toc__item' + (heading.tagName === 'H3' ? ' ghcn-toc__item--nested' : '');\n        const link = document.createElement('a');\n        link.className = 'ghcn-toc__link';\n        if (nav.dataset.linkClass) nav.dataset.linkClass.split(/\\s+/).filter(Boolean).forEach(value => link.classList.add(value));\n        link.href = '#' + encodeURIComponent(heading.id);\n        link.textContent = heading.textContent.trim();\n        link.addEventListener('click', event => {\n          if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;\n          event.preventDefault();\n          heading.scrollIntoView({ behavior: 'auto', block: 'start' });\n          if (!heading.hasAttribute('tabindex')) {\n            heading.setAttribute('tabindex', '-1');\n            heading.addEventListener('blur', () => heading.removeAttribute('tabindex'), { once: true });\n          }\n          heading.focus({ preventScroll: true });\n          try { history.replaceState(null, '', '#' + encodeURIComponent(heading.id)); } catch {}\n        });\n        item.append(link); list.append(item);\n      });\n      nav.dataset.ghcnTocReady = 'true'; nav.hidden = false;\n    });\n  };\n  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true }); else init();\n})();"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native Ghost post data and optional progressive enhancement."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-toc"
+    ],
+    "titleClass": [
+      ".ghcn-toc__title"
+    ],
+    "listClass": [
+      ".ghcn-toc__list"
+    ],
+    "linkClass": [
+      ".ghcn-toc__link"
+    ]
+  }
+}

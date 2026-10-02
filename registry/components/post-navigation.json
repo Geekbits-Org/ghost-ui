@@ -1,0 +1,41 @@
+{
+  "name": "post-navigation",
+  "type": "components:content",
+  "description": "Accessible chronological previous/next post links, with no dead links at either end.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "post-navigation.hbs",
+      "type": "partial",
+      "target": "partials/components/post-navigation.hbs",
+      "content": "{{!-- Styling parameters: class, cardClass, titleClass, labelClass --}}\n{{#with this as |ghostcnStyles|}}\n{{!-- Use inside {{#post}}. Native helpers hide missing neighbors. --}}\n<nav class=\"ghcn-post-navigation{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" aria-label=\"Post navigation\">{{~#prev_post~}}<a class=\"ghcn-post-navigation__link{{#if ghostcnStyles.cardClass}} {{ghostcnStyles.cardClass}}{{/if}}\" href=\"{{url}}\" rel=\"prev\"><span class=\"ghcn-post-navigation__label{{#if ghostcnStyles.labelClass}} {{ghostcnStyles.labelClass}}{{/if}}\">Previous post</span><span class=\"ghcn-post-navigation__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{title}}</span></a>{{~/prev_post~}}{{~#next_post~}}<a class=\"ghcn-post-navigation__link{{#if ghostcnStyles.cardClass}} {{ghostcnStyles.cardClass}}{{/if}} ghcn-post-navigation__link--next\" href=\"{{url}}\" rel=\"next\"><span class=\"ghcn-post-navigation__label{{#if ghostcnStyles.labelClass}} {{ghostcnStyles.labelClass}}{{/if}}\">Next post</span><span class=\"ghcn-post-navigation__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{title}}</span></a>{{~/next_post~}}</nav>\n{{/with}}"
+    },
+    {
+      "name": "post-navigation.css",
+      "type": "style",
+      "target": "assets/css/components/post-navigation.css",
+      "content": "\n.ghcn-post-navigation { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1em; margin-block: 2em; }\n.ghcn-post-navigation:empty { display: none; }\n.ghcn-post-navigation__link { min-width: 0; display: flex; flex-direction: column; gap: .5em; padding: 1.25em; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); color: var(--card-foreground); text-decoration: none; }\n.ghcn-post-navigation__link--next { grid-column: 2; text-align: right; }\n.ghcn-post-navigation__label { font-size: .75em; color: var(--muted-foreground); }\n.ghcn-post-navigation__title { font-weight: 600; overflow-wrap: anywhere; }\n.ghcn-post-navigation__link:hover .ghcn-post-navigation__title { text-decoration: underline; }\n.ghcn-post-navigation__link:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }\n@media(max-width:620px) { .ghcn-post-navigation { grid-template-columns: 1fr; } .ghcn-post-navigation__link--next { grid-column: 1; } }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native Ghost post data and optional progressive enhancement."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-post-navigation"
+    ],
+    "cardClass": [
+      ".ghcn-post-navigation__link"
+    ],
+    "titleClass": [
+      ".ghcn-post-navigation__title"
+    ],
+    "labelClass": [
+      ".ghcn-post-navigation__label"
+    ]
+  }
+}

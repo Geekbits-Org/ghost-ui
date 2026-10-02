@@ -38,6 +38,11 @@ jobs:
       - name: Verify CLI list command
         run: node packages/cli/dist/index.js list
 
+      - name: Build and check documentation
+        run: |
+          npm run docs:build
+          npm run docs:check
+
       - name: Run End-to-End Ghost Theme Validation
         run: |
           cd example-theme
@@ -47,3 +52,38 @@ jobs:
           node ../packages/cli/dist/index.js add author-card -y
           node ../packages/cli/dist/index.js add post-card -y
           npx --yes gscan@6.4.2 .
+
+  real-ghost-browser:
+    name: Real Ghost browser regressions
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.20.0'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Install pinned isolated Ghost runtime
+        run: npm install --prefix .ghost-runtime --no-audit --no-fund ghost@6.63.0
+      - name: Install headless browser
+        run: npx playwright install --with-deps chromium
+      - name: Verify documentation preview interactions
+        run: |
+          npm run docs:build
+          npm run docs:check
+          npm run docs:browser
+      - name: Run real Ghost matrix
+        env:
+          GHOST_E2E_ROOT: ${{ github.workspace }}/.ghost-runtime/node_modules/ghost
+        run: npm run test:e2e
+      - name: Save reports, screenshots and failure traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-ghost-browser-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14

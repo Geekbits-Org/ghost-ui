@@ -1,0 +1,38 @@
+{
+  "name": "tag-list",
+  "type": "components:content",
+  "description": "Linked public tags for the current post, omitting internal tags and empty tag lists.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "tag-list.hbs",
+      "type": "partial",
+      "target": "partials/components/tag-list.hbs",
+      "content": "{{!-- Styling parameters: class, listClass, linkClass --}}\n{{#with this as |ghostcnStyles|}}\n{{!-- Use inside {{#post}}; Ghost foreach filters internal tags. --}}\n{{#foreach tags visibility=\"public\"}}{{#if @first}}<nav class=\"ghcn-tag-list{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" aria-label=\"Post tags\"><ul class=\"ghcn-tag-list__items{{#if ghostcnStyles.listClass}} {{ghostcnStyles.listClass}}{{/if}}\">{{/if}}<li><a class=\"ghcn-tag-list__link{{#if ghostcnStyles.linkClass}} {{ghostcnStyles.linkClass}}{{/if}}\" href=\"{{url}}\">{{name}}</a></li>{{#if @last}}</ul></nav>{{/if}}{{/foreach}}\n{{/with}}"
+    },
+    {
+      "name": "tag-list.css",
+      "type": "style",
+      "target": "assets/css/components/tag-list.css",
+      "content": "\n.ghcn-tag-list { margin-block: 1.5em; }\n.ghcn-tag-list__items { display: flex; flex-wrap: wrap; gap: .5em; list-style: none; padding: 0; margin: 0; }\n.ghcn-tag-list__link { display: block; padding: .375em .875em; background: var(--muted); color: var(--foreground); border: 1px solid var(--border); border-radius: 999px; font-size: .875em; text-decoration: none; }\n.ghcn-tag-list__link:hover { background: var(--secondary); text-decoration: underline; }\n.ghcn-tag-list__link:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native Ghost post data and optional progressive enhancement."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-tag-list"
+    ],
+    "listClass": [
+      ".ghcn-tag-list__items"
+    ],
+    "linkClass": [
+      ".ghcn-tag-list__link"
+    ]
+  }
+}

@@ -98,5 +98,46 @@
       "member-cta.hbs",
       "member-cta.css"
     ]
+  },
+  {
+    "name": "related-posts",
+    "description": "Related reading from the same primary tag, excluding the current post; recent posts when untagged.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "related-posts.hbs",
+      "related-posts.css"
+    ]
+  },
+  {
+    "name": "post-navigation",
+    "description": "Accessible chronological previous/next post links, with no dead links at either end.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "post-navigation.hbs",
+      "post-navigation.css"
+    ]
+  },
+  {
+    "name": "table-of-contents",
+    "description": "Progressively enhanced h2/h3 navigation with collision-safe anchors and keyboard focus.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "table-of-contents.hbs",
+      "table-of-contents.css",
+      "table-of-contents.js"
+    ]
+  },
+  {
+    "name": "tag-list",
+    "description": "Linked public tags for the current post, omitting internal tags and empty tag lists.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "tag-list.hbs",
+      "tag-list.css"
+    ]
   }
 ]

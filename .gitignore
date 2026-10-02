@@ -27,3 +27,11 @@ desktop.ini
 # Ghost runtime data / temp
 content/data/
 *.db
+
+# Local documentation publishing checkout and archives
+.sites-runtime/
+
+# Generated browser regression evidence
+test-results/
+playwright-report/
+.ghost-runtime/

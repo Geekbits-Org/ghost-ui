@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const coreComponents = require('./core-components');
+const readingComponents = require('./reading-components');
 const { applyStyleSlots } = require('./component-styling');
 
 const componentsDir = path.join(__dirname, '..', 'registry', 'components');
@@ -589,7 +590,7 @@ function makeCssHostIndependent(component) {
   }
 }
 
-const allComponents = [newsletterForm, pricingTable, authorCard, postCard, ...coreComponents];
+const allComponents = [newsletterForm, pricingTable, authorCard, postCard, ...coreComponents, ...readingComponents];
 applyStyleSlots(pricingTable, {
   class: ['gh-pricing'], titleClass: ['gh-pricing-title'], gridClass: ['gh-pricing-grid'],
   cardClass: ['gh-pricing-card'], buttonClass: ['ghcn-button']
@@ -633,6 +634,10 @@ for (const component of coreComponents) {
   fs.writeFileSync(path.join(componentsDir, `${component.name}.json`), JSON.stringify(component, null, 2), 'utf8');
   console.log(`Created ${component.name}.json`);
 }
+for (const component of readingComponents) {
+  fs.writeFileSync(path.join(componentsDir, `${component.name}.json`), JSON.stringify(component, null, 2), 'utf8');
+  console.log(`Created ${component.name}.json`);
+}
 
 // 5. Generate registry/index.json
 const index = [
@@ -664,7 +669,7 @@ const index = [
     ghost_version: ">=5.0.0",
     files: ["post-card.hbs", "post-card.css"]
   },
-  ...coreComponents.map(component => ({
+  ...[...coreComponents, ...readingComponents].map(component => ({
     name: component.name,
     description: component.description,
     category: component.type,

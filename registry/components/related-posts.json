@@ -1,0 +1,53 @@
+{
+  "name": "related-posts",
+  "type": "components:content",
+  "description": "Related reading from the same primary tag, excluding the current post; recent posts when untagged.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "files": [
+    {
+      "name": "related-posts.hbs",
+      "type": "partial",
+      "target": "partials/components/related-posts.hbs",
+      "content": "{{!-- Styling parameters: class, titleClass, gridClass, cardClass, cardTitleClass, imageClass, contentClass, descriptionClass --}}\n{{#with this as |ghostcnStyles|}}\n{{!-- Use inside {{#post}}. heading overrides the section title. Empty results render nothing. --}}\n{{#if primary_tag}}\n{{#get \"posts\" filter=\"id:-{{id}}+tag:{{primary_tag.slug}}\" limit=\"3\" include=\"tags,authors\"}}{{#if posts}}\n<section class=\"ghcn-related{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" aria-label=\"Related posts\">\n  <h2 class=\"ghcn-related__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{#if ghostcnStyles.heading}}{{ghostcnStyles.heading}}{{else}}Keep reading{{/if}}</h2>\n  <div class=\"ghcn-related__grid{{#if ghostcnStyles.gridClass}} {{ghostcnStyles.gridClass}}{{/if}}\">\n    {{#foreach posts}}\n    <article class=\"ghcn-related__card{{#if ghostcnStyles.cardClass}} {{ghostcnStyles.cardClass}}{{/if}}\">\n      {{#if feature_image}}<a class=\"ghcn-related__image-link\" href=\"{{url}}\" tabindex=\"-1\" aria-hidden=\"true\"><img class=\"ghcn-related__image{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\" src=\"{{img_url feature_image size=\"m\"}}\" alt=\"\" loading=\"lazy\" /></a>{{/if}}\n      <div class=\"ghcn-related__content{{#if ghostcnStyles.contentClass}} {{ghostcnStyles.contentClass}}{{/if}}\"><h3 class=\"ghcn-related__card-title{{#if ghostcnStyles.cardTitleClass}} {{ghostcnStyles.cardTitleClass}}{{/if}}\"><a href=\"{{url}}\">{{title}}</a></h3><p class=\"ghcn-related__description{{#if ghostcnStyles.descriptionClass}} {{ghostcnStyles.descriptionClass}}{{/if}}\">{{excerpt words=\"20\"}}</p></div>\n    </article>\n    {{/foreach}}\n  </div>\n</section>\n{{/if}}{{/get}}\n{{else}}\n{{#get \"posts\" filter=\"id:-{{id}}\" limit=\"3\" include=\"tags,authors\"}}{{#if posts}}\n<section class=\"ghcn-related{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" aria-label=\"Related posts\">\n  <h2 class=\"ghcn-related__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{#if ghostcnStyles.heading}}{{ghostcnStyles.heading}}{{else}}Keep reading{{/if}}</h2>\n  <div class=\"ghcn-related__grid{{#if ghostcnStyles.gridClass}} {{ghostcnStyles.gridClass}}{{/if}}\">\n    {{#foreach posts}}\n    <article class=\"ghcn-related__card{{#if ghostcnStyles.cardClass}} {{ghostcnStyles.cardClass}}{{/if}}\">\n      {{#if feature_image}}<a class=\"ghcn-related__image-link\" href=\"{{url}}\" tabindex=\"-1\" aria-hidden=\"true\"><img class=\"ghcn-related__image{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\" src=\"{{img_url feature_image size=\"m\"}}\" alt=\"\" loading=\"lazy\" /></a>{{/if}}\n      <div class=\"ghcn-related__content{{#if ghostcnStyles.contentClass}} {{ghostcnStyles.contentClass}}{{/if}}\"><h3 class=\"ghcn-related__card-title{{#if ghostcnStyles.cardTitleClass}} {{ghostcnStyles.cardTitleClass}}{{/if}}\"><a href=\"{{url}}\">{{title}}</a></h3><p class=\"ghcn-related__description{{#if ghostcnStyles.descriptionClass}} {{ghostcnStyles.descriptionClass}}{{/if}}\">{{excerpt words=\"20\"}}</p></div>\n    </article>\n    {{/foreach}}\n  </div>\n</section>\n{{/if}}{{/get}}\n{{/if}}\n{{/with}}"
+    },
+    {
+      "name": "related-posts.css",
+      "type": "style",
+      "target": "assets/css/components/related-posts.css",
+      "content": "\n.ghcn-related { margin-block: 2em; color: var(--foreground); }\n.ghcn-related__title { margin: 0 0 1em; font-size: 1.5em; line-height: 1.2; }\n.ghcn-related__grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1em; }\n.ghcn-related__card { min-width: 0; overflow: hidden; background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: var(--radius); }\n.ghcn-related__image-link { display: block; aspect-ratio: 16/9; overflow: hidden; }\n.ghcn-related__image { display: block; width: 100%; height: 100%; object-fit: cover; }\n.ghcn-related__content { padding: 1.25em; }\n.ghcn-related__card-title { font-size: 1.125em; line-height: 1.3; margin: 0 0 .75em; }\n.ghcn-related__card-title a { color: inherit; text-decoration: none; }\n.ghcn-related__card-title a:hover { text-decoration: underline; }\n.ghcn-related__description { color: var(--muted-foreground); font-size: .875em; margin: 0; }\n.ghcn-related a:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }\n@media(max-width:760px) { .ghcn-related__grid { grid-template-columns: 1fr; } }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native Ghost post data and optional progressive enhancement."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-related"
+    ],
+    "titleClass": [
+      ".ghcn-related__title"
+    ],
+    "gridClass": [
+      ".ghcn-related__grid"
+    ],
+    "cardClass": [
+      ".ghcn-related__card"
+    ],
+    "cardTitleClass": [
+      ".ghcn-related__card-title"
+    ],
+    "imageClass": [
+      ".ghcn-related__image"
+    ],
+    "contentClass": [
+      ".ghcn-related__content"
+    ],
+    "descriptionClass": [
+      ".ghcn-related__description"
+    ]
+  }
+}
