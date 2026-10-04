@@ -14,19 +14,19 @@ module.exports = {
     {{#foreach tiers}}
         {{#match type "free"}}
         <article class="gh-pricing-card">
-            <h3>{{name}}</h3>
-            {{#if description}}<p>{{description}}</p>{{/if}}
+            <h3 class="gh-pricing-card-title">{{name}}</h3>
+            {{#if description}}<p class="gh-pricing-description">{{description}}</p>{{/if}}
             <p class="gh-pricing-price">Free</p>
-            {{#if benefits}}<ul>{{#foreach benefits}}<li>{{this}}</li>{{/foreach}}</ul>{{/if}}
+            {{#if benefits}}<ul class="gh-pricing-benefits">{{#foreach benefits}}<li>{{this}}</li>{{/foreach}}</ul>{{/if}}
             {{#if @member}}<a class="ghcn-button ghcn-button--outline" href="#/portal/account" data-portal="account">Manage account</a>
             {{else}}<a class="ghcn-button ghcn-button--outline" href="#/portal/signup/free" data-portal="signup/free">Join free</a>{{/if}}
         </article>
         {{else}}
         {{#if @site.paid_members_enabled}}
         <article class="gh-pricing-card">
-            <h3>{{name}}</h3>
-            {{#if description}}<p>{{description}}</p>{{/if}}
-            {{#if benefits}}<ul>{{#foreach benefits}}<li>{{this}}</li>{{/foreach}}</ul>{{/if}}
+            <h3 class="gh-pricing-card-title">{{name}}</h3>
+            {{#if description}}<p class="gh-pricing-description">{{description}}</p>{{/if}}
+            {{#if benefits}}<ul class="gh-pricing-benefits">{{#foreach benefits}}<li>{{this}}</li>{{/foreach}}</ul>{{/if}}
             {{#if monthly_price}}<p class="gh-pricing-price">{{price monthly_price currency=currency}} <span>/ month</span></p>{{/if}}
             {{#if yearly_price}}<p class="gh-pricing-price">{{price yearly_price currency=currency}} <span>/ year</span></p>{{/if}}
             <div class="gh-pricing-actions">
@@ -54,12 +54,16 @@ module.exports = {
 .gh-pricing *, .gh-pricing *::before, .gh-pricing *::after { box-sizing: border-box; }
 .gh-pricing-title { margin: 0 0 1.5rem; text-align: center; font-size: 2rem; }
 .gh-pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); gap: 1.25rem; }
-.gh-pricing-card { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: min(var(--radius), 1.5rem); background: var(--card); color: var(--card-foreground); }
-.gh-pricing-card h3 { margin: 0; font-size: 1.25rem; }
+.gh-pricing-card { min-width: 0; overflow-wrap: anywhere; display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: min(var(--radius), 1.5rem); background: var(--card); color: var(--card-foreground); }
+/* Follow the card's local foreground, not the page's dark/light tokens.
+   A custom background must be paired with a readable foreground at the call site. */
+.gh-pricing-card-title { margin: 0; font-size: 1.25rem; color: inherit; }
 .gh-pricing-card p { margin: 0; }
-.gh-pricing-card ul { margin: 0; padding-left: 1.25rem; color: var(--muted-foreground); }
-.gh-pricing-price { font-size: 1.75rem; font-weight: 700; }
-.gh-pricing-price span { font-size: 0.875rem; font-weight: 400; color: var(--muted-foreground); }
+.gh-pricing-description { color: inherit; }
+.gh-pricing-benefits { margin: 0; padding-left: 1.25rem; color: inherit; }
+.gh-pricing-benefits li { color: inherit; }
+.gh-pricing-price { font-size: 1.75rem; font-weight: 700; color: inherit; }
+.gh-pricing-price span { font-size: 0.875rem; font-weight: 400; color: inherit; }
 .gh-pricing-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; }
 ` }
   ],

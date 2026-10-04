@@ -1,0 +1,5 @@
+/* Only the preview shell, never component defaults. */
+body { margin: 0; background: var(--background); color: var(--foreground); font: 16px/1.5 ui-sans-serif,system-ui,sans-serif; }
+.playground-preview { padding: 24px; overflow-wrap: anywhere; }
+#preview-feedback { font-size: 14px; color: var(--muted-foreground); margin-top: 16px; }
+#preview-feedback:empty { display: none; }

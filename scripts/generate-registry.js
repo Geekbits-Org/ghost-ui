@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const coreComponents = require('./core-components');
 const readingComponents = require('./reading-components');
+const primitives = require('./ui-primitives');
+const composedComponents = require('./composed-components');
 const { applyStyleSlots } = require('./component-styling');
 
 const componentsDir = path.join(__dirname, '..', 'registry', 'components');
@@ -590,10 +592,11 @@ function makeCssHostIndependent(component) {
   }
 }
 
-const allComponents = [newsletterForm, pricingTable, authorCard, postCard, ...coreComponents, ...readingComponents];
+const allComponents = [newsletterForm, pricingTable, authorCard, postCard, ...coreComponents, ...readingComponents, ...primitives, ...composedComponents];
 applyStyleSlots(pricingTable, {
   class: ['gh-pricing'], titleClass: ['gh-pricing-title'], gridClass: ['gh-pricing-grid'],
-  cardClass: ['gh-pricing-card'], buttonClass: ['ghcn-button']
+  cardClass: ['gh-pricing-card'], buttonClass: ['ghcn-button'], cardTitleClass: ['gh-pricing-card-title'],
+  descriptionClass: ['gh-pricing-description'], priceClass: ['gh-pricing-price'], benefitsClass: ['gh-pricing-benefits']
 });
 applyStyleSlots(newsletterForm, {
   class: ['gh-newsletter-form'], titleClass: ['gh-newsletter-title'], descriptionClass: ['gh-newsletter-desc'],
@@ -634,7 +637,7 @@ for (const component of coreComponents) {
   fs.writeFileSync(path.join(componentsDir, `${component.name}.json`), JSON.stringify(component, null, 2), 'utf8');
   console.log(`Created ${component.name}.json`);
 }
-for (const component of readingComponents) {
+for (const component of [...readingComponents, ...primitives, ...composedComponents]) {
   fs.writeFileSync(path.join(componentsDir, `${component.name}.json`), JSON.stringify(component, null, 2), 'utf8');
   console.log(`Created ${component.name}.json`);
 }
@@ -669,7 +672,7 @@ const index = [
     ghost_version: ">=5.0.0",
     files: ["post-card.hbs", "post-card.css"]
   },
-  ...[...coreComponents, ...readingComponents].map(component => ({
+  ...[...coreComponents, ...readingComponents, ...primitives, ...composedComponents].map(component => ({
     name: component.name,
     description: component.description,
     category: component.type,

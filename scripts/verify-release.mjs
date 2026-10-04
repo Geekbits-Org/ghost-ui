@@ -8,7 +8,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(path.join(repo, 'packages/cli/package.json'));
-const { scaffoldTheme, REQUIRED_STARTER_COMPONENTS } = require('./dist/utils/theme-scaffold');
+const { scaffoldTheme } = require('./dist/utils/theme-scaffold');
 const { initializeThemeProject, buildGhostcnConfig } = require('./dist/utils/theme-project');
 const { installComponent } = require('./dist/utils/component-installer');
 const Handlebars = require('handlebars');
@@ -26,11 +26,11 @@ if (commentsUrl) {
 }
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'ghostcn-release-'));
 const roots = {};
-const components = [...REQUIRED_STARTER_COMPONENTS, 'newsletter-form', 'author-card', 'pricing-table'];
+const components = JSON.parse(fs.readFileSync(path.join(repo, 'registry/index.json'), 'utf8')).map(item => item.name);
 // Real call-site fixtures: Tailwind scans complete literals in hash parameters.
 const stylingTemplate = `
-<div id="purple-pricing">{{> "components/pricing-table" title="Purple membership" class="mx-auto my-12 w-full max-w-4xl slot-root" titleClass="text-purple-600 slot-title" gridClass="gap-6 slot-grid" cardClass="rounded-2xl bg-purple-50 p-8 shadow-lg slot-card" buttonClass="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-8 slot-button"}}</div>
-<div id="green-pricing">{{> "components/pricing-table" title="Green membership" class="mx-auto my-12 max-w-4xl slot-root" cardClass="rounded-3xl bg-emerald-50 p-5 slot-card" buttonClass="bg-emerald-600 text-white slot-button"}}</div>
+<div id="purple-pricing">{{> "components/pricing-table" title="Purple membership" class="mx-auto my-12 w-full max-w-4xl slot-root" titleClass="text-purple-600 dark:text-purple-400 slot-title" gridClass="gap-6 slot-grid" cardClass="rounded-2xl bg-purple-50 text-purple-950 dark:bg-purple-950 dark:text-purple-50 p-8 shadow-lg slot-card" buttonClass="bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-8 slot-button"}}</div>
+<div id="green-pricing">{{> "components/pricing-table" title="Green membership" class="mx-auto my-12 max-w-4xl slot-root" cardClass="rounded-3xl bg-emerald-50 text-emerald-950 dark:bg-emerald-950 dark:text-emerald-50 p-5 slot-card" buttonClass="bg-emerald-700 text-white slot-button"}}</div>
 <div id="default-pricing">{{> "components/pricing-table" title="Unchanged defaults"}}</div>
 <div id="styled-newsletter">{{> "components/newsletter-form" class="mx-auto max-w-4xl p-4 slot-root" titleClass="text-purple-600 slot-title" inputClass="border-purple-500 rounded-xl slot-input" buttonClass="bg-purple-600 text-white slot-button"}}</div>
 <div id="styled-author">{{#with primary_author}}{{> "components/author-card" class="mx-auto max-w-4xl p-4 slot-root" titleClass="text-fuchsia-600 slot-title"}}{{/with}}</div>
@@ -45,10 +45,10 @@ const stylingTemplate = `
 const vanillaSlotCss = `
 .slot-root { max-width: 56rem; margin: 3rem auto; }
 .slot-root .slot-title { color: #7c3aed; }
-.slot-root .slot-card { background: #f5f3ff; padding: 2rem; border-radius: 1rem; box-shadow: 0 8px 24px #0001; }
+.slot-root .slot-card { background: #f5f3ff; color: #3b0764; padding: 2rem; border-radius: 1rem; box-shadow: 0 8px 24px #0001; }
 .slot-root .slot-button { background: #7c3aed; color: #fff; border-radius: .75rem; padding-inline: 2rem; }
-#green-pricing .slot-card { background: #ecfdf5; }
-#green-pricing .slot-button { background: #059669; }
+#green-pricing .slot-card { background: #ecfdf5; color: #022c22; }
+#green-pricing .slot-button { background: #047857; }
 #styled-newsletter .slot-root, #styled-author .slot-root { padding: 1rem; }
 .slot-root .slot-input { border-color: #a855f7; border-radius: .75rem; }
 `;

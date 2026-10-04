@@ -1,0 +1,74 @@
+{
+  "name": "button",
+  "type": "components:ui",
+  "description": "A native button or link with variants, sizes and per-instance classes.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Visual treatment; unknown values fall back to default.",
+      "options": [
+        "default",
+        "secondary",
+        "outline",
+        "ghost",
+        "destructive",
+        "link"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "description": "Component scale; unknown values fall back to default.",
+      "options": [
+        "sm",
+        "default",
+        "lg"
+      ],
+      "default": "default"
+    },
+    "text": {
+      "description": "Visible, escaped label.",
+      "default": "Button"
+    },
+    "href": {
+      "description": "Trusted link URL. Omit to render a button."
+    },
+    "type": {
+      "description": "Button type (ignored for links).",
+      "options": [
+        "button",
+        "submit",
+        "reset"
+      ],
+      "default": "button"
+    },
+    "disabled": {
+      "description": "Boolean. Disables a button or removes navigation from a link."
+    },
+    "ariaLabel": {
+      "description": "Optional accessible name."
+    },
+    "dataPortal": {
+      "description": "Optional native Ghost Portal action for enabled links."
+    }
+  },
+  "files": [
+    {
+      "name": "button.hbs",
+      "type": "partial",
+      "target": "partials/components/button.hbs",
+      "content": "{{!-- Styling parameters: class --}}\n{{#with this as |ghostcnStyles|}}\n{{#if href}}\n<a class=\"ghcn-ui-button{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-variant=\"{{#match variant \"secondary\"}}secondary{{else}}{{#match variant \"outline\"}}outline{{else}}{{#match variant \"ghost\"}}ghost{{else}}{{#match variant \"destructive\"}}destructive{{else}}{{#match variant \"link\"}}link{{else}}default{{/match}}{{/match}}{{/match}}{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\" {{#if ariaLabel}}aria-label=\"{{ariaLabel}}\"{{/if}} {{#if id}}id=\"{{id}}\"{{/if}} {{#if disabled}}role=\"link\" aria-disabled=\"true\" tabindex=\"-1\"{{else}}href=\"{{href}}\" {{#if dataPortal}}data-portal=\"{{dataPortal}}\"{{/if}}{{/if}}>{{#if text}}{{text}}{{else}}Button{{/if}}</a>\n{{else}}\n<button class=\"ghcn-ui-button{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-variant=\"{{#match variant \"secondary\"}}secondary{{else}}{{#match variant \"outline\"}}outline{{else}}{{#match variant \"ghost\"}}ghost{{else}}{{#match variant \"destructive\"}}destructive{{else}}{{#match variant \"link\"}}link{{else}}default{{/match}}{{/match}}{{/match}}{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\" {{#if ariaLabel}}aria-label=\"{{ariaLabel}}\"{{/if}} {{#if id}}id=\"{{id}}\"{{/if}} type=\"{{#match type \"submit\"}}submit{{else}}{{#match type \"reset\"}}reset{{else}}button{{/match}}{{/match}}\" {{#if disabled}}disabled{{/if}}>{{#if text}}{{text}}{{else}}Button{{/if}}</button>\n{{/if}}\n{{/with}}"
+    },
+    {
+      "name": "button.css",
+      "type": "style",
+      "target": "assets/css/components/button.css",
+      "content": ".ghcn-ui-button { box-sizing: border-box; font-family: inherit; font-size: 16px; line-height: 1.5; color: var(--foreground); }\n.ghcn-ui-button, .ghcn-ui-button * { box-sizing: border-box; }\n.ghcn-ui-button:where([data-size=\"sm\"]) { font-size: 14px; }\n.ghcn-ui-button:where([data-size=\"lg\"]) { font-size: 18px; }\n.ghcn-ui-button:focus-visible, .ghcn-ui-button :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }\n.ghcn-ui-button { display: inline-flex; align-items: center; justify-content: center; gap: .5em; min-height: 2.5em; padding: .5em 1em; border: 1px solid transparent; border-radius: var(--radius); background: var(--primary); color: var(--primary-foreground); font-weight: 600; text-decoration: none; cursor: pointer; }\n.ghcn-ui-button:hover { filter: brightness(.94); }\n.ghcn-ui-button:where([data-variant=\"secondary\"]) { background: var(--secondary); color: var(--secondary-foreground); }\n.ghcn-ui-button:where([data-variant=\"outline\"]) { background: transparent; color: var(--foreground); border-color: var(--border); }\n.ghcn-ui-button:where([data-variant=\"ghost\"]), .ghcn-ui-button:where([data-variant=\"link\"]) { background: transparent; color: var(--foreground); }\n.ghcn-ui-button:where([data-variant=\"link\"]) { color: var(--primary); text-decoration: underline; }\n.ghcn-ui-button:where([data-variant=\"destructive\"]) { background: var(--destructive); color: var(--destructive-foreground); }\n.ghcn-ui-button:disabled, .ghcn-ui-button[aria-disabled=\"true\"] { opacity: .5; cursor: not-allowed; filter: none; }\n"
+    }
+  ],
+  "styleSlots": {
+    "class": [
+      ".ghcn-ui-button"
+    ]
+  }
+}

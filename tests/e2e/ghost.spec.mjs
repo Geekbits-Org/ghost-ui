@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { createGhostFixture } from './ghost-fixture.mjs';
+import { textContrast } from '../helpers/contrast.mjs';
 
 let fixture;
 test.beforeAll(async () => { fixture = await createGhostFixture(process.env.GHOST_E2E_ROOT); });
@@ -39,7 +40,32 @@ for (const colorScheme of scheme === 'Auto' ? ['light', 'dark'] : [scheme.toLowe
           await expect(page.locator('.ghcn-header')).toBeVisible();
           await expect(page.locator('.gh-post-card').first()).toBeVisible();
           await expect(page.locator('.gh-newsletter-form')).toBeVisible();
+          const primitives = page.locator('.primitive-test');
+          await expect(primitives.locator('.custom-primitive-card')).toHaveCSS('padding', '32px');
+          await expect(primitives.locator('.custom-primitive-button')).toHaveAttribute('data-variant', 'outline');
+          await expect(primitives.locator('.custom-primitive-button')).toHaveAttribute('data-size', 'sm');
+          const primitivePurple = await primitives.locator('.custom-primitive-button').evaluate(el => {
+            const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+            ctx.fillStyle = getComputedStyle(el).backgroundColor; ctx.fillRect(0, 0, 1, 1);
+            return [...ctx.getImageData(0, 0, 1, 1).data];
+          });
+          expect(primitivePurple).toEqual(style === 'tailwind' ? [152, 16, 250, 255] : [147, 51, 234, 255]);
+          await expect(primitives.locator('.disabled-link')).not.toHaveAttribute('href');
+          await expect(primitives.locator('.disabled-link')).toHaveAttribute('aria-disabled', 'true');
+          await expect(primitives.locator('.disabled-button')).toBeDisabled();
+          await expect(primitives.getByLabel('Example email (required)')).toHaveAttribute('aria-describedby', 'primitive-email-hint');
+          await expect(primitives.getByRole('status')).toContainText('Your theme, your components');
+          await expect(primitives.locator('.custom-post-grid .custom-grid-card').first()).toBeVisible();
+          await expect(primitives.locator('.custom-author-list .custom-author-card').first()).toBeVisible();
+          await expect(primitives.locator('.custom-tag-grid .custom-tag-card').first()).toBeVisible();
+          await expect(primitives.locator('.custom-tag-grid .custom-tag-button').first()).toHaveAttribute('href', /\/tag\//);
+          await expect(primitives.locator('.custom-archive-header .custom-archive-badge')).toContainText('Topic');
           await expect(page.locator('.pricing-test .custom-card').first()).toHaveCSS('padding', '32px');
+          for (const instance of ['.pricing-test', '.pricing-light-test', '.pricing-dark-test']) {
+            const text = page.locator(`${instance} .gh-pricing-card-title, ${instance} .gh-pricing-description, ${instance} .gh-pricing-benefits li, ${instance} .gh-pricing-price, ${instance} .gh-pricing-price span`);
+            expect(await text.count()).toBeGreaterThan(0);
+            for (const element of await text.all()) expect(await textContrast(element, '.gh-pricing-card'), `${instance} text contrast`).toBeGreaterThanOrEqual(4.5);
+          }
           const customButton = page.locator('.pricing-test .custom-button').first();
           await expect(customButton).toBeVisible();
           const purple = await customButton.evaluate(el => {

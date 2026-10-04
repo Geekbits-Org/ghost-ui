@@ -53,6 +53,17 @@ You own the code. You customize the classes. Zero vendor lock-in.
 | **`post-navigation`** | Chronological previous/next story links | `post-navigation.hbs`, `post-navigation.css` |
 | **`table-of-contents`** | Accessible article heading navigation with unique anchors | `table-of-contents.hbs`, `table-of-contents.css`, `table-of-contents.js` |
 | **`tag-list`** | Public post tags, with internal tags hidden | `tag-list.hbs`, `tag-list.css` |
+| **`button`** | Native button or link, with variants, sizes and disabled states | `button.hbs`, `button.css` |
+| **`card`** | Content card accepting text or nested template blocks | `card.hbs`, `card.css` |
+| **`badge`** | Non-interactive label with variants and sizes | `badge.hbs`, `badge.css` |
+| **`input`** | Repeat-safe labeled native input and optional help text | `input.hbs`, `input.css` |
+| **`alert`** | Accessible status message with optional urgent announcement | `alert.hbs`, `alert.css` |
+| **`post-grid`** | Responsive current-post collection composed from post cards | `post-grid.hbs`, `post-grid.css` |
+| **`author-list`** | Publication author collection composed from author cards | `author-list.hbs`, `author-list.css` |
+| **`tag-grid`** | Public tag archive links composed from cards and buttons | `tag-grid.hbs`, `tag-grid.css` |
+| **`archive-header`** | Shared author/tag archive heading with an optional badge/image | `archive-header.hbs`, `archive-header.css` |
+
+The five primitives, four composed blocks, dependency installation, and local playground are **unreleased development features**. Use this checkout's built CLI to test them; updating an older npm release will not provide them.
 
 ---
 
@@ -193,6 +204,16 @@ Add a specific component:
 npx ghostcn add newsletter-form
 ```
 
+Add multiple components in one command (unreleased development CLI):
+
+```bash
+ghostcn add button card badge input alert post-grid author-list tag-grid archive-header
+```
+
+For existing files, the spinner pauses before a single overwrite decision per requested component. Enter / N preserves them and continues with the rest; Y replaces that component's existing files. Ctrl+C cancels the remaining work (earlier installs are not rolled back). Review `ghostcn diff <name>` before replacing customizations.
+
+For scripts or a quick safe re-run, `ghostcn add button card --skip-existing` installs missing files and preserves existing ones without prompts. Without a terminal, existing files are also preserved and the CLI prints review/replacement directions. Use `--yes` only for deliberate replacement; do not combine it with `--skip-existing`.
+
 Or run `add` without arguments to pick interactively from a checklist:
 ```bash
 npx ghostcn add
@@ -258,7 +279,7 @@ All components keep their semantic identity classes and default CSS. Defaults li
 
 | Component | Root | Additional styling parameters |
 | --- | --- | --- |
-| `pricing-table` | `class` | `titleClass`, `gridClass`, `cardClass`, `buttonClass` |
+| `pricing-table` | `class` | `titleClass`, `gridClass`, `cardClass`, `buttonClass`, `cardTitleClass`, `descriptionClass`, `priceClass`, `benefitsClass` |
 | `newsletter-form` | `class` | `titleClass`, `descriptionClass`, `formClass`, `inputClass`, `buttonClass` |
 | `post-card` | `class` | `imageClass`, `contentClass`, `titleClass`, `descriptionClass`, `metaClass`, `footerClass` |
 | `author-card` | `class` | `avatarClass`, `contentClass`, `titleClass`, `descriptionClass`, `metaClass` |
@@ -274,6 +295,20 @@ All components keep their semantic identity classes and default CSS. Defaults li
 | `tag-list` | `class` | `listClass`, `linkClass` |
 
 Slots only affect elements that render for the current content/member state. `buttonClass` applies to all theme-owned buttons in that component, not individual monthly/yearly actions and not Ghost-generated search/Portal/comments UI. Use scoped descendant selectors for more granular targeting. Root `class` does not automatically recolor children that have their own colors; use the corresponding slot. To customize pagination at the call site, use `{{> "pagination" pagination class="my-pagination"}}`; the native `{{pagination}}` helper retains its default appearance.
+
+### Pair custom backgrounds with foregrounds
+
+Default semantic surfaces (`bg-card text-card-foreground`) follow Light/Dark/Auto. Arbitrary background utilities do **not** select a matching text color automatically. For example, `bg-purple-50` alone leaves dark-mode foreground tokens white. Always pair custom surfaces and text, including their dark variants:
+
+```handlebars
+{{> "components/pricing-table"
+    class="mx-auto my-12 max-w-5xl"
+    cardClass="rounded-2xl bg-purple-50 text-purple-950 dark:bg-purple-950 dark:text-purple-50 p-8 shadow-lg"
+    buttonClass="bg-purple-600 text-white hover:bg-purple-700"
+}}
+```
+
+Pricing titles, descriptions, benefits, prices, and billing intervals inherit the card's local text color; use their named slots for individual overrides. Standalone cards use the same pairing on `class`, not `cardClass`. For vanilla custom surfaces, set **both** `background` and `color` on your own class. Review contrast in every color mode; arbitrary custom colors are not automatically contrast-corrected.
 
 For vanilla CSS, pass custom class names and define them in your theme-owned `assets/css/source.css`:
 
@@ -308,6 +343,66 @@ ghostcn/
 
 ## Development & Testing
 
+### Composable components (unreleased)
+
+Every component still accepts `class`. A standalone button or card uses `class` for itself; `cardClass` and `buttonClass` belong only to blocks containing those elements. Primitives support `size="sm|default|lg"`. Their supported variants are:
+
+| Component | Variants |
+| :--- | :--- |
+| `button` | `default`, `secondary`, `outline`, `ghost`, `destructive`, `link` |
+| `card` | `default`, `secondary`, `outline` |
+| `badge` | `default`, `secondary`, `outline`, `destructive` |
+| `input` | `default`, `filled` |
+| `alert` | `default`, `secondary`, `outline`, `destructive` |
+
+Unknown variants/sizes fall back to `default`. Existing components do not gain invented variant parameters. Pass booleans as `disabled=true`, not `disabled="false"` (a nonempty string is truthy in Handlebars).
+
+```handlebars
+{{> "components/button" text="Subscribe" href="#/portal/signup" dataPortal="signup"
+    variant="outline" size="sm" class="bg-purple-600 hover:bg-purple-700 text-white"
+}}
+
+{{#> "components/card" heading="Join the publication" class="mx-auto max-w-md p-8"}}
+    <p>Your own content, in your own template.</p>
+    {{> "components/button" text="Learn more" href="/about/" class="rounded-xl"}}
+{{/components/card}}
+
+{{> "components/input" label="Email" type="email" name="email" required=true
+    hint="Used for replies only" hintId="contact-email-hint" inputClass="rounded-xl"
+}}
+
+{{> "components/post-grid" posts=posts heading="Latest stories" cardClass="rounded-xl"}}
+{{> "components/author-list" heading="Our authors"}}
+{{> "components/tag-grid" heading="Topics" cardVariant="outline"}}
+{{#tag}}{{> "components/archive-header" eyebrow="Topic" archiveImage=feature_image}}{{/tag}}
+```
+
+Use ordinary CSS classes instead of utilities in vanilla themes, with your stylesheet loaded after component defaults. Variants deliberately use low-specificity selectors. `input`'s root class styles the field wrapper; `inputClass` targets the control. Each label wraps its input, so no ID is required; provide a **unique** `hintId` with `hint` for an accessible help-text association. These inputs do not submit to Ghost by themselves. Use `newsletter-form` for native member signup.
+
+Cards accept escaped `body` text or a trusted Handlebars partial block as above—never pass untrusted raw HTML. Partial calls follow normal Handlebars context inheritance: explicitly set/reset nested parameters (e.g. `class=""`, `variant="default"`) when you don't want an outer card's values. Button `href` values must come from trusted theme code or Ghost URLs; HTML escaping is not URL sanitization. Disabled links have no `href` or Portal action. Alerts default to `role="status"`; use `urgent=true` only for urgent dynamic announcements.
+
+Adding a composed block installs missing dependencies first. **Existing dependency files are preserved even with `add -y`.** To replace a dependency deliberately, add that component explicitly. Requested root components use one overwrite decision each; Enter preserves existing files and continues. Custom partial aliases under `partials/` are reflected in nested references. Review `ghostcn diff` before merging updates.
+
+`author-list` and `tag-grid` query up to 100 records; they are compact discovery blocks, not paginated directories. Use a custom paginated Ghost query with the reusable cards for larger archives. `post-grid` renders the collection you pass. Empty collections render nothing unless the block receives `emptyText`.
+
+### Local playground (unreleased)
+
+Build the CLI in this repository, then invoke its absolute `packages/cli/dist/index.js` path from your **theme directory**:
+
+```bash
+# Repository directory:
+npm run build
+
+# Theme directory, replacing the placeholder with this checkout's actual path:
+node /absolute/path/to/ghost/packages/cli/dist/index.js add tag-grid
+node /absolute/path/to/ghost/packages/cli/dist/index.js playground
+# Optional: --port 4191 (or --port 0 for an available port)
+```
+
+Open the printed localhost URL. The playground reads your installed partials and layout's local stylesheet links, shows controls for supported parameters, and reloads when theme files change. Keep `npm run dev` running in another terminal. Tailwind classes typed only into a preview field are not compiled automatically: add complete class literals to a scanned `.hbs` file first. Preview controls are temporary; copy the generated usage into your theme to save it.
+
+The server binds to loopback only, rejects writes and unsafe/symlinked paths, and sandbox-previews synthetic data. It does not start Ghost, send emails, perform payments or change your theme files. Custom Ghost helpers, real query results, Portal, comments, access control and the rest of your theme must still be tested in Ghost. Stop with Ctrl+C.
+
 The real-Ghost browser suite builds both styling systems in Light/Dark/Auto, exercises desktop/mobile layouts, reading navigation, real comments, and visitor/free/paid access. It runs an isolated database and content directory; it never changes your installed publication. See [the regression setup](tests/e2e/README.md) for prerequisites, commands, and coverage boundaries.
 
 ```bash
@@ -319,6 +414,12 @@ npm run build
 
 # Run automated tests
 npm test
+
+# Local playground UI and documentation browser checks
+npm run docs:build
+npm run docs:check
+npm run docs:browser
+npm run test:playground
 
 # Verify theme compatibility with Ghost validator
 cd example-theme

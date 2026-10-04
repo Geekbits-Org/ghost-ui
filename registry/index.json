@@ -139,5 +139,95 @@
       "tag-list.hbs",
       "tag-list.css"
     ]
+  },
+  {
+    "name": "button",
+    "description": "A native button or link with variants, sizes and per-instance classes.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "button.hbs",
+      "button.css"
+    ]
+  },
+  {
+    "name": "card",
+    "description": "A composable content card with optional heading, description and footer.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "card.hbs",
+      "card.css"
+    ]
+  },
+  {
+    "name": "badge",
+    "description": "A small non-interactive label with variants and sizes.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "badge.hbs",
+      "badge.css"
+    ]
+  },
+  {
+    "name": "input",
+    "description": "An accessible labeled native input, with optional hint and invalid/disabled states.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "input.hbs",
+      "input.css"
+    ]
+  },
+  {
+    "name": "alert",
+    "description": "An accessible status message with an optional urgent announcement.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "alert.hbs",
+      "alert.css"
+    ]
+  },
+  {
+    "name": "post-grid",
+    "description": "A responsive grid using post-card; pass posts from a loop, archive or get query.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "post-grid.hbs",
+      "post-grid.css"
+    ]
+  },
+  {
+    "name": "author-list",
+    "description": "Publication authors rendered with reusable author cards.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "author-list.hbs",
+      "author-list.css"
+    ]
+  },
+  {
+    "name": "tag-grid",
+    "description": "Public tag archive links composed from card and button primitives.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "tag-grid.hbs",
+      "tag-grid.css"
+    ]
+  },
+  {
+    "name": "archive-header",
+    "description": "A reusable tag or author archive heading with an optional badge and image.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "archive-header.hbs",
+      "archive-header.css"
+    ]
   }
 ]

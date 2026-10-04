@@ -1,0 +1,62 @@
+{
+  "name": "alert",
+  "type": "components:ui",
+  "description": "An accessible status message with an optional urgent announcement.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Visual treatment; unknown values fall back to default.",
+      "options": [
+        "default",
+        "secondary",
+        "outline",
+        "destructive"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "description": "Component scale; unknown values fall back to default.",
+      "options": [
+        "sm",
+        "default",
+        "lg"
+      ],
+      "default": "default"
+    },
+    "heading": {
+      "description": "Optional status heading."
+    },
+    "description": {
+      "description": "Escaped status text."
+    },
+    "urgent": {
+      "description": "Boolean. Use role=alert for urgent, dynamically inserted errors only."
+    }
+  },
+  "files": [
+    {
+      "name": "alert.hbs",
+      "type": "partial",
+      "target": "partials/components/alert.hbs",
+      "content": "{{!-- Styling parameters: class, titleClass, descriptionClass --}}\n{{#with this as |ghostcnStyles|}}\n<div class=\"ghcn-ui-alert{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-variant=\"{{#match variant \"secondary\"}}secondary{{else}}{{#match variant \"outline\"}}outline{{else}}{{#match variant \"destructive\"}}destructive{{else}}default{{/match}}{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\" role=\"{{#if urgent}}alert{{else}}status{{/if}}\">\n  {{#if heading}}<h3 class=\"ghcn-ui-alert__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{heading}}</h3>{{/if}}\n  <p class=\"ghcn-ui-alert__description{{#if ghostcnStyles.descriptionClass}} {{ghostcnStyles.descriptionClass}}{{/if}}\">{{#if description}}{{description}}{{else}}An update for your readers.{{/if}}</p>\n</div>\n{{/with}}"
+    },
+    {
+      "name": "alert.css",
+      "type": "style",
+      "target": "assets/css/components/alert.css",
+      "content": ".ghcn-ui-alert { box-sizing: border-box; font-family: inherit; font-size: 16px; line-height: 1.5; color: var(--foreground); }\n.ghcn-ui-alert, .ghcn-ui-alert * { box-sizing: border-box; }\n.ghcn-ui-alert:where([data-size=\"sm\"]) { font-size: 14px; }\n.ghcn-ui-alert:where([data-size=\"lg\"]) { font-size: 18px; }\n.ghcn-ui-alert:focus-visible, .ghcn-ui-alert :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }\n.ghcn-ui-alert { padding: 1em; background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: var(--radius); overflow-wrap: anywhere; }\n.ghcn-ui-alert:where([data-variant=\"secondary\"]) { background: var(--secondary); color: var(--secondary-foreground); }\n.ghcn-ui-alert:where([data-variant=\"outline\"]) { background: transparent; }\n.ghcn-ui-alert:where([data-variant=\"destructive\"]) { border-color: var(--destructive); color: var(--destructive); }\n.ghcn-ui-alert__title { font-size: 1em; margin: 0 0 .375em; font-weight: 600; }\n.ghcn-ui-alert__description { margin: 0; }\n"
+    }
+  ],
+  "styleSlots": {
+    "class": [
+      ".ghcn-ui-alert"
+    ],
+    "titleClass": [
+      ".ghcn-ui-alert__title"
+    ],
+    "descriptionClass": [
+      ".ghcn-ui-alert__description"
+    ]
+  }
+}

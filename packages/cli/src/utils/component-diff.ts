@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { ComponentManifest, getComponent, sanitizeComponentName, DEFAULT_REGISTRY_URL } from './registry';
+import { ComponentManifest, getComponent, sanitizeComponentName, DEFAULT_REGISTRY_URL, fetchRegistryJson } from './registry';
 import { componentFiles, safeThemePath } from './component-files';
 import { readHistory, revision } from './component-history';
 import { GhostcnConfig } from './theme-project';
@@ -18,9 +18,7 @@ export async function comparisonManifest(name: string, latest: boolean): Promise
   const base = process.env.GHOST_UI_REGISTRY_URL || DEFAULT_REGISTRY_URL;
   const url = new URL(`${base.replace(/\/$/, '')}/components/${name}.json`);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Invalid registry URL.');
-  const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
-  if (!response.ok) throw new Error(`Latest registry returned HTTP ${response.status}; no files were changed.`);
-  const manifest = await response.json() as ComponentManifest;
+  const manifest = await fetchRegistryJson<ComponentManifest>(url.href, 10000);
   if (manifest.name !== name || !Array.isArray(manifest.files)) throw new Error('Registry returned an invalid component manifest.');
   return manifest;
 }

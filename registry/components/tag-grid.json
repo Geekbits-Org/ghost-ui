@@ -1,0 +1,64 @@
+{
+  "name": "tag-grid",
+  "type": "components:content",
+  "description": "Public tag archive links composed from card and button primitives.",
+  "dependencies": [
+    "card",
+    "button"
+  ],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "heading": {
+      "description": "Optional section heading."
+    },
+    "emptyText": {
+      "description": "Optional message when no content is available; otherwise render nothing."
+    },
+    "cardVariant": {
+      "description": "Variant forwarded to each card.",
+      "options": [
+        "default",
+        "secondary",
+        "outline"
+      ],
+      "default": "default"
+    }
+  },
+  "files": [
+    {
+      "name": "tag-grid.hbs",
+      "type": "partial",
+      "target": "partials/components/tag-grid.hbs",
+      "content": "{{!-- Styling parameters: class, titleClass, gridClass --}}\n{{#with this as |ghostcnStyles|}}\n{{#get \"tags\" filter=\"visibility:public\" limit=\"100\" include=\"count.posts\"}}\n{{#if tags}}<section class=\"ghcn-tag-grid{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" aria-label=\"Topics\">\n  {{#if ghostcnStyles.heading}}<h2 class=\"ghcn-tag-grid__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{ghostcnStyles.heading}}</h2>{{/if}}\n  <div class=\"ghcn-tag-grid__grid{{#if ghostcnStyles.gridClass}} {{ghostcnStyles.gridClass}}{{/if}}\">{{#foreach tags visibility=\"public\"}}\n    {{#> \"components/card\" heading=name description=description class=ghostcnStyles.cardClass titleClass=ghostcnStyles.cardTitleClass descriptionClass=ghostcnStyles.descriptionClass variant=ghostcnStyles.cardVariant}}\n      {{> \"components/button\" href=url text=\"Explore topic\" variant=\"outline\" size=\"sm\" class=ghostcnStyles.buttonClass}}\n    {{/components/card}}\n  {{/foreach}}</div>\n</section>{{else}}{{#if ghostcnStyles.emptyText}}<section class=\"ghcn-tag-grid{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\"><p class=\"ghcn-tag-grid__empty\">{{ghostcnStyles.emptyText}}</p></section>{{/if}}{{/if}}\n{{/get}}\n{{/with}}"
+    },
+    {
+      "name": "tag-grid.css",
+      "type": "style",
+      "target": "assets/css/components/tag-grid.css",
+      "content": ".ghcn-tag-grid { font-size: 16px; color: var(--foreground); margin-block: 2em; }\n.ghcn-tag-grid__title { font-size: 1.5em; line-height: 1.25; margin: 0 0 1em; }\n.ghcn-tag-grid__grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5em; }\n.ghcn-tag-grid__grid > * { min-width: 0; }\n.ghcn-tag-grid__empty { color: var(--muted-foreground); }\n@media(max-width:900px) { .ghcn-tag-grid__grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }\n@media(max-width:620px) { .ghcn-tag-grid__grid { grid-template-columns: 1fr; } }"
+    }
+  ],
+  "styleSlots": {
+    "class": [
+      ".ghcn-tag-grid"
+    ],
+    "titleClass": [
+      ".ghcn-tag-grid__title"
+    ],
+    "gridClass": [
+      ".ghcn-tag-grid__grid"
+    ],
+    "cardClass": [
+      ".ghcn-ui-card"
+    ],
+    "cardTitleClass": [
+      ".ghcn-ui-card__title"
+    ],
+    "descriptionClass": [
+      ".ghcn-ui-card__description"
+    ],
+    "buttonClass": [
+      ".ghcn-ui-button"
+    ]
+  }
+}

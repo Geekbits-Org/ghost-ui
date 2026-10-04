@@ -56,7 +56,7 @@ export function inspectTheme(themeRoot) {
             for (const match of source.matchAll(/\{\{asset\s+["']([^"']+)["']/g)) {
                 if (!exists(`assets/${match[1]}`)) errors.push(`${file}: missing asset ${match[1]} (run your build)`);
             }
-            for (const match of source.matchAll(/\{\{>\s*["']([^"']+)["']/g)) {
+            for (const match of source.matchAll(/\{\{(?:#>|>)\s*["']([^"']+)["']/g)) {
                 if (!exists(`partials/${match[1]}.hbs`)) errors.push(`${file}: missing partial ${match[1]}`);
             }
         }

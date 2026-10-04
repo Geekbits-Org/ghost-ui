@@ -36,6 +36,8 @@ Without an existing installation, install the pinned Ghost package into a dedica
 - Related stories, public-only tags, previous/next links, duplicate heading IDs, TOC focus behavior and empty states.
 - Real signed Ghost sessions for free and comped paid members; protected content must not leak to visitors or free members.
 - Disabled and invite-only membership settings.
+- Native button/card/badge/input/alert rendering, partial-block composition, disabled controls, per-instance Tailwind/vanilla overrides, and post/author/tag/archive composed blocks with real Ghost data.
+- Pricing text contrast on adaptive, permanently light, and permanently dark cards in every color-mode/viewport combination. Benefits and billing intervals follow the card's local foreground, not the page's global tokens.
 
 This is a Chromium regression matrix, not a guarantee for every host theme, browser, Ghost version, or editor card. Media checks cover layout and controls, not video codec playback. Payment and email writes are blocked; the suite does not charge anyone or send subscriptions. Real comments load Ghost's client assets, so network access is required.
 

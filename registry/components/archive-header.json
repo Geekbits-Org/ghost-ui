@@ -1,0 +1,57 @@
+{
+  "name": "archive-header",
+  "type": "components:content",
+  "description": "A reusable tag or author archive heading with an optional badge and image.",
+  "dependencies": [
+    "badge"
+  ],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "heading": {
+      "description": "Heading override; otherwise uses author/tag name or site title."
+    },
+    "eyebrow": {
+      "description": "Optional badge label."
+    },
+    "description": {
+      "description": "Description override; otherwise uses author bio."
+    },
+    "archiveImage": {
+      "description": "Optional archive feature image URL."
+    },
+    "imageAlt": {
+      "description": "Alternative text for the image (empty for decorative images)."
+    }
+  },
+  "files": [
+    {
+      "name": "archive-header.hbs",
+      "type": "partial",
+      "target": "partials/components/archive-header.hbs",
+      "content": "{{!-- Styling parameters: class, titleClass, descriptionClass, imageClass --}}\n{{#with this as |ghostcnStyles|}}\n<header class=\"ghcn-archive-header{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\">\n  {{#if eyebrow}}{{> \"components/badge\" text=eyebrow variant=\"secondary\" class=ghostcnStyles.badgeClass}}{{/if}}\n  <h1 class=\"ghcn-archive-header__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{#if heading}}{{heading}}{{else}}{{#if name}}{{name}}{{else}}{{@site.title}}{{/if}}{{/if}}</h1>\n  {{#if description}}<p class=\"ghcn-archive-header__description{{#if ghostcnStyles.descriptionClass}} {{ghostcnStyles.descriptionClass}}{{/if}}\">{{description}}</p>{{else}}{{#if bio}}<p class=\"ghcn-archive-header__description{{#if ghostcnStyles.descriptionClass}} {{ghostcnStyles.descriptionClass}}{{/if}}\">{{bio}}</p>{{/if}}{{/if}}\n  {{#if archiveImage}}<img class=\"ghcn-archive-header__image{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\" src=\"{{img_url archiveImage size=\"l\"}}\" alt=\"{{imageAlt}}\" />{{/if}}\n</header>\n{{/with}}"
+    },
+    {
+      "name": "archive-header.css",
+      "type": "style",
+      "target": "assets/css/components/archive-header.css",
+      "content": ".ghcn-archive-header { font-size: 16px; color: var(--foreground); text-align: center; margin-block: 2em; }\n.ghcn-archive-header__title { font-size: clamp(2em,5vw,3em); line-height: 1.1; margin: .5em 0; overflow-wrap: anywhere; }\n.ghcn-archive-header__description { max-width: 42em; margin: 1em auto; color: var(--muted-foreground); }\n.ghcn-archive-header__image { display: block; width: 100%; max-height: 28em; object-fit: cover; border-radius: var(--radius); margin-top: 2em; }\n"
+    }
+  ],
+  "styleSlots": {
+    "class": [
+      ".ghcn-archive-header"
+    ],
+    "titleClass": [
+      ".ghcn-archive-header__title"
+    ],
+    "descriptionClass": [
+      ".ghcn-archive-header__description"
+    ],
+    "imageClass": [
+      ".ghcn-archive-header__image"
+    ],
+    "badgeClass": [
+      ".ghcn-ui-badge"
+    ]
+  }
+}

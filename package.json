@@ -14,6 +14,7 @@
     "docs:dev": "node scripts/serve-docs.mjs",
     "docs:check": "node scripts/check-docs.mjs",
     "docs:browser": "playwright test --config playwright.docs.config.mjs",
+    "test:playground": "playwright test --config playwright.playground.config.mjs",
     "test:e2e": "playwright test",
     "test:e2e:preflight": "node tests/e2e/ghost-fixture.mjs"
   },

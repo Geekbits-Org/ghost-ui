@@ -19,6 +19,7 @@ export interface ComponentManifest {
   ghost_version?: string;
   files: ComponentFile[];
   styleSlots?: Record<string, string[]>;
+  parameters?: Record<string, { description: string; options?: string[]; default?: string }>;
   gscan?: {
     rules_satisfied: string[];
     notes: string;
@@ -43,13 +44,17 @@ export function sanitizeComponentName(name: string): string {
   return sanitized;
 }
 
-async function fetchWithTimeout(url: string, timeoutMs = 5000): Promise<Response> {
+export async function fetchRegistryJson<T>(url: string, timeoutMs = 5000): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { signal: controller.signal });
+    const response = await fetch(url, { signal: controller.signal });
+    if (!response.ok) throw new Error(`Registry returned HTTP ${response.status}.`);
+    // Keep the deadline active through the response body, not just its headers.
+    return await response.json() as T;
   } finally {
     clearTimeout(timer);
+    controller.abort();
   }
 }
 
@@ -110,10 +115,7 @@ export async function getRegistryIndex(): Promise<RegistryItem[]> {
   // If custom registry URL explicitly configured, try remote first
   if (process.env.GHOST_UI_REGISTRY_URL) {
     try {
-      const res = await fetchWithTimeout(`${process.env.GHOST_UI_REGISTRY_URL}/index.json`);
-      if (res.ok) {
-        return (await res.json()) as RegistryItem[];
-      }
+      return await fetchRegistryJson<RegistryItem[]>(`${process.env.GHOST_UI_REGISTRY_URL}/index.json`);
     } catch {
       // Fallback to local
     }
@@ -127,10 +129,7 @@ export async function getRegistryIndex(): Promise<RegistryItem[]> {
 
   // 2. Fallback to default remote registry
   try {
-    const res = await fetchWithTimeout(`${DEFAULT_REGISTRY_URL}/index.json`);
-    if (res.ok) {
-      return (await res.json()) as RegistryItem[];
-    }
+    return await fetchRegistryJson<RegistryItem[]>(`${DEFAULT_REGISTRY_URL}/index.json`);
   } catch {
     // Network or abort error
   }
@@ -144,10 +143,7 @@ export async function getComponent(componentName: string): Promise<ComponentMani
   // If custom registry URL explicitly configured, try remote first
   if (process.env.GHOST_UI_REGISTRY_URL) {
     try {
-      const res = await fetchWithTimeout(`${process.env.GHOST_UI_REGISTRY_URL}/components/${sanitized}.json`);
-      if (res.ok) {
-        return (await res.json()) as ComponentManifest;
-      }
+      return await fetchRegistryJson<ComponentManifest>(`${process.env.GHOST_UI_REGISTRY_URL}/components/${sanitized}.json`);
     } catch {
       // Fallback to local
     }
@@ -159,10 +155,7 @@ export async function getComponent(componentName: string): Promise<ComponentMani
 
   // 2. Fallback to default remote registry
   try {
-    const res = await fetchWithTimeout(`${DEFAULT_REGISTRY_URL}/components/${sanitized}.json`);
-    if (res.ok) {
-      return (await res.json()) as ComponentManifest;
-    }
+    return await fetchRegistryJson<ComponentManifest>(`${DEFAULT_REGISTRY_URL}/components/${sanitized}.json`);
   } catch {
     // Network or abort error
   }

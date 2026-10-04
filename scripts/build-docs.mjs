@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { spawnSync } from 'node:child_process';
-import { escape, gettingStarted, titleFor, code, note, existingTheme, stylingGuide, ghostIntegration, releaseNotes } from '../docs/content.mjs';
+import { escape, gettingStarted, titleFor, code, note, existingTheme, stylingGuide, ghostIntegration, releaseNotes, composableGuide } from '../docs/content.mjs';
 import { renderComponentPreview, componentCall, previewStates, hasMembership, vanillaCustomizationCss } from './component-preview.mjs';
 const repo = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(path.join(repo, 'packages/cli/package.json'));
@@ -30,14 +30,14 @@ for (const style of ['css','tailwind']) {
   if (style === 'css') write('assets/preview-css.css', `${theme}\n${styles}\n${vanillaCustomizationCss}`);
   else write('assets/tailwind-components.css', `${tailwindTheme()}\n${theme}\n${styles}`);
   for (const manifest of manifests) for (const scheme of ['light','dark']) for (const variant of ['default','custom']) for (const state of hasMembership(manifest.name) ? previewStates : ['visitor']) {
-    write(`previews/${manifest.name}-${style}-${scheme}-${variant}-${state}.html`, renderComponentPreview(manifest, { style, scheme, variant, state }));
+    write(`previews/${manifest.name}-${style}-${scheme}-${variant}-${state}.html`, renderComponentPreview(manifest, { style, scheme, variant, state, manifests }));
   }
 }
 const cli = path.join(path.dirname(require.resolve('@tailwindcss/cli/package.json')), 'dist/index.mjs');
 const compilation = spawnSync(process.execPath, [cli, '-i', './docs/tailwind.css', '-o', './docs/dist/assets/preview-tailwind.css', '--minify'], { cwd: repo, encoding:'utf8' });
 if (compilation.status !== 0) throw new Error(compilation.stderr || compilation.error?.message || 'Tailwind preview compilation failed');
 const navGroups = [
-  ['Start here', [['/','Getting started'], ['/guides/existing-theme/','Existing themes'], ['/guides/styling/','Styling'], ['/guides/ghost/','Ghost integration'], ['/releases/','Releases']]],
+  ['Start here', [['/','Getting started'], ['/guides/existing-theme/','Existing themes'], ['/guides/styling/','Styling'], ['/guides/composable/','Composition & playground'], ['/guides/ghost/','Ghost integration'], ['/releases/','Releases']]],
   ['Components', [['/components/','Overview'], ...manifests.map(item => [`/components/${item.name}/`,titleFor(item.name)])]]
 ];
 export function layout(title, body, current) {
@@ -49,6 +49,7 @@ write('index.html', layout('Getting started', gettingStarted(), '/'));
 for (const [route,title,content] of [
   ['guides/existing-theme','Existing themes',existingTheme()],
   ['guides/styling','Styling',stylingGuide()],
+  ['guides/composable','Composition & playground',composableGuide()],
   ['guides/ghost','Ghost integration',ghostIntegration()],
   ['releases','Releases',releaseNotes()]
 ]) write(`${route}/index.html`, layout(title, content, `/${route}/`));
@@ -57,11 +58,11 @@ const slotDescription = {
   class: 'Root element of this component.', buttonClass: 'All theme-owned buttons that render; not Ghost-owned UI.',
   cardClass: 'Nested cards, not the component’s root.', titleClass: 'Main component heading or author name.',
   gridClass: 'Grid holding nested cards.', descriptionClass: 'Description or excerpt, when available.',
-  contentClass: 'Internal content area.', inputClass: 'Newsletter email input.', formClass: 'Newsletter form.',
+  contentClass: 'Internal content area.', inputClass: 'Native input control.', formClass: 'Newsletter form.',
   avatarClass: 'Author avatar image or fallback.', imageClass: 'Post image, when available.',
   metaClass: 'Metadata row.', footerClass: 'Card footer.', innerClass: 'Inner layout container.',
   navClass: 'Navigation container(s).', socialClass: 'Social links container.', statusClass: 'Pagination page-count text.',
-  cardTitleClass: 'Heading inside a reading card.', labelClass: 'Previous/next direction label.', listClass: 'Tag or table-of-contents list.', linkClass: 'Individual tag or generated heading links.'
+  cardTitleClass: 'Heading inside a nested card.', labelClass: 'Direction label or field label.', listClass: 'Tag or table-of-contents list.', linkClass: 'Individual tag or generated heading links.', badgeClass: 'Nested archive badge.'
 };
 const readingNotes = {
   'related-posts': '<p>Use inside <code>{{#post}}</code>. Related posts share the primary tag; untagged posts fall back to recent posts. The current post is excluded, and no section renders if there are no results. Set <code>heading="More stories"</code> to change the section heading.</p>',
@@ -76,8 +77,12 @@ for (const manifest of manifests) {
   const demoNote = manifest.name === 'pricing-table' ? 'Demo tiers and prices. Your installed table uses the active public tiers configured in Ghost.' : 'Demo content, rendered from the actual component partial. Membership, search, and navigation run on your real Ghost publication.';
   const files = manifest.files.map(file => `<li><code>${escape(file.target)}</code></li>`).join('');
   const slots = Object.entries(manifest.styleSlots).map(([name,targets]) => `<tr><td><code>${name}</code></td><td>${slotDescription[name] || 'Internal element.'}<br><small>${escape(targets.join(', '))}</small></td></tr>`).join('');
+  const parameters = Object.entries(manifest.parameters || {}).map(([name, info]) => `<tr><td><code>${name}</code></td><td>${escape(info.description)}${info.options ? `<br>Options: ${info.options.map(value => `<code>${escape(value)}</code>`).join(', ')}` : ''}${info.default ? `<br>Default: <code>${escape(info.default)}</code>` : ''}</td></tr>`).join('');
+  const newFeature = Boolean(manifest.parameters);
+  const parameterDocs = parameters ? `<h2>Component options</h2><div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Behavior</th></tr></thead><tbody>${parameters}</tbody></table></div><p>Boolean flags use <code>disabled=true</code>, not quoted false strings. Unknown variants/sizes fall back to default. See <a href="/guides/composable/">composition and the local playground</a>.</p>` : '';
+  const dependencyDocs = manifest.dependencies?.length ? `<p>Missing dependencies are installed automatically: ${manifest.dependencies.map(name => `<a href="/components/${name}/">${name}</a>`).join(', ')}. Existing dependency files are preserved, including with <code>add -y</code>. Add a dependency explicitly to deliberately replace it.</p>` : '';
   const content = `<p class="eyebrow">Components / ${manifest.name}</p><h1>${title}</h1><p class="lead">${escape(manifest.description)}</p><section class="preview-box" data-component-preview="${manifest.name}" aria-label="${title} interactive preview"><div class="preview-controls">${controls}</div><iframe class="preview-frame" title="${title} preview" src="/previews/${manifest.name}-css-light-default-visitor.html" sandbox="allow-scripts"></iframe><div class="preview-notice">${demoNote}<p class="preview-status" role="status"></p></div></section>
-  <h2>Install</h2>${code(`npx ghostcn@latest add ${manifest.name}`)}<h2>Use in a template</h2>${code(componentCall(manifest), 'handlebars')}${manifest.name === 'pagination' ? note('The native <code>{{pagination}}</code> helper uses this partial automatically. Call it directly as shown above to pass styling parameters.') : ''}
+  <h2>Install</h2>${newFeature ? note('Unreleased development feature. Use the built checkout’s CLI, not an older npm release. See the composition guide for local commands.') : ''}${code(`${newFeature ? 'ghostcn' : 'npx ghostcn@latest'} add ${manifest.name}`)}${dependencyDocs}<h2>Use in a template</h2>${code(componentCall(manifest), 'handlebars')}${manifest.name === 'pagination' ? note('The native <code>{{pagination}}</code> helper uses this partial automatically. Call it directly as shown above to pass styling parameters.') : ''}${parameterDocs}
   ${readingNotes[manifest.name] || ''}<h2>Customize each instance</h2><p>Parameters are optional and keep the semantic identity classes and default styles. Original components support them from 1.3.0; reading components are new in 1.4.0.</p><h3>Tailwind</h3>${code(componentCall(manifest,true,'tailwind'),'handlebars')}<h3>Vanilla CSS</h3>${code(componentCall(manifest,true,'css'),'handlebars')}${code(vanillaCustomizationCss.trim(),'css')}
   <h2>Styling parameters</h2><div class="table-wrap"><table><thead><tr><th>Parameter</th><th>Target</th></tr></thead><tbody>${slots}</tbody></table></div><p>Parameters only affect elements that render for your current content and membership settings. <a href="/guides/styling/">Read the styling guide</a> for reuse, specificity, and upgrade boundaries.</p><h2>Installed files</h2><ul>${files}</ul><p><a href="https://github.com/Geekbits-Org/ghost-ui/blob/main/registry/components/${manifest.name}.json">View the registry source</a></p>`;
   write(`components/${manifest.name}/index.html`,layout(title,content,`/components/${manifest.name}/`));

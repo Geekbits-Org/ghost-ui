@@ -1,0 +1,55 @@
+{
+  "name": "author-list",
+  "type": "components:content",
+  "description": "Publication authors rendered with reusable author cards.",
+  "dependencies": [
+    "author-card"
+  ],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "heading": {
+      "description": "Optional section heading."
+    },
+    "emptyText": {
+      "description": "Optional message when no content is available; otherwise render nothing."
+    }
+  },
+  "files": [
+    {
+      "name": "author-list.hbs",
+      "type": "partial",
+      "target": "partials/components/author-list.hbs",
+      "content": "{{!-- Styling parameters: class, titleClass, gridClass --}}\n{{#with this as |ghostcnStyles|}}\n{{#get \"authors\" limit=\"100\" include=\"count.posts\"}}\n{{#if authors}}<section class=\"ghcn-author-list{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" aria-label=\"Authors\">\n  {{#if ghostcnStyles.heading}}<h2 class=\"ghcn-author-list__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{ghostcnStyles.heading}}</h2>{{/if}}\n  <div class=\"ghcn-author-list__grid{{#if ghostcnStyles.gridClass}} {{ghostcnStyles.gridClass}}{{/if}}\">{{#foreach authors}}\n    {{> \"components/author-card\" class=ghostcnStyles.cardClass titleClass=ghostcnStyles.cardTitleClass avatarClass=ghostcnStyles.avatarClass descriptionClass=ghostcnStyles.descriptionClass}}\n  {{/foreach}}</div>\n</section>{{else}}{{#if ghostcnStyles.emptyText}}<section class=\"ghcn-author-list{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\"><p class=\"ghcn-author-list__empty\">{{ghostcnStyles.emptyText}}</p></section>{{/if}}{{/if}}\n{{/get}}\n{{/with}}"
+    },
+    {
+      "name": "author-list.css",
+      "type": "style",
+      "target": "assets/css/components/author-list.css",
+      "content": ".ghcn-author-list { font-size: 16px; color: var(--foreground); margin-block: 2em; }\n.ghcn-author-list__title { font-size: 1.5em; line-height: 1.25; margin: 0 0 1em; }\n.ghcn-author-list__grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5em; }\n.ghcn-author-list__grid > * { min-width: 0; }\n.ghcn-author-list__empty { color: var(--muted-foreground); }\n@media(max-width:900px) { .ghcn-author-list__grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }\n@media(max-width:620px) { .ghcn-author-list__grid { grid-template-columns: 1fr; } }"
+    }
+  ],
+  "styleSlots": {
+    "class": [
+      ".ghcn-author-list"
+    ],
+    "titleClass": [
+      ".ghcn-author-list__title"
+    ],
+    "gridClass": [
+      ".ghcn-author-list__grid"
+    ],
+    "cardClass": [
+      ".gh-author-card"
+    ],
+    "cardTitleClass": [
+      ".gh-author-name"
+    ],
+    "avatarClass": [
+      ".gh-author-avatar",
+      ".gh-author-avatar-fallback"
+    ],
+    "descriptionClass": [
+      ".gh-author-bio"
+    ]
+  }
+}

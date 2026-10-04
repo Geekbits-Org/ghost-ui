@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased — composable components
+
+- Fixed variadic `add` arguments so every requested component is processed, with deduplication and an accurate installed/preserved/failed summary. Reinstall prompts pause the spinner, explain Enter/N/Y/Ctrl+C, and apply one decision per component. Added safe noninteractive `--skip-existing` behavior.
+- Registry request deadlines now cover JSON response bodies as well as headers; install and read-only diff share the bounded request helper.
+- Pricing text inherits each card's local foreground, with granular title/description/price/benefit slots. Corrected custom surface examples to pair background/text colors in Light/Dark/Auto, and added browser contrast regressions.
+
+- Added `button`, `card`, `badge`, `input`, and `alert`, with universal root classes, documented variants/sizes and native accessible states. Cards accept trusted nested Handlebars template blocks or escaped text.
+- Added `post-grid`, `author-list`, `tag-grid`, and `archive-header`, reusing existing cards and new primitives with forwarded per-instance styling slots.
+- Added dependency-first installation with whole-graph preflight, cycle/collision checks and custom partial-alias rewriting shared with diff. Existing dependencies remain untouched even when overwriting the requested root block.
+- Added read-only loopback `ghostcn playground [--port 4190]` using installed files, supported-parameter controls, synthetic membership previews, usage snippets and change-triggered reload. It shares its demo renderer with documentation, not production Ghost rendering.
+- Added primitive, dependency, playground HTTP/UI and real-Ghost regression coverage. Development only: no npm publication or documentation deployment is part of this milestone.
+
 ## 1.4.0 — 2026-10-02 (prepared; not published by this workflow)
 
 - Added `related-posts`, `post-navigation`, `table-of-contents`, and `tag-list`, with universal root classes and documented internal styling slots for Tailwind and vanilla CSS.

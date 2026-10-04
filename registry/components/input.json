@@ -1,0 +1,94 @@
+{
+  "name": "input",
+  "type": "components:ui",
+  "description": "An accessible labeled native input, with optional hint and invalid/disabled states.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Visual treatment; unknown values fall back to default.",
+      "options": [
+        "default",
+        "filled"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "description": "Component scale; unknown values fall back to default.",
+      "options": [
+        "sm",
+        "default",
+        "lg"
+      ],
+      "default": "default"
+    },
+    "label": {
+      "description": "Visible accessible label.",
+      "default": "Input"
+    },
+    "type": {
+      "description": "Native input type.",
+      "options": [
+        "text",
+        "email",
+        "search",
+        "url",
+        "number",
+        "password"
+      ],
+      "default": "text"
+    },
+    "name": {
+      "description": "Form field name."
+    },
+    "value": {
+      "description": "Initial field value."
+    },
+    "placeholder": {
+      "description": "Optional placeholder (not a label)."
+    },
+    "hint": {
+      "description": "Optional help text."
+    },
+    "hintId": {
+      "description": "Unique ID for help text; provide with hint for aria-describedby."
+    },
+    "invalid": {
+      "description": "Boolean invalid state."
+    },
+    "required": {
+      "description": "Boolean required state."
+    },
+    "disabled": {
+      "description": "Boolean disabled state."
+    }
+  },
+  "files": [
+    {
+      "name": "input.hbs",
+      "type": "partial",
+      "target": "partials/components/input.hbs",
+      "content": "{{!-- Styling parameters: class, labelClass, inputClass, descriptionClass --}}\n{{#with this as |ghostcnStyles|}}\n<div class=\"ghcn-ui-field{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-variant=\"{{#match variant \"filled\"}}filled{{else}}default{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\">\n  <label class=\"ghcn-ui-field__label\"><span class=\"ghcn-ui-field__label-text{{#if ghostcnStyles.labelClass}} {{ghostcnStyles.labelClass}}{{/if}}\">{{#if label}}{{label}}{{else}}Input{{/if}}{{#if required}} (required){{/if}}</span>\n    <input class=\"ghcn-ui-field__input{{#if ghostcnStyles.inputClass}} {{ghostcnStyles.inputClass}}{{/if}}\" type=\"{{#match type \"email\"}}email{{else}}{{#match type \"search\"}}search{{else}}{{#match type \"url\"}}url{{else}}{{#match type \"number\"}}number{{else}}{{#match type \"password\"}}password{{else}}text{{/match}}{{/match}}{{/match}}{{/match}}{{/match}}\" {{#if name}}name=\"{{name}}\"{{/if}} value=\"{{value}}\" placeholder=\"{{placeholder}}\" {{#if required}}required{{/if}} {{#if disabled}}disabled{{/if}} {{#if invalid}}aria-invalid=\"true\"{{/if}} {{#if hintId}}aria-describedby=\"{{hintId}}\"{{/if}} />\n  </label>\n  {{#if hint}}<p class=\"ghcn-ui-field__hint{{#if ghostcnStyles.descriptionClass}} {{ghostcnStyles.descriptionClass}}{{/if}}\" {{#if hintId}}id=\"{{hintId}}\"{{/if}}>{{hint}}</p>{{/if}}\n</div>\n{{/with}}"
+    },
+    {
+      "name": "input.css",
+      "type": "style",
+      "target": "assets/css/components/input.css",
+      "content": ".ghcn-ui-field { box-sizing: border-box; font-family: inherit; font-size: 16px; line-height: 1.5; color: var(--foreground); }\n.ghcn-ui-field, .ghcn-ui-field * { box-sizing: border-box; }\n.ghcn-ui-field:where([data-size=\"sm\"]) { font-size: 14px; }\n.ghcn-ui-field:where([data-size=\"lg\"]) { font-size: 18px; }\n.ghcn-ui-field:focus-visible, .ghcn-ui-field :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }\n.ghcn-ui-field { width: 100%; }\n.ghcn-ui-field__label { display: grid; gap: .375em; font-weight: 500; }\n.ghcn-ui-field__input { width: 100%; min-width: 0; min-height: 2.5em; padding: .5em .75em; border: 1px solid var(--input); border-radius: var(--radius); background: var(--background); color: var(--foreground); font: inherit; }\n:where(.ghcn-ui-field[data-variant=\"filled\"]) .ghcn-ui-field__input { background: var(--muted); }\n.ghcn-ui-field__input::placeholder { color: var(--muted-foreground); }\n.ghcn-ui-field__input[aria-invalid=\"true\"] { border-color: var(--destructive); }\n.ghcn-ui-field__input:disabled { opacity: .5; cursor: not-allowed; }\n.ghcn-ui-field__hint { color: var(--muted-foreground); font-size: .875em; margin: .5em 0 0; }\n"
+    }
+  ],
+  "styleSlots": {
+    "class": [
+      ".ghcn-ui-field"
+    ],
+    "labelClass": [
+      ".ghcn-ui-field__label-text"
+    ],
+    "inputClass": [
+      ".ghcn-ui-field__input"
+    ],
+    "descriptionClass": [
+      ".ghcn-ui-field__hint"
+    ]
+  }
+}

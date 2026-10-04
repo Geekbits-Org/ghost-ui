@@ -1,6 +1,31 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert';
-import { sanitizeComponentName, getRegistryIndex, getComponent } from '../utils/registry';
+import { sanitizeComponentName, getRegistryIndex, getComponent, fetchRegistryJson } from '../utils/registry';
+
+test('registry timeout stays active while a stalled JSON body is being read', async () => {
+  const original = globalThis.fetch;
+  let signal: AbortSignal;
+  globalThis.fetch = (async (_url, options) => {
+    signal = options!.signal!;
+    return { ok: true, json: () => new Promise((_resolve, reject) => {
+      signal.addEventListener('abort', () => reject(new Error('body timed out')), { once: true });
+    }) } as Response;
+  }) as typeof fetch;
+  try {
+    await assert.rejects(fetchRegistryJson('https://registry.example/index.json', 25), /body timed out/);
+    assert.ok(signal!.aborted);
+  } finally { globalThis.fetch = original; }
+});
+
+test('registry JSON helper rejects HTTP errors and invalid bodies', async () => {
+  const original = globalThis.fetch;
+  try {
+    globalThis.fetch = (async () => new Response('not found', { status: 404 })) as typeof fetch;
+    await assert.rejects(fetchRegistryJson('https://registry.example/index.json'), /HTTP 404/);
+    globalThis.fetch = (async () => new Response('not json')) as typeof fetch;
+    await assert.rejects(fetchRegistryJson('https://registry.example/index.json'), SyntaxError);
+  } finally { globalThis.fetch = original; }
+});
 
 describe('Ghost UI Registry Utils', () => {
   describe('sanitizeComponentName', () => {

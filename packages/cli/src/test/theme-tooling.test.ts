@@ -65,6 +65,12 @@ describe('theme diagnostics and packaging', () => {
     assert.equal(run(root, 'pack').status, 1);
     assert.ok(!fs.existsSync(path.join(root, 'dist/test-theme-1.0.0.zip')));
   });
+  test('doctor detects missing partial-block dependencies instead of accepting silent fallback markup', async () => {
+    const root = await theme('css');
+    fs.appendFileSync(path.join(root, 'index.hbs'), '\n{{#> "components/missing-card"}}Fallback content{{/components/missing-card}}');
+    assert.equal(run(root).status, 1);
+    assert.ok(run(root).stderr.includes('missing partial components/missing-card'));
+  });
   test('rejects config paths escaping the theme and symlinked runtime directories', async () => {
     const root = await theme('css');
     const configPath = path.join(root, 'components.json');

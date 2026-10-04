@@ -1,0 +1,183 @@
+{{!< default}}
+
+<div class="mx-auto w-full max-w-6xl space-y-16 px-4 py-12 sm:px-6">
+
+    {{> "components/archive-header"
+        eyebrow="Ghostcn showcase"
+        heading="One library. Your style."
+        description="A test page for all 23 components, styled at their call sites."
+        class="my-0"
+        titleClass="text-4xl font-bold tracking-tight md:text-6xl"
+        badgeClass="bg-purple-600 text-white"
+    }}
+
+    <section class="space-y-6" aria-label="Primitive components">
+        <h2 class="text-2xl font-bold">Buttons, badges and alerts</h2>
+        <div class="flex flex-wrap items-center gap-3">
+            {{> "components/button" text="Purple button" href="#showcase-reading" class="rounded-xl bg-purple-600 text-white hover:bg-purple-700"}}
+            {{> "components/button" text="Outline button" href="#showcase-membership" variant="outline" class="rounded-xl border-purple-600 text-purple-700 dark:text-purple-300"}}
+            {{> "components/button" text="Small button" href="#showcase-topics" size="sm" class="rounded-xl bg-emerald-700 text-white hover:bg-emerald-800"}}
+            {{> "components/button" text="Disabled" disabled=true variant="secondary" class="rounded-xl"}}
+        </div>
+        <div class="flex flex-wrap gap-3">
+            {{> "components/badge" text="Featured" class="bg-purple-600 text-white"}}
+            {{> "components/badge" text="Secondary" variant="secondary"}}
+            {{> "components/badge" text="Outline" variant="outline" class="border-purple-600 text-purple-700 dark:text-purple-300"}}
+        </div>
+        {{> "components/alert"
+            heading="Customization without editing shared partials"
+            description="Each example uses class or a named styling slot. Change one instance without changing the others."
+            class="rounded-2xl border-purple-200 bg-purple-50 text-purple-950 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-50"
+            titleClass="font-bold text-inherit"
+            descriptionClass="text-inherit"
+        }}
+    </section>
+
+    <section class="space-y-6" aria-label="Cards and inputs">
+        <h2 class="text-2xl font-bold">Cards and inputs</h2>
+        <div class="grid gap-6 md:grid-cols-2">
+            {{#> "components/card"
+                heading="A composed purple card"
+                description="Custom content and another component inside a card."
+                class="rounded-2xl border-purple-200 bg-purple-50 p-8 text-purple-950 shadow-sm dark:border-purple-800 dark:bg-purple-950 dark:text-purple-50"
+                titleClass="text-2xl font-bold"
+                contentClass="space-y-6"
+                footer="This card's colors adapt to Light, Dark and Auto."
+            }}
+                <p>Put your own trusted template markup here.</p>
+                {{> "components/button" text="Explore the examples" href="#showcase-reading" variant="default" size="default" class="rounded-xl bg-purple-600 text-white hover:bg-purple-700"}}
+            {{/components/card}}
+
+            {{#> "components/card"
+                heading="Input states"
+                class="rounded-2xl bg-card p-8 text-card-foreground shadow-sm"
+                titleClass="text-2xl font-bold"
+                contentClass="space-y-6"
+            }}
+                {{> "components/input" label="Email address" type="email" name="showcase-email" placeholder="you@example.com" hint="Demo input only; this is not a signup form." hintId="showcase-email-hint" class="w-full" inputClass="rounded-xl border-purple-400 focus:border-purple-600"}}
+                {{> "components/input" label="Invalid example" invalid=true hint="An example validation message." hintId="showcase-invalid-hint" class="w-full" inputClass="rounded-xl"}}
+                {{> "components/input" label="Disabled example" disabled=true value="Unavailable" class="w-full" inputClass="rounded-xl"}}
+            {{/components/card}}
+        </div>
+    </section>
+
+    <section class="space-y-6" aria-label="Header preview">
+        <h2 class="text-2xl font-bold">Site header</h2>
+        {{!-- Intentional extra preview: default.hbs already renders the real header. --}}
+        {{> "components/site-header" class="rounded-2xl border border-border shadow-sm" innerClass="px-4" buttonClass="rounded-xl bg-purple-600 text-white hover:bg-purple-700"}}
+    </section>
+
+    <section class="space-y-6" aria-label="Featured posts">
+        <h2 class="text-2xl font-bold">Featured posts</h2>
+        {{> "components/featured-posts" class="w-full" titleClass="text-3xl font-bold" gridClass="gap-6" cardClass="rounded-2xl bg-card text-card-foreground shadow-sm"}}
+        <p class="text-sm text-muted-foreground">Mark posts as featured in Ghost Admin to populate this section.</p>
+    </section>
+
+    <section class="space-y-6" aria-label="Individual post cards">
+        <h2 class="text-2xl font-bold">Individual post cards</h2>
+        <div class="grid gap-6 md:grid-cols-3">
+            {{#get "posts" limit="3" include="authors,tags"}}
+                {{#foreach posts}}
+                    {{> "components/post-card" class="rounded-2xl bg-card text-card-foreground shadow-sm" imageClass="aspect-video object-cover" titleClass="text-xl font-bold"}}
+                {{else}}
+                    <p class="text-muted-foreground">Publish some posts to see these cards.</p>
+                {{/foreach}}
+            {{/get}}
+        </div>
+    </section>
+
+    <section class="space-y-6" aria-label="Composed post grid">
+        <h2 class="text-2xl font-bold">Post grid</h2>
+        {{> "components/post-grid"
+            posts=posts
+            heading=""
+            emptyText="Publish posts to populate the grid."
+            gridClass="col-span-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            cardClass="rounded-2xl bg-card text-card-foreground shadow-sm"
+            cardTitleClass="text-xl font-bold"
+        }}
+    </section>
+
+    <section id="showcase-topics" class="space-y-6">
+        {{> "components/tag-grid"
+            heading="Explore topics"
+            emptyText="Add public tags to your posts to populate this section."
+            titleClass="text-2xl font-bold"
+            gridClass="grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+            cardClass="rounded-2xl bg-card p-6 text-card-foreground shadow-sm"
+            cardTitleClass="text-xl font-bold"
+            buttonClass="rounded-xl bg-purple-600 text-white hover:bg-purple-700"
+        }}
+    </section>
+
+    <section class="space-y-6" aria-label="Author list">
+        {{> "components/author-list" heading="Meet the authors" emptyText="No authors are available yet." titleClass="text-2xl font-bold" gridClass="grid-cols-1 gap-6 md:grid-cols-2" cardClass="rounded-2xl bg-card p-6 text-card-foreground shadow-sm" avatarClass="rounded-xl"}}
+    </section>
+
+    <section id="showcase-reading" class="space-y-8">
+        <h2 class="text-2xl font-bold">Post-specific components</h2>
+        {{!-- A real public post supplies id, dates, tags, author and access context. --}}
+        {{#get "posts" filter="visibility:public" order="published_at asc" limit="1" include="authors,tags"}}
+            {{#foreach posts}}
+                {{> "components/post-header" class="my-0 w-full" titleClass="text-3xl font-bold md:text-5xl" imageClass="rounded-2xl"}}
+
+                {{> "components/tag-list" class="my-6" linkClass="border-purple-200 bg-purple-50 text-purple-950 dark:border-purple-800 dark:bg-purple-950 dark:text-purple-50"}}
+
+                <div class="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)]">
+                    {{> "components/table-of-contents" heading="Inside this demo" contentSelector="#showcase-article" class="my-0 h-fit rounded-2xl bg-card text-card-foreground" linkClass="text-purple-700 dark:text-purple-300"}}
+                    <article id="showcase-article" class="space-y-5 rounded-2xl border border-border bg-card p-6 text-card-foreground sm:p-8">
+                        <h2 class="text-2xl font-bold">Start with your story</h2>
+                        <p>{{excerpt words="45"}}</p>
+                        <h3 class="text-xl font-bold">Make it your own</h3>
+                        <p>These sample headings let you test table-of-contents links and keyboard focus without displaying a post's full content.</p>
+                        <h2 class="text-2xl font-bold">Keep building</h2>
+                        <p>Change the classes at each component call to try another style.</p>
+                        {{> "components/button" text="Read the actual post" href=url class="rounded-xl bg-purple-600 text-white hover:bg-purple-700"}}
+                    </article>
+                </div>
+
+                <h2 class="text-2xl font-bold">Single author card</h2>
+                {{#primary_author}}
+                    {{> "components/author-card" class="mx-auto max-w-2xl rounded-2xl bg-card p-6 text-card-foreground shadow-sm" avatarClass="rounded-xl" titleClass="text-xl font-bold"}}
+                {{/primary_author}}
+
+                <h2 class="text-2xl font-bold">Previous / next post</h2>
+                {{> "components/post-navigation" cardClass="rounded-2xl bg-card text-card-foreground shadow-sm" titleClass="text-lg font-bold" labelClass="text-purple-700 dark:text-purple-300"}}
+
+                {{> "components/related-posts" heading="Keep reading" titleClass="text-2xl font-bold" gridClass="gap-6" cardClass="rounded-2xl bg-card text-card-foreground shadow-sm" cardTitleClass="text-xl font-bold"}}
+
+                <h2 class="text-2xl font-bold">Membership call to action</h2>
+                {{> "components/member-cta" class="max-w-3xl rounded-2xl" buttonClass="rounded-xl bg-purple-600 text-white hover:bg-purple-700"}}
+            {{else}}
+                <p class="rounded-2xl border border-border p-6 text-muted-foreground">Publish at least one public post to see the post-specific examples.</p>
+            {{/foreach}}
+        {{/get}}
+    </section>
+
+    <section id="showcase-membership" class="space-y-8">
+        <h2 class="text-2xl font-bold">Newsletter and pricing</h2>
+        {{> "components/newsletter-form" title="Never miss a story" description="Real Ghost newsletter signup—not a demo submission." class="mx-auto max-w-3xl rounded-2xl shadow-sm" inputClass="rounded-xl" buttonClass="rounded-xl bg-purple-600 text-white hover:bg-purple-700"}}
+        {{> "components/pricing-table"
+            title="Choose your membership"
+            class="mx-auto max-w-5xl"
+            titleClass="text-3xl font-bold"
+            gridClass="gap-6"
+            cardClass="rounded-2xl border-purple-200 bg-purple-50 p-8 text-purple-950 shadow-sm dark:border-purple-800 dark:bg-purple-950 dark:text-purple-50"
+            cardTitleClass="text-xl font-bold"
+            buttonClass="rounded-xl bg-purple-600 text-white hover:bg-purple-700"
+        }}
+        <p class="text-sm text-muted-foreground">These sections respect Ghost's membership settings and your current login state. Prices come from your real public tiers.</p>
+    </section>
+
+    <section class="space-y-6" aria-label="Pagination">
+        <h2 class="text-2xl font-bold">Pagination</h2>
+        {{> "pagination" pagination class="my-0" buttonClass="rounded-xl bg-purple-600 text-white hover:bg-purple-700"}}
+    </section>
+
+    <section class="space-y-6" aria-label="Footer preview">
+        <h2 class="text-2xl font-bold">Site footer</h2>
+        {{!-- Intentional extra preview: default.hbs already renders the real footer. --}}
+        {{> "components/site-footer" class="rounded-2xl border border-border bg-card text-card-foreground" innerClass="gap-6 px-6"}}
+    </section>
+
+</div>

@@ -7,6 +7,7 @@ import { create } from './commands/create';
 import { doctor } from './commands/doctor';
 import { pack } from './commands/pack';
 import { diff } from './commands/diff';
+import { playground } from './commands/playground';
 import packageJson from '../package.json';
 
 function main() {
@@ -37,8 +38,9 @@ function main() {
   program
     .command('add')
     .description('Add one or more components to your Ghost theme')
-    .argument('[component]', 'The component to add (leave blank for interactive selection)')
+    .argument('[components...]', 'Component names to add (leave blank for interactive selection)')
     .option('-y, --yes', 'Overwrite existing files without prompting')
+    .option('--skip-existing', 'Keep existing files and install missing files without prompting')
     .action(add);
 
   program.command('doctor').description('Check theme configuration, local assets, partials and build readiness').action(doctor);
@@ -49,8 +51,13 @@ function main() {
     .option('--json', 'Return machine-readable comparisons with baseline, local and registry content')
     .action(diff);
   program.command('pack').description('Package built theme runtime files as a Ghost-uploadable ZIP').action(pack);
+  program.command('playground').description('Preview installed components locally with synthetic content (read-only)')
+    .option('--port <number>', 'Local loopback port (0 chooses an available port)', '4190').action(playground);
 
-  program.parse();
+  program.parseAsync().catch(error => {
+    console.error(error.message);
+    process.exitCode = 1;
+  });
 }
 
 main();

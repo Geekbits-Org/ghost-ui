@@ -1,0 +1,54 @@
+{
+  "name": "post-grid",
+  "type": "components:content",
+  "description": "A responsive grid using post-card; pass posts from a loop, archive or get query.",
+  "dependencies": [
+    "post-card"
+  ],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "heading": {
+      "description": "Optional section heading."
+    },
+    "emptyText": {
+      "description": "Optional message when no content is available; otherwise render nothing."
+    }
+  },
+  "files": [
+    {
+      "name": "post-grid.hbs",
+      "type": "partial",
+      "target": "partials/components/post-grid.hbs",
+      "content": "{{!-- Styling parameters: class, titleClass, gridClass --}}\n{{#with this as |ghostcnStyles|}}\n{{#if posts}}\n<section class=\"ghcn-post-grid{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" aria-label=\"Posts\">\n  {{#if heading}}<h2 class=\"ghcn-post-grid__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{heading}}</h2>{{/if}}\n  <div class=\"ghcn-post-grid__grid{{#if ghostcnStyles.gridClass}} {{ghostcnStyles.gridClass}}{{/if}}\">{{#foreach posts}}\n    {{> \"components/post-card\" class=ghostcnStyles.cardClass titleClass=ghostcnStyles.cardTitleClass imageClass=ghostcnStyles.imageClass descriptionClass=ghostcnStyles.descriptionClass}}\n  {{/foreach}}</div>\n</section>\n{{else}}{{#if emptyText}}<section class=\"ghcn-post-grid{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\"><p class=\"ghcn-post-grid__empty\">{{emptyText}}</p></section>{{/if}}{{/if}}\n{{/with}}"
+    },
+    {
+      "name": "post-grid.css",
+      "type": "style",
+      "target": "assets/css/components/post-grid.css",
+      "content": ".ghcn-post-grid { font-size: 16px; color: var(--foreground); margin-block: 2em; }\n.ghcn-post-grid__title { font-size: 1.5em; line-height: 1.25; margin: 0 0 1em; }\n.ghcn-post-grid__grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5em; }\n.ghcn-post-grid__grid > * { min-width: 0; }\n.ghcn-post-grid__empty { color: var(--muted-foreground); }\n@media(max-width:900px) { .ghcn-post-grid__grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }\n@media(max-width:620px) { .ghcn-post-grid__grid { grid-template-columns: 1fr; } }"
+    }
+  ],
+  "styleSlots": {
+    "class": [
+      ".ghcn-post-grid"
+    ],
+    "titleClass": [
+      ".ghcn-post-grid__title"
+    ],
+    "gridClass": [
+      ".ghcn-post-grid__grid"
+    ],
+    "cardClass": [
+      ".gh-post-card"
+    ],
+    "cardTitleClass": [
+      ".gh-post-card-title"
+    ],
+    "imageClass": [
+      ".gh-post-card-img"
+    ],
+    "descriptionClass": [
+      ".gh-post-card-excerpt"
+    ]
+  }
+}

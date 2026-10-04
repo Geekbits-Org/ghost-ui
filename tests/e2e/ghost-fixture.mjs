@@ -45,8 +45,32 @@ export async function createGhostFixture(ghostRoot) {
     post = post.replace('<div class="ghcn-article-content">', '{{> "components/table-of-contents" class="toc-test" linkClass="toc-first-link"}}\n        {{> "components/table-of-contents" class="toc-second" linkClass="toc-second-link"}}\n        <div class="ghcn-article-content">');
     post = post.replace('    {{comments}}', '    <div class="ghcn-article">{{> "components/tag-list"}}{{> "components/post-navigation"}}{{> "components/related-posts"}}</div>\n    {{comments}}');
     fs.writeFileSync(postPath, post);
-    fs.appendFileSync(path.join(themeRoot, 'index.hbs'), '\n{{> "components/pricing-table" class="pricing-test" cardClass="rounded-2xl p-8 custom-card" buttonClass="bg-purple-600 text-white custom-button"}}\n');
-    if (style === 'css') fs.appendFileSync(path.join(themeRoot, 'assets/css/source.css'), '\n.pricing-test .custom-card { padding: 2rem; border-radius: 1rem; }\n.pricing-test .custom-button { background: #9333ea; color: white; }\n');
+    fs.appendFileSync(path.join(themeRoot, 'index.hbs'), '\n{{> "components/pricing-table" class="pricing-test" cardClass="rounded-2xl bg-purple-50 text-purple-950 dark:bg-purple-950 dark:text-purple-50 p-8 custom-card" buttonClass="bg-purple-600 text-white custom-button"}}\n{{> "components/pricing-table" class="pricing-light-test" cardClass="bg-purple-50 text-purple-950 pale-card"}}\n{{> "components/pricing-table" class="pricing-dark-test" cardClass="bg-purple-950 text-purple-50 deep-card"}}\n');
+    fs.appendFileSync(path.join(themeRoot, 'index.hbs'), `
+<section class="primitive-test ghcn-container" aria-label="Component regression examples">
+  {{#> "components/card" heading="A composed card" description="Built with native partial blocks" class="p-8 custom-primitive-card"}}
+    {{> "components/button" text="Read story" href="/public-story/" variant="outline" size="sm" class="bg-purple-600 text-white custom-primitive-button"}}
+    {{> "components/badge" text="Featured" variant="secondary" class="custom-badge"}}
+  {{/components/card}}
+  {{> "components/button" text="Unavailable" href="/must-not-navigate/" disabled=true class="disabled-link"}}
+  {{> "components/button" text="Disabled action" disabled=true class="disabled-button"}}
+  {{> "components/input" label="Example email" type="email" required=true hint="Demo only" hintId="primitive-email-hint" class="custom-field" inputClass="rounded-xl"}}
+  {{> "components/alert" heading="Ready to build" description="Your theme, your components" variant="secondary" class="custom-alert"}}
+  {{> "components/post-grid" heading="Post grid" class="custom-post-grid" cardClass="rounded-xl custom-grid-card"}}
+  {{> "components/author-list" heading="Authors" class="custom-author-list" cardClass="custom-author-card"}}
+  {{> "components/tag-grid" heading="Topics" class="custom-tag-grid" cardClass="custom-tag-card" buttonClass="custom-tag-button"}}
+  {{> "components/archive-header" heading="Archive preview" eyebrow="Topic" description="Independent stories" class="custom-archive-header" badgeClass="custom-archive-badge"}}
+</section>
+`);
+    if (style === 'css') fs.appendFileSync(path.join(themeRoot, 'assets/css/source.css'), `
+.pricing-test .custom-card { padding: 2rem; border-radius: 1rem; background: #faf5ff; color: #3b0764; }
+.pricing-test .custom-button { background: #9333ea; color: white; }
+.dark-mode .pricing-test .custom-card { background: #3b0764; color: #faf5ff; }
+@media (prefers-color-scheme: dark) { .auto-color .pricing-test .custom-card { background: #3b0764; color: #faf5ff; } }
+.pricing-light-test .pale-card { background: #faf5ff; color: #3b0764; }
+.pricing-dark-test .deep-card { background: #3b0764; color: #faf5ff; }
+`);
+    if (style === 'css') fs.appendFileSync(path.join(themeRoot, 'assets/css/source.css'), '\n.primitive-test .custom-primitive-card { padding: 2rem; }\n.primitive-test .custom-primitive-button { background: #9333ea; color: white; }\n');
     if (style === 'tailwind') {
       fs.mkdirSync(path.join(themeRoot, 'node_modules'));
       fs.symlinkSync(path.dirname(cli.resolve('tailwindcss/package.json')), path.join(themeRoot, 'node_modules/tailwindcss'), 'junction');

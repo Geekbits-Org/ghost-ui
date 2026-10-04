@@ -41,6 +41,8 @@ for(const entry of index){
   const html=fs.readFileSync(path.join(root,`components/${entry.name}/index.html`),'utf8');
   const component=JSON.parse(fs.readFileSync(path.join(repo,`registry/components/${entry.name}.json`),'utf8'));
   for(const slot of Object.keys(component.styleSlots))assert.ok(html.includes(`<code>${slot}</code>`),`${entry.name}.${slot} documentation`);
+  for(const parameter of Object.keys(component.parameters || {}))assert.ok(html.includes(`<code>${parameter}</code>`),`${entry.name}.${parameter} option documentation`);
+  for(const dependency of component.dependencies || [])assert.ok(html.includes(`/components/${dependency}/`),`${entry.name}.${dependency} dependency documentation`);
   for(const style of ['css','tailwind'])for(const scheme of ['light','dark'])for(const variant of ['default','custom'])for(const state of hasMembership(entry.name)?previewStates:['visitor']) {
     assert.ok(fs.existsSync(path.join(root,`previews/${entry.name}-${style}-${scheme}-${variant}-${state}.html`)),`${entry.name} preview combination`);
   }
