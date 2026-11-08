@@ -61,6 +61,7 @@ export async function init(options: InitOptions = {}) {
           message: 'Which base color palette would you like to use?',
           choices: [
             { title: 'Zinc', value: 'zinc', description: 'Modern neutral with cool undertones' },
+            { title: 'Doks', value: 'doks', description: 'Warm editorial surfaces in light and dark' },
             { title: 'Slate', value: 'slate', description: 'Cool gray with subtle blue tones' },
             { title: 'Stone', value: 'stone', description: 'Warm, earthy neutral' },
             { title: 'Gray', value: 'gray', description: 'Clean, balanced neutral gray' },
@@ -84,7 +85,8 @@ export async function init(options: InitOptions = {}) {
             { title: 'Emerald', value: 'emerald', description: 'Lush natural green' },
             { title: 'Rose', value: 'rose', description: 'Warm crimson rose' },
             { title: 'Orange', value: 'orange', description: 'Energetic warm orange' },
-            { title: 'Zinc / Monochrome', value: 'zinc', description: 'Minimalist black/white' }
+            { title: 'Zinc / Monochrome', value: 'zinc', description: 'Minimalist black/white' },
+            { title: 'Doks / Monochrome', value: 'doks', description: 'Neutral controls with an inverted dark palette' }
           ],
           initial: 0
         },
@@ -98,7 +100,8 @@ export async function init(options: InitOptions = {}) {
             { title: 'Large (0.75rem)', value: '0.75rem' },
             { title: 'Extra Large (1.0rem)', value: '1rem' },
             { title: 'None (0px)', value: '0' },
-            { title: 'Full (Pill / 9999px)', value: '9999px' }
+            { title: 'Full (Pill / 9999px)', value: '9999px' },
+            { title: 'Doks (0.625rem)', value: '0.625rem' }
           ],
           initial: 0
         },

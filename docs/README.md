@@ -1,6 +1,11 @@
-# Ghostcn documentation website
+# Legacy Ghostcn documentation preview
 
-The editable source lives in this repository. The npm package contains only the CLI and component registry, not the documentation website.
+The canonical documentation is [ghostcn.geekbits.dev](https://ghostcn.geekbits.dev).
+Edit the public docs on the [Doks `main` branch](https://github.com/Geekbits-Org/doks/tree/main).
+
+This directory keeps the original static preview and its test fixtures. The npm
+package ships the CLI, component registry, theme and playground assets, and a short
+README. Neither documentation site is included.
 
 ```sh
 npm run docs:build

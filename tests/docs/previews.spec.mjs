@@ -21,9 +21,12 @@ for (const component of registry) test(`${component.name}: documentation control
       expect(await frame.locator('html').evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
       if (component.name === 'table-of-contents') {
         await expect(frame.locator('.demo-link')).toHaveCount(3);
+        await expect(frame.locator('.demo-link').first()).toHaveAttribute('aria-current', 'location');
         await frame.locator('.demo-link').nth(1).focus();
         await frame.locator('.demo-link').nth(1).press('Enter');
         await expect(frame.locator('.ghcn-article-content h3')).toBeFocused();
+        await expect(frame.locator('.demo-link[aria-current="location"]')).toHaveCount(1);
+        await expect(frame.locator('.demo-link').nth(1)).toHaveAttribute('aria-current', 'location');
       }
     }
     const copy = page.locator('[data-copy]').first();

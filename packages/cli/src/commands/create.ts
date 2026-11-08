@@ -22,9 +22,9 @@ export interface CreateOptions {
 export async function create(themeNameArgument?: string, options: CreateOptions = {}) {
   let themeName = themeNameArgument || '';
   let style: 'tailwind' | 'css' = 'tailwind';
-  let baseColor: BaseColor = 'zinc';
-  let accentColor: AccentColor = 'ghost';
-  let radius: Radius = '0.5rem';
+  let baseColor: BaseColor = 'doks';
+  let accentColor: AccentColor = 'doks';
+  let radius: Radius = '0.625rem';
   let colorScheme: ColorScheme = 'Auto';
   let packageManager: PackageManager = 'npm';
   let authorName = 'Theme Author';
@@ -36,9 +36,9 @@ export async function create(themeNameArgument?: string, options: CreateOptions 
     const response = await prompts([
       ...(!themeName ? [{ type: 'text' as const, name: 'themeName', message: 'What should the theme be called?', initial: 'my-ghost-theme' }] : []),
       { type: 'select', name: 'style', message: 'Which styling system?', choices: [{ title: 'Tailwind CSS', value: 'tailwind' }, { title: 'Vanilla CSS', value: 'css' }], initial: 0 },
-      { type: 'select', name: 'baseColor', message: 'Choose a base palette', choices: ['zinc', 'slate', 'stone', 'gray', 'neutral'].map(value => ({ title: value[0].toUpperCase() + value.slice(1), value })), initial: 0 },
-      { type: 'select', name: 'accentColor', message: 'Choose an accent color', choices: ['ghost', 'indigo', 'violet', 'blue', 'emerald', 'rose', 'orange', 'zinc'].map(value => ({ title: value === 'ghost' ? 'Ghost accent (Recommended)' : value[0].toUpperCase() + value.slice(1), value })), initial: 0 },
-      { type: 'select', name: 'radius', message: 'Choose a border radius', choices: [{ title: 'Medium', value: '0.5rem' }, { title: 'Small', value: '0.25rem' }, { title: 'Large', value: '0.75rem' }, { title: 'Extra large', value: '1rem' }, { title: 'None', value: '0' }, { title: 'Pill', value: '9999px' }], initial: 0 },
+      { type: 'select', name: 'baseColor', message: 'Choose a base palette', choices: [{ title: 'Doks (Recommended)', value: 'doks', description: 'Warm editorial surfaces in light and dark' }, ...['zinc', 'slate', 'stone', 'gray', 'neutral'].map(value => ({ title: value[0].toUpperCase() + value.slice(1), value }))], initial: 0 },
+      { type: 'select', name: 'accentColor', message: 'Choose an accent color', choices: [{ title: 'Doks / Monochrome', value: 'doks' }, { title: 'Ghost publication accent', value: 'ghost' }, ...['indigo', 'violet', 'blue', 'emerald', 'rose', 'orange', 'zinc'].map(value => ({ title: value[0].toUpperCase() + value.slice(1), value }))], initial: 0 },
+      { type: 'select', name: 'radius', message: 'Choose a border radius', choices: [{ title: 'Doks (10px)', value: '0.625rem' }, { title: 'Medium', value: '0.5rem' }, { title: 'Small', value: '0.25rem' }, { title: 'Large', value: '0.75rem' }, { title: 'Extra large', value: '1rem' }, { title: 'None', value: '0' }, { title: 'Pill', value: '9999px' }], initial: 0 },
       { type: 'select', name: 'colorScheme', message: 'Choose the initial color scheme', choices: ['Auto', 'Light', 'Dark'].map(value => ({ title: value, value })), initial: 0 },
       { type: 'multiselect', name: 'optionalComponents', message: 'Add optional starter components', choices: [{ title: 'Newsletter form', value: 'newsletter-form', selected: true }, { title: 'Author card', value: 'author-card', selected: true }, { title: 'Pricing table', value: 'pricing-table', selected: false }], hint: '- Space to select. Return to submit' },
       { type: 'select', name: 'packageManager', message: 'Choose a package manager', choices: ['npm', 'pnpm', 'yarn', 'bun'].map(value => ({ title: value, value })), initial: 0 },

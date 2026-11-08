@@ -25,7 +25,7 @@ fs.cpSync(path.join(docsRoot, 'assets'), path.join(out, 'assets'), { recursive: 
 for (const manifest of manifests) for (const file of manifest.files.filter(file => file.type === 'js')) write(`assets/${file.name}`, file.content);
 write('assets/preview-shell.css', ':root{--ghost-accent-color:#e46735}body{margin:0;background:var(--background);color:var(--foreground);font:16px/1.5 ui-sans-serif,system-ui,sans-serif}.preview-shell{padding:24px;overflow-wrap:anywhere}.preview-empty{padding:32px;border:1px dashed var(--border);border-radius:8px;text-align:center;color:var(--muted-foreground)}#preview-feedback{font-size:14px;margin:12px 0 0;color:var(--muted-foreground)}#preview-feedback:empty{display:none}');
 for (const style of ['css','tailwind']) {
-  const theme = generateThemeCss({ style, baseColor:'zinc', accentColor:'ghost', radius:'0.5rem' });
+  const theme = generateThemeCss({ style, baseColor:'doks', accentColor:'doks', radius:'0.625rem' });
   const styles = manifests.flatMap(manifest => manifest.files.filter(file => file.type === 'style').map(file => componentCss(file.content, style))).join('\n');
   if (style === 'css') write('assets/preview-css.css', `${theme}\n${styles}\n${vanillaCustomizationCss}`);
   else write('assets/tailwind-components.css', `${tailwindTheme()}\n${theme}\n${styles}`);

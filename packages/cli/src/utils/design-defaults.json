@@ -1,0 +1,17 @@
+{
+  "section-space": "clamp(24px, 4vw, 48px)",
+  "section-gap": "20px",
+  "grid-gap": "16px",
+  "panel-padding": "clamp(16px, 3vw, 24px)",
+  "panel-radius": "min(var(--radius, 8px), 24px)",
+  "title-display": "clamp(32px, 5vw, 56px)",
+  "title-section": "clamp(24px, 3vw, 32px)",
+  "title-card": "20px",
+  "text-body": "16px",
+  "text-small": "14px",
+  "text-meta": "13px",
+  "control-height": "40px",
+  "control-padding": "8px 14px",
+  "control-gap": "8px",
+  "control-radius": "var(--radius, 8px)"
+}

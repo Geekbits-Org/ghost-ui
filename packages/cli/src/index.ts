@@ -14,7 +14,8 @@ function main() {
   const program = new Command()
     .name('ghostcn')
     .description('The shadcn/ui for Ghost CMS themes')
-    .version(packageJson.version || '1.0.0');
+    .version(packageJson.version || '1.0.0')
+    .addHelpText('after', `\nDocumentation: ${packageJson.homepage}`);
 
   program
     .command('create')

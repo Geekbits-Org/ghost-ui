@@ -33,7 +33,8 @@ export function componentCall(manifest, customized = false, style = 'tailwind') 
 export function renderComponentPreview(manifest, { style = 'css', scheme = 'light', variant = 'default', state = 'visitor', manifests = [manifest] } = {}) {
   const partials = Object.fromEntries(manifests.map(item => [`components/${item.name}`, item.files.find(file => file.type === 'partial').content]));
   if (manifest.name === 'pagination') partials.pagination = partials['components/pagination'];
-  const context = { ...previewDemoContext, ...(demoParameters[manifest.name] || {}) };
+  const base = ['pricing-table', 'newsletter-form'].includes(manifest.name) ? {} : previewDemoContext;
+  const context = { ...base, ...(demoParameters[manifest.name] || {}) };
   if (manifest.name === 'post-card') context.posts = [previewDemoContext.posts[0]];
   let html = renderPreviewTemplate(partials, componentCall(manifest, variant === 'custom', style), { state, context });
   if (manifest.name === 'table-of-contents') html += '<article class="ghcn-article-content"><h2>Start with your story</h2><p>Demo article content. The table of contents uses your actual article headings.</p><h3>Make room for readers</h3><p>Subheadings preserve the reading hierarchy.</p><h2>Keep it yours</h2><p>Change each component from its call site.</p></article><script defer src="/assets/table-of-contents.js"></script>';

@@ -1,6 +1,19 @@
 # Changelog
 
-## Unreleased — composable components
+## 1.5.0 — 2026-11-08
+
+- New themes default to the Doks palette, monochrome controls, and 10px radius. Other palette and accent choices remain available.
+- Components share a type scale, spacing, surfaces, and control dimensions in vanilla CSS and Tailwind. Featured stories use the same image-and-content treatment as post cards, with a larger lead story.
+- The table of contents uses a quiet reading rail, tracks the active heading, and supports an opt-in sticky sidebar on desktop.
+- Membership tiers share a compact layout with a clear primary action, a quieter yearly option, and aligned benefits and prices.
+- Updated components include fallbacks for older theme token files. Review `ghostcn diff` before replacing any copied files; existing themes are not restyled automatically.
+
+## 1.4.1
+
+- Point the npm homepage, CLI help, and generated theme README to [ghostcn.geekbits.dev](https://ghostcn.geekbits.dev).
+- Ship a short npm quick-start README that links to the hosted guides. The CLI, component registry, and runtime assets are still bundled; the docs site is not.
+
+## 1.4.0 — 2026-10-04
 
 - Fixed variadic `add` arguments so every requested component is processed, with deduplication and an accurate installed/preserved/failed summary. Reinstall prompts pause the spinner, explain Enter/N/Y/Ctrl+C, and apply one decision per component. Added safe noninteractive `--skip-existing` behavior.
 - Registry request deadlines now cover JSON response bodies as well as headers; install and read-only diff share the bounded request helper.
@@ -10,9 +23,9 @@
 - Added `post-grid`, `author-list`, `tag-grid`, and `archive-header`, reusing existing cards and new primitives with forwarded per-instance styling slots.
 - Added dependency-first installation with whole-graph preflight, cycle/collision checks and custom partial-alias rewriting shared with diff. Existing dependencies remain untouched even when overwriting the requested root block.
 - Added read-only loopback `ghostcn playground [--port 4190]` using installed files, supported-parameter controls, synthetic membership previews, usage snippets and change-triggered reload. It shares its demo renderer with documentation, not production Ghost rendering.
-- Added primitive, dependency, playground HTTP/UI and real-Ghost regression coverage. Development only: no npm publication or documentation deployment is part of this milestone.
+- Added primitive, dependency, playground HTTP/UI and real-Ghost regression coverage.
 
-## 1.4.0 — 2026-10-02 (prepared; not published by this workflow)
+### Reading components, safe diffs, and documentation
 
 - Added `related-posts`, `post-navigation`, `table-of-contents`, and `tag-list`, with universal root classes and documented internal styling slots for Tailwind and vanilla CSS.
 - Reading components exclude the current story, hide internal tags, omit unavailable neighbors and empty results, and support repeated differently styled instances.
@@ -26,7 +39,7 @@
 
 Updating the CLI does not replace existing component files. Commit your theme and run `ghostcn diff`; manually merge selected changes. Legacy installations without `.ghostcn/installed.json` are reported as untracked. Keep the baseline file with your theme. `add -y` remains an intentional overwrite, not a conflict-resolving update.
 
-## 1.3.0 — 2026-10-01
+## 1.3.0 — prepared in Git; included in 1.4.0 on npm
 
 - All 10 components accept per-instance root `class`, with documented slots for internal cards, grids, titles, content, inputs and theme-owned buttons where applicable.
 - Styling parameters remain bound to the caller through Ghost `get`, `foreach` and author contexts. Multiple differently styled instances remain independent; class values are HTML-escaped.

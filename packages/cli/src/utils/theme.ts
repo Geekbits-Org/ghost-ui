@@ -1,8 +1,9 @@
 import { componentCss } from './styles';
+import designDefaults from './design-defaults.json';
 
-export type BaseColor = 'zinc' | 'slate' | 'stone' | 'gray' | 'neutral';
-export type AccentColor = 'ghost' | 'zinc' | 'indigo' | 'violet' | 'blue' | 'emerald' | 'rose' | 'orange';
-export type Radius = '0' | '0.25rem' | '0.5rem' | '0.75rem' | '1rem' | '9999px';
+export type BaseColor = 'doks' | 'zinc' | 'slate' | 'stone' | 'gray' | 'neutral';
+export type AccentColor = 'doks' | 'ghost' | 'zinc' | 'indigo' | 'violet' | 'blue' | 'emerald' | 'rose' | 'orange';
+export type Radius = '0' | '0.25rem' | '0.5rem' | '0.625rem' | '0.75rem' | '1rem' | '9999px';
 
 export interface ThemeConfig {
   style: 'tailwind' | 'css';
@@ -32,6 +33,46 @@ interface ColorTokens {
 }
 
 export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorTokens }> = {
+  doks: {
+    light: {
+      background: '#f6f4f0',
+      foreground: '#0a0a0a',
+      card: '#ffffff',
+      cardForeground: '#0a0a0a',
+      popover: '#ffffff',
+      popoverForeground: '#0a0a0a',
+      secondary: '#f5f5f5',
+      secondaryForeground: '#171717',
+      muted: '#f5f5f5',
+      mutedForeground: '#68645f',
+      accent: '#f5f5f5',
+      accentForeground: '#171717',
+      destructive: '#b91c1c',
+      destructiveForeground: '#ffffff',
+      border: '#e5e5e5',
+      input: '#aaa6a0',
+      ring: '#68645f'
+    },
+    dark: {
+      background: '#171614',
+      foreground: '#fafafa',
+      card: '#22211e',
+      cardForeground: '#fafafa',
+      popover: '#22211e',
+      popoverForeground: '#fafafa',
+      secondary: '#333333',
+      secondaryForeground: '#fafafa',
+      muted: '#333333',
+      mutedForeground: '#b4afa8',
+      accent: '#333333',
+      accentForeground: '#fafafa',
+      destructive: '#fca5a5',
+      destructiveForeground: '#450a0a',
+      border: '#393835',
+      input: '#77736d',
+      ring: '#b4afa8'
+    }
+  },
   zinc: {
     light: {
       background: '#ffffff',
@@ -238,6 +279,10 @@ export const ACCENT_COLORS: Record<
   AccentColor,
   { light: { primary: string; primaryForeground: string; ring?: string }; dark: { primary: string; primaryForeground: string; ring?: string } }
 > = {
+  doks: {
+    light: { primary: '#171717', primaryForeground: '#fafafa' },
+    dark: { primary: '#ededed', primaryForeground: '#171717' }
+  },
   ghost: {
     light: {
       primary: 'var(--ghost-accent-color, #18181b)',
@@ -333,6 +378,7 @@ export function generateThemeCss(config: ThemeConfig): string {
   --input: ${base.light.input};
   --ring: ${accent.light.ring || base.light.ring};
   --radius: ${radius};
+${Object.entries(designDefaults).map(([name, value]) => `  --ghcn-${name}: ${value};`).join('\n')}
 
   /* Ghost Native Compatibility Fallbacks */
   --ghost-card-bg: var(--card);
@@ -381,17 +427,17 @@ export function generateThemeCss(config: ThemeConfig): string {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 40px;
+  gap: var(--ghcn-control-gap);
+  min-height: var(--ghcn-control-height);
   border: 1px solid transparent;
-  border-radius: var(--radius);
-  padding: 10px 16px;
+  border-radius: var(--ghcn-control-radius);
+  padding: var(--ghcn-control-padding);
   color: var(--primary-foreground);
   background: var(--primary);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--ghcn-text-small);
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.25;
   text-decoration: none;
   cursor: pointer;
   transition: opacity 150ms ease, background-color 150ms ease, border-color 150ms ease;
@@ -407,38 +453,41 @@ export function generateThemeCss(config: ThemeConfig): string {
 .ghcn-button--outline {
   border-color: var(--border);
   color: var(--foreground);
-  background: var(--background);
+  background: transparent;
 }
 .ghcn-button--ghost {
   color: var(--foreground);
   background: transparent;
 }
 .ghcn-icon-button {
-  width: 40px;
+  width: var(--ghcn-control-height);
   padding: 0;
 }
 .ghcn-input {
   box-sizing: border-box;
-  min-height: 40px;
+  min-height: var(--ghcn-control-height);
   width: 100%;
   border: 1px solid var(--input);
-  border-radius: var(--radius);
-  padding: 10px 14px;
+  border-radius: var(--ghcn-control-radius);
+  padding: var(--ghcn-control-padding);
   color: var(--foreground);
   background: var(--background);
   font: inherit;
-  font-size: 14px;
+  font-size: var(--ghcn-text-small);
+  line-height: 1.25;
 }
 .ghcn-badge {
   display: inline-flex;
   align-items: center;
   border-radius: 9999px;
-  padding: 4px 10px;
-  color: var(--primary-foreground);
-  background: var(--primary);
+  border: 1px solid var(--border);
+  padding: 3px 9px;
+  color: var(--secondary-foreground);
+  background: var(--secondary);
   font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
 }
 .ghcn-avatar {
   display: block;

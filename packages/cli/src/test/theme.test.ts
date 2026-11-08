@@ -50,7 +50,7 @@ describe('ghostcn Theming System', () => {
     });
 
     test('supports all base palettes', () => {
-      const palettes = ['zinc', 'slate', 'stone', 'gray', 'neutral'] as const;
+      const palettes = ['doks', 'zinc', 'slate', 'stone', 'gray', 'neutral'] as const;
       for (const palette of palettes) {
         const css = generateThemeCss({
           style: 'tailwind',
@@ -60,6 +60,19 @@ describe('ghostcn Theming System', () => {
         });
         const lightBg = BASE_PALETTES[palette].light.foreground;
         assert.ok(css.includes(`--foreground: ${lightBg};`));
+      }
+    });
+
+    test('shares Doks surfaces and component defaults across both styling systems', () => {
+      for (const style of ['css', 'tailwind'] as const) {
+        const css = generateThemeCss({ style, baseColor: 'doks', accentColor: 'doks', radius: '0.625rem' });
+        assert.ok(css.includes('--background: #f6f4f0;'));
+        assert.ok(css.includes('--background: #171614;'));
+        assert.ok(css.includes('--card: #22211e;'));
+        assert.ok(css.includes('--primary: #ededed;'));
+        assert.ok(css.includes('--radius: 0.625rem;'));
+        assert.ok(css.includes('--ghcn-grid-gap: 16px;'));
+        assert.ok(css.includes('--ghcn-control-height: 40px;'));
       }
     });
 
@@ -92,7 +105,7 @@ describe('ghostcn Theming System', () => {
       assert.ok(hbs.includes('ghostcnStyles.buttonClass'), 'newsletter supports call-site button classes');
       const css = manifest?.files.find(f => f.type === 'style')?.content || '';
       assert.ok(css.includes('var(--card') && css.includes('var(--foreground') && css.includes('var(--primary'), 'defaults use semantic tokens in component CSS');
-      assert.ok(css.includes('font-size: 16px'), 'component should establish a host-independent type scale');
+      assert.ok(css.includes('font-size: var(--ghcn-text-body, 16px)'), 'component should establish a host-independent type scale with a fallback for existing themes');
       assert.ok(css.includes('.gh-newsletter-form .sr-only'), 'newsletter label should be visually hidden');
       assert.ok(css.includes('display: none'), 'newsletter status messages should be hidden by default');
       assert.ok(!css.includes('rem;'), 'component spacing should not depend on the host root font size');
@@ -128,7 +141,7 @@ describe('ghostcn Theming System', () => {
       assert.ok(hbs.includes('ghostcnStyles.class'));
       assert.ok(hbs.includes('{{url}}'));
       assert.ok(hbs.includes('{{title}}'));
-      assert.ok(manifest?.files.some(f => f.type === 'style' && f.content.includes('var(--primary')));
+      assert.ok(manifest?.files.some(f => f.type === 'style' && f.content.includes('var(--card') && f.content.includes('var(--ghcn-title-card, 20px)')));
     });
 
     test('starter foundation components use native Ghost integration points', async () => {

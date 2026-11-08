@@ -2,11 +2,21 @@ import Handlebars from 'handlebars';
 
 // Synthetic data only. This is shared by static docs and the local playground,
 // never used by production themes, never connected to Ghost/Stripe/email APIs.
-export const demoImage = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675"><rect width="1200" height="675" fill="#172f45"/><path d="M0 470h1200v205H0z" fill="#e46735"/><text x="80" y="180" font-family="sans-serif" font-size="72" fill="white">Ghostcn Journal</text><text x="80" y="270" font-family="sans-serif" font-size="36" fill="#b7cad9">Demo feature image</text></svg>');
+// Text-free artwork survives the lead, thumbnail and article crops.
+const editorialImage = (background: string, ink: string, motif: string) => 'data:image/svg+xml,' + encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675"><rect width="1200" height="675" fill="${background}"/><g fill="${ink}">${motif}</g></svg>`
+);
+export const demoImage = editorialImage('#ded4c3', '#38362f', '<path d="M315 475V220L560 120l205 100v255L560 575z"/><path d="M560 170v348l160-71V250z" fill="#b68f74"/><path d="M359 249l157-66v324l-157-55z" fill="#f4ece1"/><path d="M817 232v245l76-34V272z" fill="#9a8c74"/>');
+const secondImage = editorialImage('#cbd1c5', '#374738', '<circle cx="600" cy="337" r="210"/><path d="M380 336h440v35H380z" fill="#f0ede1"/><circle cx="600" cy="337" r="116" fill="#aab4a1"/><path d="M573 121h54v431h-54z" fill="#677c65" opacity=".8"/>');
+const thirdImage = editorialImage('#dbc7bb', '#6a483e', '<path d="M334 454l140-235 127 208 126-208 140 235z"/><path d="M312 485h576v40H312z" fill="#9c6956"/><circle cx="603" cy="166" r="44" fill="#f5e4cd"/>');
 export const demoAuthor = { name: 'Alex Reader', url: '/author/alex/', bio: 'Writing about independent publishing, thoughtful design, and building a home for your readers.', location: 'Everywhere', count: { posts: 12 } };
 const tags = [{ name: 'Publishing', description: 'Stories about independent publishing.', url: '/tag/publishing/', visibility: 'public' }, { name: 'Design', description: 'The details that make it yours.', url: '/tag/design/', visibility: 'public' }];
-export const demoPost = { title: 'A home for independent ideas', url: '/a-home-for-independent-ideas/', excerpt: 'Good stories deserve a place of their own. Build a publication around your ideas, your community, and your voice.', custom_excerpt: 'Good stories deserve a place of their own.', feature_image: demoImage, feature_image_alt: 'Demo feature image for Ghostcn Journal', primary_author: demoAuthor, primary_tag: tags[0], tags, access: true };
-export const demoPosts = [demoPost, { ...demoPost, title: 'Make room for your readers' }, { ...demoPost, title: 'The details that make it yours' }];
+export const demoPost = { title: 'A home for independent ideas', url: '/a-home-for-independent-ideas/', excerpt: 'Good stories deserve a place of their own. Build a publication around your ideas, your community, and your voice.', custom_excerpt: 'Good stories deserve a place of their own.', feature_image: demoImage, feature_image_alt: 'An abstract illustration of folded paper', primary_author: demoAuthor, primary_tag: tags[0], tags, access: true };
+export const demoPosts = [
+  demoPost,
+  { ...demoPost, title: 'Make room for your readers', url: '/make-room-for-your-readers/', feature_image: secondImage, feature_image_alt: 'An abstract illustration of intersecting circles', excerpt: 'A thoughtful reading experience starts with space for the story and a clear path to what comes next.' },
+  { ...demoPost, title: 'The details that make it yours', url: '/the-details-that-make-it-yours/', feature_image: thirdImage, feature_image_alt: 'An abstract illustration of two hills and the sun', excerpt: 'The small choices that make your publication feel unmistakably yours.' },
+];
 const tiers = [{ id: 'demo-free', type: 'free', name: 'Reader', description: 'Follow the publication.', benefits: ['New posts in your inbox'] }, { id: 'demo-paid', type: 'paid', name: 'Supporter', description: 'Support independent writing.', currency: 'USD', monthly_price: 500, yearly_price: 5000, benefits: ['Everything in Reader', 'Members-only stories'] }];
 export const previewStates = ['visitor', 'free', 'paid', 'disabled', 'invite', 'restricted'];
 export const previewDemoContext = { ...demoPost, posts: demoPosts, pagination: { page: 2, pages: 4, prev: 1, next: 3 } };

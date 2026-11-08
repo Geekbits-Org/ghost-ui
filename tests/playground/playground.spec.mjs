@@ -138,7 +138,8 @@ for (const style of ['css', 'tailwind']) for (const width of [1280, 390]) {
             expect(await contrast(element, surface), `${component} ${scheme}/${colorScheme} ${classes}: ${await element.textContent()}`).toBeGreaterThanOrEqual(4.5);
           }
           if (component === 'pricing-table') for (const button of await page.locator('.gh-pricing-card .ghcn-button').all()) {
-            expect(await contrast(button, '.ghcn-button')).toBeGreaterThanOrEqual(4.5);
+            const transparent = await button.evaluate(el => getComputedStyle(el).backgroundColor === 'rgba(0, 0, 0, 0)');
+            expect(await contrast(button, transparent ? '.gh-pricing-card' : '.ghcn-button')).toBeGreaterThanOrEqual(4.5);
           }
           expect(await page.locator('html').evaluate(el => el.scrollWidth <= el.clientWidth + 1)).toBe(true);
         }

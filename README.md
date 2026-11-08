@@ -12,6 +12,8 @@
   <a href="https://github.com/Geekbits-Org/ghost-ui/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat-square" alt="License" /></a>
 </p>
 
+**[Documentation](https://ghostcn.geekbits.dev)** · [Component reference](https://ghostcn.geekbits.dev/docs/components) · [Changelog](https://ghostcn.geekbits.dev/changelog)
+
 ---
 
 ## What is ghostcn?
@@ -63,7 +65,7 @@ You own the code. You customize the classes. Zero vendor lock-in.
 | **`tag-grid`** | Public tag archive links composed from cards and buttons | `tag-grid.hbs`, `tag-grid.css` |
 | **`archive-header`** | Shared author/tag archive heading with an optional badge/image | `archive-header.hbs`, `archive-header.css` |
 
-The five primitives, four composed blocks, dependency installation, and local playground are **unreleased development features**. Use this checkout's built CLI to test them; updating an older npm release will not provide them.
+The primitives, composed blocks, dependency installation, and local playground are available in Ghostcn 1.4.0. See the [component reference](https://ghostcn.geekbits.dev/docs/components) for usage and styling parameters.
 
 ---
 
@@ -78,6 +80,8 @@ npx ghostcn create my-theme
 ```
 
 The wizard configures Tailwind CSS or vanilla CSS, design tokens, color mode, package manager, optional components, and dependency installation. The generated theme includes Ghost templates for the home page, posts, pages, tags, and authors; responsive navigation; member flows; build scripts; and gscan validation.
+
+Ghostcn 1.5 defaults to the Doks palette for new themes: warm light and dark surfaces, neutral controls, and a shared type and spacing scale. You can still choose another palette or use your publication’s Ghost accent. Updating the CLI won’t change an existing theme’s copied files.
 
 Use recommended defaults without installing dependencies:
 
@@ -204,7 +208,7 @@ Add a specific component:
 npx ghostcn add newsletter-form
 ```
 
-Add multiple components in one command (unreleased development CLI):
+Add multiple components in one command:
 
 ```bash
 ghostcn add button card badge input alert post-grid author-list tag-grid archive-header
@@ -343,7 +347,7 @@ ghostcn/
 
 ## Development & Testing
 
-### Composable components (unreleased)
+### Composable components
 
 Every component still accepts `class`. A standalone button or card uses `class` for itself; `cardClass` and `buttonClass` belong only to blocks containing those elements. Primitives support `size="sm|default|lg"`. Their supported variants are:
 
@@ -385,18 +389,13 @@ Adding a composed block installs missing dependencies first. **Existing dependen
 
 `author-list` and `tag-grid` query up to 100 records; they are compact discovery blocks, not paginated directories. Use a custom paginated Ghost query with the reusable cards for larger archives. `post-grid` renders the collection you pass. Empty collections render nothing unless the block receives `emptyText`.
 
-### Local playground (unreleased)
+### Local playground
 
-Build the CLI in this repository, then invoke its absolute `packages/cli/dist/index.js` path from your **theme directory**:
+From your **theme directory**:
 
 ```bash
-# Repository directory:
-npm run build
-
-# Theme directory, replacing the placeholder with this checkout's actual path:
-node /absolute/path/to/ghost/packages/cli/dist/index.js add tag-grid
-node /absolute/path/to/ghost/packages/cli/dist/index.js playground
-# Optional: --port 4191 (or --port 0 for an available port)
+npx ghostcn@latest add tag-grid --skip-existing
+npx ghostcn@latest playground
 ```
 
 Open the printed localhost URL. The playground reads your installed partials and layout's local stylesheet links, shows controls for supported parameters, and reloads when theme files change. Keep `npm run dev` running in another terminal. Tailwind classes typed only into a preview field are not compiled automatically: add complete class literals to a scanned `.hbs` file first. Preview controls are temporary; copy the generated usage into your theme to save it.
@@ -415,7 +414,7 @@ npm run build
 # Run automated tests
 npm test
 
-# Local playground UI and documentation browser checks
+# Local playground UI and legacy documentation preview checks
 npm run docs:build
 npm run docs:check
 npm run docs:browser

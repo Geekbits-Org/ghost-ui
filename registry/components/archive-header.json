@@ -34,7 +34,7 @@
       "name": "archive-header.css",
       "type": "style",
       "target": "assets/css/components/archive-header.css",
-      "content": ".ghcn-archive-header { font-size: 16px; color: var(--foreground); text-align: center; margin-block: 2em; }\n.ghcn-archive-header__title { font-size: clamp(2em,5vw,3em); line-height: 1.1; margin: .5em 0; overflow-wrap: anywhere; }\n.ghcn-archive-header__description { max-width: 42em; margin: 1em auto; color: var(--muted-foreground); }\n.ghcn-archive-header__image { display: block; width: 100%; max-height: 28em; object-fit: cover; border-radius: var(--radius); margin-top: 2em; }\n"
+      "content": ".ghcn-archive-header { box-sizing: border-box; min-width: 0; margin-block: var(--ghcn-section-space, clamp(24px, 4vw, 48px)); font-family: inherit; font-size: var(--ghcn-text-body, 16px); line-height: 1.5; color: var(--foreground); width: min(100% - 32px, 1152px); margin-inline: auto; text-align: center; }\n.ghcn-archive-header__title { font-size: var(--ghcn-title-display, clamp(32px, 5vw, 56px)); font-weight: 700; line-height: 1.08; letter-spacing: -.045em; text-wrap: balance; overflow-wrap: anywhere; max-width: 24ch; margin: 12px auto; }\n.ghcn-archive-header__description { max-width: 60ch; margin: 12px auto; color: var(--muted-foreground); }\n.ghcn-archive-header__image { display: block; width: 100%; max-height: 440px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: var(--ghcn-panel-radius, min(var(--radius, 8px), 24px)); margin-top: var(--ghcn-section-gap, 20px); }\n"
     }
   ],
   "styleSlots": {

@@ -25,7 +25,7 @@
       "name": "author-list.css",
       "type": "style",
       "target": "assets/css/components/author-list.css",
-      "content": ".ghcn-author-list { font-size: 16px; color: var(--foreground); margin-block: 2em; }\n.ghcn-author-list__title { font-size: 1.5em; line-height: 1.25; margin: 0 0 1em; }\n.ghcn-author-list__grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1.5em; }\n.ghcn-author-list__grid > * { min-width: 0; }\n.ghcn-author-list__empty { color: var(--muted-foreground); }\n@media(max-width:900px) { .ghcn-author-list__grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }\n@media(max-width:620px) { .ghcn-author-list__grid { grid-template-columns: 1fr; } }"
+      "content": ".ghcn-author-list { box-sizing: border-box; min-width: 0; margin-block: var(--ghcn-section-space, clamp(24px, 4vw, 48px)); font-family: inherit; font-size: var(--ghcn-text-body, 16px); line-height: 1.5; color: var(--foreground); width: min(100% - 32px, 1152px); margin-inline: auto; }\n.ghcn-author-list__title { font-size: var(--ghcn-title-section, clamp(24px, 3vw, 32px)); font-weight: 700; line-height: 1.18; letter-spacing: -.035em; text-wrap: balance; margin: 0 0 var(--ghcn-section-gap, 20px); }\n.ghcn-author-list__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: var(--ghcn-grid-gap, 16px); }\n.ghcn-author-list__grid > * { min-width: 0; }\n.ghcn-author-list__empty { color: var(--muted-foreground); }\n:where(.ghcn-author-list__grid) > .gh-author-card { width: 100%; margin: 0; }\n"
     }
   ],
   "styleSlots": {

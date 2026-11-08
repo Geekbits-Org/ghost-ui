@@ -1,6 +1,6 @@
 {
   "name": "ghostcn",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "The shadcn/ui for Ghost CMS themes - component distribution system",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "tsc && node -e \"const fs=require('fs'); fs.cpSync('templates', 'dist/templates', {recursive:true}); if(fs.existsSync('../../registry')){fs.cpSync('../../registry', 'dist/registry', {recursive:true});} if(fs.existsSync('../../README.md')){fs.copyFileSync('../../README.md', 'README.md');}\"",
+    "build": "tsc && node -e \"const fs=require('fs'); fs.cpSync('templates', 'dist/templates', {recursive:true}); if(fs.existsSync('../../registry')){fs.cpSync('../../registry', 'dist/registry', {recursive:true});}\"",
     "prepublishOnly": "npm run build",
     "start": "ts-node src/index.ts",
     "dev": "ts-node src/index.ts",
@@ -40,7 +40,7 @@
   "bugs": {
     "url": "https://github.com/Geekbits-Org/ghost-ui/issues"
   },
-  "homepage": "https://github.com/Geekbits-Org/ghost-ui#readme",
+  "homepage": "https://ghostcn.geekbits.dev",
   "dependencies": {
     "handlebars": "^4.7.9",
     "chalk": "^4.1.2",

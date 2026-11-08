@@ -5,6 +5,7 @@ const readingComponents = require('./reading-components');
 const primitives = require('./ui-primitives');
 const composedComponents = require('./composed-components');
 const { applyStyleSlots } = require('./component-styling');
+const { token, section, sectionTitle, surface, cardTitle, focusWithin } = require('./component-defaults');
 
 const componentsDir = path.join(__dirname, '..', 'registry', 'components');
 if (!fs.existsSync(componentsDir)) {
@@ -80,20 +81,12 @@ const newsletterForm = {
       target: "assets/css/components/newsletter-form.css",
       content: `/* ghostcn: Newsletter Form Styles */
 .gh-newsletter-form {
-    box-sizing: border-box;
-    font-family: inherit;
-    font-size: 16px;
-    line-height: 1.5;
-    isolation: isolate;
-    background-color: var(--card, #ffffff);
-    color: var(--card-foreground, #09090b);
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: min(var(--radius, 0.5rem), 1.5rem);
-    padding: 2rem;
+    ${section}
+    ${surface}
+    padding: ${token('panel-padding')};
     text-align: center;
-    max-width: 42rem;
-    margin: 2rem auto;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    width: min(100% - 32px, 704px);
+    margin-inline: auto;
 }
 
 .gh-newsletter-form *,
@@ -102,28 +95,25 @@ const newsletterForm = {
     box-sizing: border-box;
 }
 
-.gh-newsletter-heading { margin-bottom: 1.5rem; }
+.gh-newsletter-heading { margin-bottom: 16px; }
 
 .gh-newsletter-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    margin-bottom: 0.5rem;
-    color: var(--foreground, #09090b);
+    ${sectionTitle}
+    margin: 0 0 8px;
+    color: inherit;
 }
 
 .gh-newsletter-desc {
     color: var(--muted-foreground, #71717a);
-    font-size: 0.875rem;
+    font-size: ${token('text-small')};
     line-height: 1.5;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto;
     max-width: 28rem;
 }
 
 .gh-newsletter-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    display: grid;
+    gap: ${token('control-gap')};
     max-width: 28rem;
     margin: 0 auto;
     position: relative;
@@ -131,37 +121,37 @@ const newsletterForm = {
 
 @media (min-width: 640px) {
     .gh-newsletter-fields {
-        flex-direction: row;
+        grid-template-columns: minmax(0, 1fr) auto;
     }
 }
 
 .gh-newsletter-input {
-    flex: 1;
-    padding: 0.625rem 1rem;
+    min-width: 0;
+    min-height: ${token('control-height')};
+    padding: ${token('control-padding')};
     background-color: var(--background, #ffffff);
     color: var(--foreground, #09090b);
     border: 1px solid var(--input, #e4e4e7);
-    border-radius: var(--radius, 0.5rem);
-    font-size: 0.875rem;
-    outline: none;
-    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    border-radius: ${token('control-radius')};
+    font-family: inherit;
+    font-size: ${token('text-small')};
+    line-height: 1.25;
 }
 
-.gh-newsletter-input:focus {
-    border-color: var(--ring, #18181b);
-    box-shadow: 0 0 0 2px var(--ring, #18181b);
-}
+${focusWithin('.gh-newsletter-form')}
 
 .gh-newsletter-btn {
     background-color: var(--primary, var(--ghost-accent-color, #18181b));
     color: var(--primary-foreground, #ffffff);
-    padding: 0.625rem 1.5rem;
-    border-radius: var(--radius, 0.5rem);
-    font-size: 0.875rem;
-    font-weight: 500;
-    border: none;
+    min-height: ${token('control-height')};
+    padding: ${token('control-padding')};
+    border-radius: ${token('control-radius')};
+    font-family: inherit;
+    font-size: ${token('text-small')};
+    font-weight: 600;
+    line-height: 1.25;
+    border: 1px solid transparent;
     cursor: pointer;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     transition: opacity 0.15s ease;
 }
 
@@ -172,10 +162,7 @@ const newsletterForm = {
 .gh-newsletter-msg-success,
 .gh-newsletter-msg-error {
     display: none;
-    position: absolute;
-    bottom: -1.75rem;
-    left: 0;
-    right: 0;
+    grid-column: 1 / -1;
     font-size: 0.75rem;
     font-weight: 500;
 }
@@ -280,23 +267,18 @@ const authorCard = {
       target: "assets/css/components/author-card.css",
       content: `/* ghostcn: Author Card Styles */
 .gh-author-card {
-    box-sizing: border-box;
+    ${surface}
     font-family: inherit;
-    font-size: 16px;
+    font-size: ${token('text-body')};
     line-height: 1.5;
     isolation: isolate;
-    background-color: var(--card, #ffffff);
-    color: var(--card-foreground, #09090b);
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: min(var(--radius, 0.5rem), 1.5rem);
-    padding: 1.5rem;
-    margin: 2rem auto;
-    max-width: 42rem;
+    padding: ${token('panel-padding')};
+    margin: ${token('section-space')} auto;
+    width: min(100% - 32px, 704px);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.25rem;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    gap: ${token('grid-gap')};
 }
 
 .gh-author-card *,
@@ -313,8 +295,9 @@ const authorCard = {
 }
 
 .gh-author-avatar {
-    width: 5rem;
-    height: 5rem;
+    width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
     border-radius: 9999px;
     object-fit: cover;
     border: 2px solid var(--border, #e4e4e7);
@@ -322,8 +305,9 @@ const authorCard = {
 }
 
 .gh-author-avatar-fallback {
-    width: 5rem;
-    height: 5rem;
+    width: 56px;
+    height: 56px;
+    flex: 0 0 56px;
     border-radius: 9999px;
     background-color: var(--muted, #f4f4f5);
     color: var(--foreground, #09090b);
@@ -338,6 +322,7 @@ const authorCard = {
 
 .gh-author-details {
     flex: 1;
+    min-width: 0;
     text-align: center;
 }
 
@@ -348,11 +333,8 @@ const authorCard = {
 }
 
 .gh-author-name {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
+    ${cardTitle}
     margin: 0;
-    color: var(--foreground, #09090b);
 }
 
 .gh-author-name a {
@@ -394,7 +376,8 @@ const authorCard = {
 .gh-author-heading { display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem; }
 .gh-author-post-count { border-radius: 9999px; padding: 0.25rem 0.625rem; background: var(--muted); color: var(--muted-foreground); font-size: 0.75rem; font-weight: 500; }
 .gh-author-location { display: inline-flex; align-items: center; gap: 0.25rem; }
-@media (min-width: 640px) { .gh-author-heading { flex-direction: row; align-items: center; } .gh-author-meta { justify-content: flex-start; } }
+@media (min-width: 640px) { .gh-author-heading { flex-direction: row; flex-wrap: wrap; align-items: center; } .gh-author-meta { justify-content: flex-start; } }
+${focusWithin('.gh-author-card')}
 `
     }
   ],
@@ -463,31 +446,20 @@ const postCard = {
       target: "assets/css/components/post-card.css",
       content: `/* ghostcn: Post Card Styles */
 .gh-post-card {
-    box-sizing: border-box;
+    ${surface}
     font-family: inherit;
-    font-size: 16px;
+    font-size: ${token('text-body')};
     line-height: 1.5;
     isolation: isolate;
-    background-color: var(--card, #ffffff);
-    color: var(--card-foreground, #09090b);
-    border: 1px solid var(--border, #e4e4e7);
-    border-radius: min(var(--radius, 0.5rem), 1.5rem);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
 .gh-post-card *,
 .gh-post-card *::before,
 .gh-post-card *::after {
     box-sizing: border-box;
-}
-
-.gh-post-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .gh-post-card-image {
@@ -498,18 +470,14 @@ const postCard = {
 }
 
 .gh-post-card-image img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
-}
-
-.gh-post-card:hover .gh-post-card-image img {
-    transform: scale(1.03);
 }
 
 .gh-post-card-content {
-    padding: 1.25rem;
+    padding: ${token('panel-padding')};
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -517,12 +485,10 @@ const postCard = {
 }
 
 .gh-post-card-tag {
-    color: var(--primary, var(--ghost-accent-color, #18181b));
-    font-size: 0.75rem;
+    color: inherit;
+    font-size: inherit;
     font-weight: 600;
     text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
 .gh-post-card-tag:hover {
@@ -530,12 +496,8 @@ const postCard = {
 }
 
 .gh-post-card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    margin: 0.5rem 0;
-    line-height: 1.35;
-    color: var(--foreground, #09090b);
+    ${cardTitle}
+    margin: 8px 0;
 }
 
 .gh-post-card-title a {
@@ -544,8 +506,9 @@ const postCard = {
     transition: color 0.15s ease;
 }
 
-.gh-post-card-title:hover {
-    color: var(--primary, var(--ghost-accent-color, #18181b));
+.gh-post-card-title a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
 
 .gh-post-card-excerpt {
@@ -554,9 +517,9 @@ const postCard = {
     -webkit-line-clamp: 3;
     overflow: hidden;
     color: var(--muted-foreground, #71717a);
-    font-size: 0.875rem;
+    font-size: ${token('text-small')};
     line-height: 1.5;
-    margin-bottom: 1rem;
+    margin: 0 0 16px;
 }
 
 .gh-post-card-footer {
@@ -565,14 +528,18 @@ const postCard = {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.75rem;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: ${token('text-meta')};
     color: var(--muted-foreground, #71717a);
 }
 
-.gh-post-card-meta { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; font-size: 0.75rem; font-weight: 600; }
+.gh-post-card-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; color: var(--muted-foreground); font-size: ${token('text-meta')}; }
 .gh-post-card-reading-time { color: var(--muted-foreground); }
 .gh-post-card-separator { color: color-mix(in srgb, var(--muted-foreground) 40%, transparent); }
 .gh-post-card-author { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; }
+${focusWithin('.gh-post-card')}
+.gh-post-card-image:focus-visible { outline-offset: -3px; }
 `
     }
   ],

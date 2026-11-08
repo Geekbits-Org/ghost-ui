@@ -8,14 +8,14 @@ const tiers = [
   { id: 'premium-tier', type: 'paid', name: 'Supporter', description: '<Real benefits>', currency: 'EUR', monthly_price: 1234, yearly_price: 9900, benefits: ['Member essays'], visibility: 'public', active: true }
 ];
 
-async function render(name: string, site: Record<string, unknown>, member?: Record<string, unknown>, context = {}) {
+async function render(name: string, site: Record<string, unknown>, member?: Record<string, unknown>, context = {}, configuredTiers: Record<string, unknown>[] = tiers) {
   const hbs = Handlebars.create();
   hbs.registerHelper('foreach', function (items, options) { return items.map((item: unknown) => options.fn(item)).join(''); });
   hbs.registerHelper('match', function (this: unknown, value, expected, options) { return value === expected ? options.fn(this) : options.inverse(this); });
   hbs.registerHelper('get', function (resource, options) {
     assert.equal(resource, 'tiers');
     assert.equal(options.hash.filter, 'visibility:public+active:true');
-    return options.fn({ tiers }, { data: options.data });
+    return options.fn({ tiers: configuredTiers }, { data: options.data });
   });
   hbs.registerHelper('price', (amount, options) => new Intl.NumberFormat('en', { style: 'currency', currency: options.hash.currency }).format(amount / 100));
   hbs.registerHelper('navigation', () => new hbs.SafeString('<ul class="nav"><li><a href="/">Home</a></li></ul>'));
@@ -61,6 +61,18 @@ describe('rendered membership states', () => {
     const memberOutput = await render('pricing-table', site, { paid: false });
     assert.ok(memberOutput.includes('data-portal="account"'));
     assert.ok(!memberOutput.includes('data-portal="signup'));
+  });
+
+  test('a tier with one billing interval has a primary checkout for that interval', async () => {
+    const site = { members_enabled: true, paid_members_enabled: true };
+    for (const interval of ['monthly', 'yearly']) {
+      const configured = { id: 'single-tier', type: 'paid', name: 'Supporter', currency: 'EUR', [interval + '_price']: 9900 };
+      const output = await render('pricing-table', site, undefined, {}, [configured]);
+      assert.ok(output.includes('€99.00'));
+      assert.ok(output.includes(`data-portal="signup/single-tier/${interval}"`));
+      assert.equal((output.match(/data-portal="signup\/single-tier\//g) || []).length, 1);
+      assert.ok(!output.includes('gh-pricing-alternate'));
+    }
   });
   test('restricted self-signup hides new membership and newsletter offers', async () => {
     const site = { members_enabled: true, members_invite_only: false, allow_self_signup: false, paid_members_enabled: true };

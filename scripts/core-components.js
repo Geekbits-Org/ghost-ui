@@ -1,3 +1,5 @@
+const { token, section, wideSection, sectionTitle, displayTitle, surface, cardTitle, focusWithin } = require('./component-defaults');
+
 const siteHeader = {
   name: 'site-header',
   type: 'components:layout',
@@ -71,7 +73,7 @@ const siteHeader = {
       content: `/* ghostcn: Site Header */
 .ghcn-header { box-sizing: border-box; position: relative; z-index: 30; border-bottom: 1px solid var(--border); color: var(--foreground); background: color-mix(in srgb, var(--background) 92%, transparent); font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }
 .ghcn-header *, .ghcn-header *::before, .ghcn-header *::after { box-sizing: border-box; }
-.ghcn-header__inner { display: flex; min-height: 4.5rem; align-items: center; gap: 1.5rem; }
+.ghcn-header__inner { display: flex; min-height: 64px; align-items: center; gap: ${token('grid-gap')}; }
 .ghcn-header__brand { display: inline-flex; flex: 0 0 auto; align-items: center; color: var(--foreground); font-size: 1.125rem; font-weight: 800; letter-spacing: -0.025em; text-decoration: none; }
 .ghcn-header__brand img { display: block; width: auto; max-width: 11rem; max-height: 2.25rem; }
 .ghcn-header__nav { min-width: 0; flex: 1; }
@@ -83,7 +85,7 @@ const siteHeader = {
 .ghcn-header__mobile { display: none; margin-left: auto; }
 .ghcn-header__mobile summary { list-style: none; }
 .ghcn-header__mobile summary::-webkit-details-marker { display: none; }
-.ghcn-header__panel { position: absolute; top: calc(100% + 0.5rem); right: 1rem; left: 1rem; border: 1px solid var(--border); border-radius: min(var(--radius), 1rem); padding: 1rem; background: var(--popover); box-shadow: 0 1rem 2.5rem rgba(0,0,0,.14); }
+.ghcn-header__panel { ${surface} position: absolute; top: calc(100% + 8px); right: 16px; left: 16px; padding: 16px; background: var(--popover); color: var(--popover-foreground); box-shadow: 0 8px 24px #0002; }
 .ghcn-header__panel .nav { align-items: stretch; flex-direction: column; gap: 0.25rem; }
 .ghcn-header__panel .nav a { display: block; border-radius: var(--radius); padding: 0.625rem 0.75rem; }
 .ghcn-header__panel .nav a:hover { background: var(--muted); }
@@ -129,7 +131,7 @@ const siteFooter = {
       content: `/* ghostcn: Site Footer */
 .ghcn-footer { box-sizing: border-box; border-top: 1px solid var(--border); color: var(--foreground); background: var(--card); font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }
 .ghcn-footer *, .ghcn-footer *::before, .ghcn-footer *::after { box-sizing: border-box; }
-.ghcn-footer__inner { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) auto; gap: 3rem; padding-block: 3rem; }
+.ghcn-footer__inner { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) auto; gap: ${token('section-gap')}; padding-block: ${token('section-space')}; }
 .ghcn-footer__brand a { color: var(--foreground); font-size: 1.125rem; font-weight: 800; text-decoration: none; }
 .ghcn-footer__brand p { max-width: 30rem; margin: 0.5rem 0 0; color: var(--muted-foreground); font-size: 0.875rem; }
 .ghcn-footer .nav { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0.5rem 1.5rem; margin: 0; padding: 0; list-style: none; }
@@ -164,9 +166,11 @@ const featuredPosts = {
     <div class="ghcn-featured__grid">
         {{#foreach posts}}
         <article class="ghcn-featured__card{{#has index="0"}} ghcn-featured__card--lead{{/has}}">
-            <a class="ghcn-featured__image" href="{{url}}">
-                {{#if feature_image}}<img src="{{img_url feature_image size="l"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" loading="{{#has index="0"}}eager{{else}}lazy{{/has}}" />{{/if}}
-            </a>
+            {{#if feature_image}}
+                <a class="ghcn-featured__image" href="{{url}}">
+                    <img src="{{img_url feature_image size="l"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" loading="{{#has index="0"}}eager{{else}}lazy{{/has}}" />
+                </a>
+            {{/if}}
             <div class="ghcn-featured__content">
                 <div class="ghcn-featured__meta">{{#if primary_tag}}<a href="{{primary_tag.url}}">{{primary_tag.name}}</a><span>&bull;</span>{{/if}}<span>{{reading_time}}</span></div>
                 <h3><a href="{{url}}">{{title}}</a></h3>
@@ -182,26 +186,28 @@ const featuredPosts = {
     {
       name: 'featured-posts.css', type: 'style', target: 'assets/css/components/featured-posts.css',
       content: `/* ghostcn: Featured Posts */
-.ghcn-featured { box-sizing: border-box; margin-block: 3rem; color: var(--foreground); font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }
+.ghcn-featured { ${section} }
 .ghcn-featured *, .ghcn-featured *::before, .ghcn-featured *::after { box-sizing: border-box; }
-.ghcn-featured__heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: 1.25rem; }
-.ghcn-featured__heading h2 { margin: 0.75rem 0 0; font-size: clamp(1.75rem,4vw,2.5rem); line-height: 1.05; letter-spacing: -0.04em; }
-.ghcn-featured__heading > a { color: var(--muted-foreground); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
-.ghcn-featured__grid { display: grid; grid-template-columns: minmax(0,2fr) minmax(15rem,1fr); gap: 1rem; }
-.ghcn-featured__card { position: relative; min-height: 15rem; overflow: hidden; border-radius: min(var(--radius),1.25rem); background: var(--muted); }
-.ghcn-featured__card--lead { grid-row: span 2; min-height: 31rem; }
-.ghcn-featured__image, .ghcn-featured__image::after { position: absolute; inset: 0; }
-.ghcn-featured__image::after { content: ""; background: linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.02) 70%); }
-.ghcn-featured__image img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
-.ghcn-featured__card:hover img { transform: scale(1.025); }
-.ghcn-featured__content { position: absolute; right: 0; bottom: 0; left: 0; z-index: 1; padding: 1.25rem; color: #fff; }
-.ghcn-featured__card--lead .ghcn-featured__content { padding: 2rem; }
-.ghcn-featured__meta { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; color: rgba(255,255,255,.78); font-size: 0.75rem; }
-.ghcn-featured__meta a, .ghcn-featured h3 a { color: inherit; text-decoration: none; }
-.ghcn-featured h3 { margin: 0; font-size: 1.25rem; line-height: 1.15; letter-spacing: -0.025em; }
-.ghcn-featured__card--lead h3 { font-size: clamp(1.75rem,4vw,3rem); }
-.ghcn-featured__content p { max-width: 42rem; margin: 0.75rem 0 0; color: rgba(255,255,255,.82); }
-@media (max-width: 720px) { .ghcn-featured__grid { grid-template-columns: 1fr; } .ghcn-featured__card--lead { grid-row: auto; min-height: 25rem; } }
+.ghcn-featured__heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px; margin-bottom: ${token('section-gap')}; }
+.ghcn-featured__title { ${sectionTitle} margin: 8px 0 0; }
+.ghcn-featured__heading > a { color: var(--muted-foreground); font-size: ${token('text-small')}; font-weight: 600; text-decoration: none; }
+.ghcn-featured__grid { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: ${token('grid-gap')}; }
+.ghcn-featured__card { ${surface} display: flex; flex-direction: column; overflow: hidden; }
+.ghcn-featured__card--lead { grid-row: span 2; }
+.ghcn-featured__card:only-child { grid-column: 1 / -1; grid-row: auto; }
+.ghcn-featured__image { display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--muted); }
+.ghcn-featured__image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ghcn-featured__card--lead:not(:only-child) .ghcn-featured__image { flex: 1 1 auto; }
+.ghcn-featured__content { padding: ${token('panel-padding')}; }
+.ghcn-featured__meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; color: var(--muted-foreground); font-size: ${token('text-meta')}; }
+.ghcn-featured__meta a, .ghcn-featured__content h3 a { color: inherit; text-decoration: none; }
+.ghcn-featured a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.ghcn-featured__content h3 { ${cardTitle} margin: 0; }
+.ghcn-featured__card--lead h3 { ${sectionTitle} }
+.ghcn-featured__content p { max-width: 60ch; margin: 8px 0 0; color: var(--muted-foreground); font-size: ${token('text-small')}; }
+${focusWithin('.ghcn-featured')}
+.ghcn-featured__image:focus-visible { outline-offset: -3px; }
+@media (max-width: 720px) { .ghcn-featured__grid { grid-template-columns: 1fr; } .ghcn-featured__card--lead { grid-row: auto; } }
 `
     }
   ],
@@ -225,7 +231,7 @@ const pagination = {
     {
       name: 'pagination.css', type: 'style', target: 'assets/css/components/pagination.css',
       content: `/* ghostcn: Pagination */
-.ghcn-pagination { box-sizing: border-box; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; width: min(100% - 2rem,72rem); margin: 3rem auto; color: var(--foreground); font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }
+.ghcn-pagination { ${section} ${wideSection} display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: ${token('grid-gap')}; }
 .ghcn-pagination *, .ghcn-pagination *::before, .ghcn-pagination *::after { box-sizing: border-box; }
 .ghcn-pagination__side { display: flex; }
 .ghcn-pagination__side--end { justify-content: flex-end; }
@@ -273,16 +279,16 @@ const postHeader = {
     {
       name: 'post-header.css', type: 'style', target: 'assets/css/components/post-header.css',
       content: `/* ghostcn: Post Header */
-.ghcn-post-header { box-sizing: border-box; margin-block: 4rem 2.5rem; color: var(--foreground); text-align: center; font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }
+.ghcn-post-header { ${section} text-align: center; }
 .ghcn-post-header *, .ghcn-post-header *::before, .ghcn-post-header *::after { box-sizing: border-box; }
-.ghcn-post-header h1 { max-width: 58rem; margin: 1rem auto; font-size: clamp(2.5rem,7vw,5rem); line-height: 0.98; letter-spacing: -0.055em; text-wrap: balance; }
-.ghcn-post-header__excerpt { max-width: 44rem; margin: 1.25rem auto; color: var(--muted-foreground); font-size: clamp(1.05rem,2vw,1.25rem); }
+.ghcn-post-header__title { ${displayTitle} max-width: 24ch; margin: 12px auto; }
+.ghcn-post-header__excerpt { max-width: 60ch; margin: 12px auto; color: var(--muted-foreground); font-size: ${token('text-body')}; }
 .ghcn-post-header__meta, .ghcn-post-header__author { display: flex; align-items: center; justify-content: center; gap: 0.625rem; }
-.ghcn-post-header__meta { flex-wrap: wrap; color: var(--muted-foreground); font-size: 0.8125rem; }
+.ghcn-post-header__meta { flex-wrap: wrap; color: var(--muted-foreground); font-size: ${token('text-meta')}; }
 .ghcn-post-header__author { color: var(--foreground); font-weight: 700; text-decoration: none; }
 .ghcn-post-header__author .ghcn-avatar { width: 2rem; height: 2rem; }
-.ghcn-post-header__media { margin: 3rem 0 0; }
-.ghcn-post-header__media img { display: block; width: 100%; max-height: 44rem; border-radius: min(var(--radius),1.25rem); object-fit: cover; }
+.ghcn-post-header__media { margin: ${token('section-gap')} 0 0; }
+.ghcn-post-header__image { display: block; width: 100%; aspect-ratio: 16 / 9; max-height: 560px; border-radius: ${token('panel-radius')}; object-fit: cover; }
 .ghcn-post-header__media figcaption { margin-top: 0.75rem; color: var(--muted-foreground); font-size: 0.75rem; }
 `
     }
@@ -352,10 +358,10 @@ const memberCta = {
     {
       name: 'member-cta.css', type: 'style', target: 'assets/css/components/member-cta.css',
       content: `/* ghostcn: Member CTA */
-.ghcn-member-cta { box-sizing: border-box; max-width: 44rem; margin: 3rem auto; overflow: hidden; border: 1px solid var(--border); border-radius: min(var(--radius),1.25rem); padding: clamp(1.5rem,5vw,3rem); color: var(--card-foreground); background: radial-gradient(circle at top right,color-mix(in srgb,var(--primary) 18%,transparent),transparent 48%),var(--card); text-align: center; font-family: inherit; font-size: 16px; line-height: 1.5; isolation: isolate; }
+.ghcn-member-cta { ${section} ${surface} width: min(100% - 32px, 704px); margin-inline: auto; padding: ${token('panel-padding')}; text-align: center; }
 .ghcn-member-cta *, .ghcn-member-cta *::before, .ghcn-member-cta *::after { box-sizing: border-box; }
-.ghcn-member-cta h2 { margin: 1rem 0 0.625rem; color: var(--foreground); font-size: clamp(1.5rem,4vw,2.25rem); line-height: 1.1; letter-spacing: -0.035em; }
-.ghcn-member-cta p { max-width: 34rem; margin: 0 auto 1.5rem; color: var(--muted-foreground); }
+.ghcn-member-cta__title { ${sectionTitle} margin: 12px 0 8px; color: inherit; }
+.ghcn-member-cta__description { max-width: 60ch; margin: 0 auto 16px; color: var(--muted-foreground); font-size: ${token('text-small')}; }
 .ghcn-member-cta__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
 `
     }
