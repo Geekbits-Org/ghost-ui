@@ -1,0 +1,79 @@
+{
+  "name": "announcement-bar",
+  "type": "components:layout",
+  "description": "Dismissible top publication announcement bar with optional link and session persistence.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Visual treatment.",
+      "options": [
+        "default",
+        "secondary",
+        "outline"
+      ],
+      "default": "default"
+    },
+    "text": {
+      "description": "Escaped announcement copy.",
+      "default": "New issue out now — explore the latest stories."
+    },
+    "linkText": {
+      "description": "Optional call-to-action link label.",
+      "default": "Learn more"
+    },
+    "href": {
+      "description": "Optional trusted call-to-action URL."
+    },
+    "dataPortal": {
+      "description": "Optional native Ghost Portal trigger for the link."
+    },
+    "storageKey": {
+      "description": "Session key so dismissing one banner does not hide future announcements.",
+      "default": "default"
+    },
+    "hideDismiss": {
+      "description": "Boolean. Hide the dismiss button."
+    }
+  },
+  "files": [
+    {
+      "name": "announcement-bar.hbs",
+      "type": "partial",
+      "target": "partials/components/announcement-bar.hbs",
+      "content": "{{!-- Styling parameters: class, contentClass, linkClass, buttonClass --}}\n{{#with this as |ghostcnStyles|}}\n<div class=\"ghcn-announcement{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-ghcn-announcement data-variant=\"{{#match variant \"secondary\"}}secondary{{else}}{{#match variant \"outline\"}}outline{{else}}default{{/match}}{{/match}}\" data-storage-key=\"{{#if storageKey}}{{storageKey}}{{else}}default{{/if}}\" role=\"region\" aria-label=\"Announcement\">\n  <div class=\"ghcn-announcement__inner ghcn-container\">\n    <p class=\"ghcn-announcement__content{{#if ghostcnStyles.contentClass}} {{ghostcnStyles.contentClass}}{{/if}}\">\n      <span>{{#if text}}{{text}}{{else}}New issue out now — explore the latest stories.{{/if}}</span>\n      {{#if href}}<a class=\"ghcn-announcement__link{{#if ghostcnStyles.linkClass}} {{ghostcnStyles.linkClass}}{{/if}}\" href=\"{{href}}\"{{#if dataPortal}} data-portal=\"{{dataPortal}}\"{{/if}}>{{#if linkText}}{{linkText}}{{else}}Learn more{{/if}} <span aria-hidden=\"true\">&rarr;</span></a>{{/if}}\n    </p>\n    {{#unless hideDismiss}}\n    <button type=\"button\" class=\"ghcn-announcement__dismiss{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" data-announcement-dismiss aria-label=\"Dismiss announcement\">\n      <svg aria-hidden=\"true\" viewBox=\"0 0 16 16\" width=\"14\" height=\"14\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\"><path d=\"M4 4l8 8M12 4l-8 8\"/></svg>\n    </button>\n    {{/unless}}\n  </div>\n</div>\n{{/with}}"
+    },
+    {
+      "name": "announcement-bar.css",
+      "type": "style",
+      "target": "assets/css/components/announcement-bar.css",
+      "content": ".ghcn-announcement { box-sizing: border-box; width: 100%; background: var(--primary); color: var(--primary-foreground); border-bottom: 1px solid transparent; font-family: inherit; font-size: var(--ghcn-text-small, 14px); line-height: 1.4; }\n.ghcn-announcement[hidden] { display: none; }\n.ghcn-announcement *, .ghcn-announcement *::before, .ghcn-announcement *::after { box-sizing: border-box; }\n.ghcn-announcement:where([data-variant=\"secondary\"]) { background: var(--secondary); color: var(--secondary-foreground); border-bottom-color: var(--border); }\n.ghcn-announcement:where([data-variant=\"outline\"]) { background: var(--card); color: var(--card-foreground); border-bottom-color: var(--border); }\n.ghcn-announcement__inner { display: flex; align-items: center; justify-content: center; gap: 12px; padding-block: 10px; position: relative; }\n.ghcn-announcement__content { margin: 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 12px; text-align: center; }\n.ghcn-announcement__link { color: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }\n.ghcn-announcement__link:hover { opacity: 0.85; }\n.ghcn-announcement__dismiss { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex: 0 0 auto; border: 0; border-radius: var(--ghcn-control-radius, var(--radius, 8px)); background: transparent; color: inherit; cursor: pointer; opacity: 0.8; transition: opacity 150ms ease, background-color 150ms ease; }\n.ghcn-announcement__dismiss:hover { opacity: 1; background: color-mix(in srgb, currentColor 12%, transparent); }\n.ghcn-announcement:focus-visible, :where(.ghcn-announcement) :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 2px; }\n@media (prefers-reduced-motion: reduce) { .ghcn-announcement__dismiss { transition: none; } }\n"
+    },
+    {
+      "name": "announcement-bar.js",
+      "type": "js",
+      "target": "assets/js/components/announcement-bar.js",
+      "content": "/* ghostcn announcement bar: dismisses with sessionStorage persistence, repeat-safe. */\n(() => {\n  function init() {\n    document.querySelectorAll('[data-ghcn-announcement]').forEach(bar => {\n      if (bar.dataset.ghcnAnnouncementReady) return;\n      bar.dataset.ghcnAnnouncementReady = 'true';\n      const key = 'ghcn-announcement:' + (bar.dataset.storageKey || 'default');\n      try {\n        if (sessionStorage.getItem(key) === 'dismissed') { bar.hidden = true; return; }\n      } catch {}\n      const btn = bar.querySelector('[data-announcement-dismiss]');\n      if (!btn) return;\n      btn.addEventListener('click', () => {\n        bar.hidden = true;\n        try { sessionStorage.setItem(key, 'dismissed'); } catch {}\n      });\n    });\n  }\n  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });\n  else init();\n})();"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native HTML and sessionStorage dismissal; no Ghost API calls."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-announcement"
+    ],
+    "contentClass": [
+      ".ghcn-announcement__content"
+    ],
+    "linkClass": [
+      ".ghcn-announcement__link"
+    ],
+    "buttonClass": [
+      ".ghcn-announcement__dismiss"
+    ]
+  }
+}

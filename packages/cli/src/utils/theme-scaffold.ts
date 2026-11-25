@@ -63,7 +63,7 @@ img { max-width: 100%; }
    Match the embedded document's native scheme so dark mode does not force a white canvas. */
 iframe[title="comments-frame"] { color-scheme: normal; }
 h1, h2, h3, h4, h5, h6 { font-family: var(--gh-font-heading, inherit); }
-.ghcn-main { min-height: 65vh; }
+.ghcn-main { min-height: 65vh; overflow-x: clip; }
 .ghcn-page-heading { width: min(100% - 32px, 1152px); margin: var(--ghcn-section-space) auto var(--ghcn-section-gap); }
 .ghcn-page-heading h1 { margin: 0; font-size: var(--ghcn-title-display); line-height: 1.08; letter-spacing: -.045em; overflow-wrap: anywhere; text-wrap: balance; }
 .ghcn-page-heading p { max-width: 42rem; margin: 1rem 0 0; color: var(--muted-foreground); font-size: 1.125rem; }
@@ -77,10 +77,14 @@ h1, h2, h3, h4, h5, h6 { font-family: var(--gh-font-heading, inherit); }
 .ghcn-article-content .kg-width-wide { width: min(72rem, 100vw - 2rem); max-width: none; margin-left: 50%; transform: translateX(-50%); }
 .ghcn-article-content .kg-width-full { width: 100vw; max-width: none; margin-left: 50%; transform: translateX(-50%); }
 .ghcn-empty { width: min(100% - 2rem, 42rem); margin: 4rem auto; padding: 3rem; border: 1px dashed var(--border); border-radius: min(var(--radius), 1rem); color: var(--muted-foreground); text-align: center; }
+.ghcn-error { width: min(100% - 2rem, 38rem); margin: 5rem auto; text-align: center; }
+.ghcn-error__code { margin: 0; color: var(--muted-foreground); font-size: 0.875rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+.ghcn-error__title { margin: 0.75rem 0 0; font-size: var(--ghcn-title-display); line-height: 1.1; letter-spacing: -0.04em; }
+.ghcn-error__message { margin: 1rem auto 1.75rem; color: var(--muted-foreground); max-width: 30rem; }
 `;
 }
 
-function defaultTemplate(_colorScheme: ColorScheme): string {
+function defaultTemplate(): string {
   return `<!DOCTYPE html>
 <html lang="{{@site.locale}}"{{#match @custom.color_scheme "Dark"}} class="dark-mode"{{else match @custom.color_scheme "Auto"}} class="auto-color"{{/match}}>
 <head>
@@ -172,6 +176,18 @@ ${header}
 `;
 }
 
+function errorTemplate(): string {
+  return `{{!< default}}
+
+<section class="ghcn-error">
+    <p class="ghcn-error__code">{{statusCode}}</p>
+    <h1 class="ghcn-error__title">{{message}}</h1>
+    <p class="ghcn-error__message">The page you are looking for may have moved or no longer exists.</p>
+    <a class="ghcn-button" href="{{@site.url}}">Back to {{@site.title}}</a>
+</section>
+`;
+}
+
 function packageJson(options: ScaffoldThemeOptions): string {
   const gscanCommand: Record<PackageManager, string> = {
     npm: 'npx --yes gscan@6.4.2 .',
@@ -179,24 +195,23 @@ function packageJson(options: ScaffoldThemeOptions): string {
     yarn: 'yarn dlx gscan@6.4.2 .',
     bun: 'bunx gscan@6.4.2 .'
   };
+  const zipScript = `${options.packageManager} run build && node ./scripts/zip.mjs`;
   const scripts = options.style === 'tailwind'
     ? {
         dev: 'tailwindcss -i ./assets/css/source.css -o ./assets/built/screen.css --watch',
         build: 'tailwindcss -i ./assets/css/source.css -o ./assets/built/screen.css --minify',
         test: 'node ./scripts/check.mjs',
-        zip: 'npm run build && node ./scripts/zip.mjs',
+        zip: zipScript,
         validate: gscanCommand[options.packageManager]
       }
     : {
         dev: 'node ./scripts/dev.mjs',
         build: 'node ./scripts/build.mjs',
         test: 'node ./scripts/check.mjs',
-        zip: 'npm run build && node ./scripts/zip.mjs',
+        zip: zipScript,
         validate: gscanCommand[options.packageManager]
       };
   const devDependencies: Record<string, string> = {};
-  // Use the selected package manager for the build preceding archive creation.
-  scripts.zip = `${options.packageManager} run build && node ./scripts/zip.mjs`;
   if (options.style === 'tailwind') {
     devDependencies.tailwindcss = '^4.1.0';
     devDependencies['@tailwindcss/cli'] = '^4.1.0';
@@ -322,13 +337,14 @@ export function scaffoldTheme(options: ScaffoldThemeOptions): ScaffoldThemeResul
     : css;
   const files: Record<string, string> = {
     'package.json': packageJson({ ...options, themeName }),
-    'default.hbs': defaultTemplate(options.colorScheme),
+    'default.hbs': defaultTemplate(),
     'index.hbs': indexTemplate(options),
     'post.hbs': postTemplate(options),
     'partials/content-cta.hbs': '{{{html}}}\n{{> "components/member-cta"}}\n',
     'page.hbs': pageTemplate(),
     'tag.hbs': archiveTemplate('tag'),
     'author.hbs': archiveTemplate('author'),
+    'error.hbs': errorTemplate(),
     'assets/css/source.css': sourceCss,
     'assets/built/screen.css': css,
     'scripts/check.mjs': "import { fileURLToPath } from 'node:url';\nimport { reportTheme } from './theme-tools.mjs';\nif (!reportTheme(fileURLToPath(new URL('../', import.meta.url)))) process.exitCode = 1;\n",

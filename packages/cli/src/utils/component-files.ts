@@ -31,8 +31,9 @@ export function componentFiles(themeRoot: string, config: GhostcnConfig, manifes
     const target = safeThemePath(themeRoot, relative);
     if (fs.existsSync(target) && !fs.statSync(target).isFile()) throw new Error('Component target must be a file, not a directory.');
     if (file.type === 'style' || file.type === 'js') toGhostAssetPath(relative);
-    if (targets.has(target)) throw new Error('Duplicate component target.');
-    targets.add(target);
+    const key = process.platform === 'win32' ? target.toLowerCase() : target;
+    if (targets.has(key)) throw new Error('Duplicate component target.');
+    targets.add(key);
     return { relative: path.relative(path.resolve(themeRoot), target).replace(/\\/g, '/'), target, content: file.type === 'style' ? componentCss(file.content, config.style) : file.type === 'partial' ? aliasedPartial(file.content, config) : file.content };
   });
 }

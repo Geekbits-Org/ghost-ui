@@ -1,0 +1,65 @@
+{
+  "name": "theme-toggle",
+  "type": "components:layout",
+  "description": "Light, dark, and system theme switcher syncing .dark-mode and .auto-color with localStorage persistence.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Visual treatment; segmented 3-way pill, compact icon, or outline button.",
+      "options": [
+        "default",
+        "compact",
+        "outline"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "description": "Control scale.",
+      "options": [
+        "sm",
+        "default",
+        "lg"
+      ],
+      "default": "default"
+    },
+    "ariaLabel": {
+      "description": "Accessible label for the theme toggle group.",
+      "default": "Color theme"
+    }
+  },
+  "files": [
+    {
+      "name": "theme-toggle.hbs",
+      "type": "partial",
+      "target": "partials/components/theme-toggle.hbs",
+      "content": "{{!-- Styling parameters: class, buttonClass --}}\n{{#with this as |ghostcnStyles|}}\n<div class=\"ghcn-theme-toggle{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-ghcn-theme-toggle data-variant=\"{{#match variant \"compact\"}}compact{{else}}{{#match variant \"outline\"}}outline{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\" role=\"group\" aria-label=\"{{#if ariaLabel}}{{ariaLabel}}{{else}}Color theme{{/if}}\">\n  {{#match variant \"compact\"}}\n    <button type=\"button\" class=\"ghcn-theme-toggle__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}} ghcn-theme-toggle__btn--cycle\" data-theme-cycle aria-label=\"Toggle color theme\"><svg class=\"ghcn-theme-toggle__sun\" aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"10\" cy=\"10\" r=\"3.5\"/><path d=\"M10 2.5v1.5M10 16v1.5M4.7 4.7l1.1 1.1M14.2 14.2l1.1 1.1M2.5 10H4M16 10h1.5M4.7 15.3l1.1-1.1M14.2 5.8l1.1-1.1\"/></svg><svg class=\"ghcn-theme-toggle__moon\" aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 12.2A6.5 6.5 0 0 1 7.8 3.5a6.5 6.5 0 1 0 8.7 8.7Z\"/></svg></button>\n  {{else}}{{#match variant \"outline\"}}\n    <button type=\"button\" class=\"ghcn-theme-toggle__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}} ghcn-theme-toggle__btn--cycle\" data-theme-cycle aria-label=\"Toggle color theme\"><svg class=\"ghcn-theme-toggle__sun\" aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"10\" cy=\"10\" r=\"3.5\"/><path d=\"M10 2.5v1.5M10 16v1.5M4.7 4.7l1.1 1.1M14.2 14.2l1.1 1.1M2.5 10H4M16 10h1.5M4.7 15.3l1.1-1.1M14.2 5.8l1.1-1.1\"/></svg><svg class=\"ghcn-theme-toggle__moon\" aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 12.2A6.5 6.5 0 0 1 7.8 3.5a6.5 6.5 0 1 0 8.7 8.7Z\"/></svg><span data-theme-label>Theme</span></button>\n  {{else}}\n    <button type=\"button\" class=\"ghcn-theme-toggle__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" data-theme-value=\"light\" aria-label=\"Light theme\" aria-pressed=\"false\"><svg class=\"ghcn-theme-toggle__sun\" aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"10\" cy=\"10\" r=\"3.5\"/><path d=\"M10 2.5v1.5M10 16v1.5M4.7 4.7l1.1 1.1M14.2 14.2l1.1 1.1M2.5 10H4M16 10h1.5M4.7 15.3l1.1-1.1M14.2 5.8l1.1-1.1\"/></svg></button>\n    <button type=\"button\" class=\"ghcn-theme-toggle__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" data-theme-value=\"system\" aria-label=\"System theme\" aria-pressed=\"false\"><svg class=\"ghcn-theme-toggle__system\" aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2.5\" y=\"3.5\" width=\"15\" height=\"10\" rx=\"1.5\"/><path d=\"M7 16.5h6M10 13.5v3\"/></svg></button>\n    <button type=\"button\" class=\"ghcn-theme-toggle__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" data-theme-value=\"dark\" aria-label=\"Dark theme\" aria-pressed=\"false\"><svg class=\"ghcn-theme-toggle__moon\" aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16.5 12.2A6.5 6.5 0 0 1 7.8 3.5a6.5 6.5 0 1 0 8.7 8.7Z\"/></svg></button>\n  {{/match}}{{/match}}\n</div>\n{{/with}}"
+    },
+    {
+      "name": "theme-toggle.css",
+      "type": "style",
+      "target": "assets/css/components/theme-toggle.css",
+      "content": ".ghcn-theme-toggle { box-sizing: border-box; display: inline-flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--border); border-radius: 9999px; background: var(--secondary); color: var(--foreground); font-family: inherit; font-size: var(--ghcn-text-small, 14px); line-height: 1; }\n.ghcn-theme-toggle *, .ghcn-theme-toggle *::before, .ghcn-theme-toggle *::after { box-sizing: border-box; }\n.ghcn-theme-toggle:where([data-variant=\"compact\"]), .ghcn-theme-toggle:where([data-variant=\"outline\"]) { padding: 0; background: transparent; border-color: transparent; }\n.ghcn-theme-toggle__btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 32px; height: 32px; padding: 0 8px; border: 1px solid transparent; border-radius: 9999px; background: transparent; color: var(--muted-foreground); font: inherit; font-weight: 600; cursor: pointer; transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease; }\n.ghcn-theme-toggle:where([data-size=\"sm\"]) .ghcn-theme-toggle__btn { min-width: 28px; height: 28px; padding: 0 6px; font-size: 12px; }\n.ghcn-theme-toggle:where([data-size=\"lg\"]) .ghcn-theme-toggle__btn { min-width: 38px; height: 38px; padding: 0 12px; font-size: 15px; }\n.ghcn-theme-toggle__btn:hover { color: var(--foreground); }\n.ghcn-theme-toggle__btn[aria-pressed=\"true\"] { background: var(--background); color: var(--foreground); border-color: var(--border); box-shadow: 0 1px 2px #0001; }\n.ghcn-theme-toggle:where([data-variant=\"compact\"]) .ghcn-theme-toggle__btn--cycle,\n.ghcn-theme-toggle:where([data-variant=\"outline\"]) .ghcn-theme-toggle__btn--cycle { border-color: var(--border); background: var(--card); color: var(--foreground); border-radius: var(--ghcn-control-radius, var(--radius, 8px)); padding: 0 10px; }\n.ghcn-theme-toggle:where([data-variant=\"compact\"]) .ghcn-theme-toggle__btn--cycle { padding: 0; }\n.ghcn-theme-toggle:where([data-variant=\"compact\"]) .ghcn-theme-toggle__btn--cycle:hover,\n.ghcn-theme-toggle:where([data-variant=\"outline\"]) .ghcn-theme-toggle__btn--cycle:hover { background: var(--muted); }\n.ghcn-theme-toggle__btn--cycle .ghcn-theme-toggle__moon { display: none; }\n.ghcn-theme-toggle[data-resolved=\"dark\"] .ghcn-theme-toggle__btn--cycle .ghcn-theme-toggle__sun { display: none; }\n.ghcn-theme-toggle[data-resolved=\"dark\"] .ghcn-theme-toggle__btn--cycle .ghcn-theme-toggle__moon { display: block; }\n.ghcn-theme-toggle:focus-visible, :where(.ghcn-theme-toggle) :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 2px; }\n@media (prefers-reduced-motion: reduce) { .ghcn-theme-toggle__btn { transition: none; } }\n"
+    },
+    {
+      "name": "theme-toggle.js",
+      "type": "js",
+      "target": "assets/js/components/theme-toggle.js",
+      "content": "/* ghostcn theme toggle: persists light/dark/system preference, repeat-safe, no dependencies. */\n(() => {\n  const KEY = 'ghcn-theme';\n  const root = document.documentElement;\n  const media = window.matchMedia('(prefers-color-scheme: dark)');\n\n  function readPreference() {\n    try {\n      const saved = localStorage.getItem(KEY);\n      if (saved === 'light' || saved === 'dark' || saved === 'system') return saved;\n    } catch {}\n    if (root.classList.contains('dark-mode') || root.classList.contains('dark')) return 'dark';\n    if (root.classList.contains('auto-color')) return 'system';\n    return 'light';\n  }\n\n  function applyTheme(mode, persist) {\n    const resolved = mode === 'system' ? (media.matches ? 'dark' : 'light') : mode;\n    root.classList.toggle('auto-color', mode === 'system');\n    root.classList.toggle('dark-mode', resolved === 'dark');\n    root.classList.toggle('dark', resolved === 'dark');\n    root.setAttribute('data-theme', resolved);\n    if (persist) {\n      try { localStorage.setItem(KEY, mode); } catch {}\n    }\n    document.querySelectorAll('[data-ghcn-theme-toggle]').forEach(container => {\n      container.dataset.mode = mode;\n      container.dataset.resolved = resolved;\n      container.querySelectorAll('[data-theme-value]').forEach(btn => {\n        btn.setAttribute('aria-pressed', String(btn.dataset.themeValue === mode));\n      });\n      const cycle = container.querySelector('[data-theme-cycle]');\n      if (cycle) {\n        const next = resolved === 'dark' ? 'light' : 'dark';\n        cycle.setAttribute('aria-label', 'Switch to ' + next + ' theme');\n        const label = cycle.querySelector('[data-theme-label]');\n        if (label) label.textContent = resolved === 'dark' ? 'Dark' : 'Light';\n      }\n    });\n  }\n\n  function init() {\n    const mode = readPreference();\n    applyTheme(mode, false);\n    document.querySelectorAll('[data-ghcn-theme-toggle]').forEach(container => {\n      if (container.dataset.ghcnThemeReady) return;\n      container.dataset.ghcnThemeReady = 'true';\n      container.querySelectorAll('[data-theme-value]').forEach(btn => {\n        btn.addEventListener('click', () => applyTheme(btn.dataset.themeValue, true));\n      });\n      const cycle = container.querySelector('[data-theme-cycle]');\n      if (cycle) {\n        cycle.addEventListener('click', () => {\n          const isDark = root.classList.contains('dark-mode') || root.classList.contains('dark');\n          applyTheme(isDark ? 'light' : 'dark', true);\n        });\n      }\n    });\n    media.addEventListener?.('change', () => {\n      if (readPreference() === 'system') applyTheme('system', false);\n    });\n  }\n\n  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });\n  else init();\n})();"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Syncs html.dark-mode and html.auto-color with localStorage; zero external dependencies."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-theme-toggle"
+    ],
+    "buttonClass": [
+      ".ghcn-theme-toggle__btn"
+    ]
+  }
+}

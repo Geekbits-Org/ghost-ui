@@ -5,6 +5,7 @@ import chalk from 'chalk';
 import ora from 'ora';
 import { BaseColor, AccentColor, Radius, ThemeConfig } from '../utils/theme';
 import { buildGhostcnConfig, initializeThemeProject } from '../utils/theme-project';
+import { toGhostAssetPath } from '../utils/theme-files';
 
 export interface InitOptions {
   yes?: boolean;
@@ -19,7 +20,8 @@ export async function init(options: InitOptions = {}) {
   const packageJsonPath = path.join(cwd, 'package.json');
   if (!fs.existsSync(packageJsonPath)) {
     console.error(chalk.red('No package.json found. Please run this command from the root of a Ghost theme.'));
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   try {
@@ -31,7 +33,8 @@ export async function init(options: InitOptions = {}) {
     }
   } catch {
     console.error(chalk.red('Error reading package.json. Ensure it is valid JSON.'));
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   let style: 'tailwind' | 'css' = 'tailwind';
@@ -109,28 +112,32 @@ export async function init(options: InitOptions = {}) {
           type: 'text',
           name: 'cssFile',
           message: 'Where should the theme CSS tokens file be written?',
-          initial: 'assets/css/ghostcn.css'
+          initial: 'assets/css/ghostcn.css',
+          validate: (value: string) => /^assets\/.+\.css$/i.test(value.trim().replace(/\\/g, '/')) ? true : 'Path must be inside assets/ and end with .css'
         },
         {
           type: 'text',
           name: 'partialsAlias',
           message: 'Where should Handlebars partials be installed?',
-          initial: 'partials/components'
+          initial: 'partials/components',
+          validate: (value: string) => /^partials(\/|$)/.test(value.trim().replace(/\\/g, '/')) ? true : 'Partials must live under partials/'
         },
         {
           type: 'text',
           name: 'stylesAlias',
           message: 'Where should component CSS stylesheets be installed?',
-          initial: 'assets/css/components'
+          initial: 'assets/css/components',
+          validate: (value: string) => /^assets(\/|$)/.test(value.trim().replace(/\\/g, '/')) ? true : 'Stylesheets must live under assets/'
         }
       ],
       {
         onCancel: () => {
           console.log(chalk.red('\nInitialization cancelled.'));
-          process.exit(1);
+          process.exitCode = 1;
         }
       }
     );
+    if (process.exitCode === 1) return;
 
     style = response.style || style;
     baseColor = response.baseColor || baseColor;
@@ -161,7 +168,8 @@ export async function init(options: InitOptions = {}) {
     styleSync = initializeThemeProject({ themeRoot: cwd, config }).styleSync;
   } catch (error: any) {
     spinner.fail(chalk.red(error.message));
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   spinner.succeed(chalk.green('Configuration & design tokens successfully initialized!'));
@@ -185,7 +193,7 @@ export async function init(options: InitOptions = {}) {
   console.log('\n' + chalk.bold.green('Next Steps:'));
   if (styleSync.status === 'missing-template') {
     console.log(`  1. Add this stylesheet to your layout's <head>:`);
-    console.log(`     ${chalk.dim('<link rel="stylesheet" href="{{asset "' + cssFile.replace('assets/', '') + '"}}">')}`);
+    console.log(`     ${chalk.dim('<link rel="stylesheet" href="{{asset "' + toGhostAssetPath(cssFile) + '"}}">')}`);
     console.log(`  2. Add components to your theme:`);
   } else {
     console.log(`  1. Add components to your theme:`);

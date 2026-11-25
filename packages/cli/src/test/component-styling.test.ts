@@ -39,6 +39,7 @@ async function renderer(name: string) {
   hbs.registerHelper('search', () => new hbs.SafeString('<button aria-label="Search">Search</button>'));
   hbs.registerHelper('img_url', value => value);
   hbs.registerHelper('url', function (this: { url: string }) { return this.url; });
+  hbs.registerHelper('encode', value => encodeURIComponent(String(value ?? '')));
   hbs.registerHelper('excerpt', function (this: { excerpt: string }) { return this.excerpt; });
   hbs.registerHelper('price', amount => `$${amount / 100}`);
   hbs.registerHelper('reading_time', () => '1 min read');
@@ -46,7 +47,7 @@ async function renderer(name: string) {
   hbs.registerHelper('page_url', page => `/page/${page}/`);
   hbs.registerHelper('plural', () => '2 posts');
   hbs.registerHelper('social_url', () => '#');
-  const context = { ...(name === 'author-card' ? author : name === 'pagination' ? { page: 2, pages: 3, prev: 1, next: 3 } : post), heading: 'Heading', description: 'Description', body: 'Body', footer: 'Footer', hint: 'Hint', eyebrow: 'Archive', archiveImage: '/archive.jpg', posts: [post] };
+  const context = { ...(name === 'author-card' ? author : name === 'pagination' ? { page: 2, pages: 3, prev: 1, next: 3 } : post), heading: 'Heading', description: 'Description', body: 'Body', footer: 'Footer', hint: 'Hint', eyebrow: 'Archive', archiveImage: '/archive.jpg', href: '/archive/', visibility: 'members', posts: [post] };
   return { manifest, hbs, context };
 }
 

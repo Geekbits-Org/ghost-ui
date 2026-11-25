@@ -87,8 +87,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#71717a',
       accent: '#f4f4f5',
       accentForeground: '#18181b',
-      destructive: '#ef4444',
-      destructiveForeground: '#fafafa',
+      destructive: '#dc2626',
+      destructiveForeground: '#ffffff',
       border: '#e4e4e7',
       input: '#e4e4e7',
       ring: '#18181b'
@@ -106,8 +106,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#a1a1aa',
       accent: '#27272a',
       accentForeground: '#fafafa',
-      destructive: '#7f1d1d',
-      destructiveForeground: '#fafafa',
+      destructive: '#f87171',
+      destructiveForeground: '#450a0a',
       border: '#27272a',
       input: '#27272a',
       ring: '#d4d4d8'
@@ -127,8 +127,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#64748b',
       accent: '#f1f5f9',
       accentForeground: '#0f172a',
-      destructive: '#ef4444',
-      destructiveForeground: '#f8fafc',
+      destructive: '#dc2626',
+      destructiveForeground: '#ffffff',
       border: '#e2e8f0',
       input: '#e2e8f0',
       ring: '#0f172a'
@@ -146,8 +146,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#94a3b8',
       accent: '#1e293b',
       accentForeground: '#f8fafc',
-      destructive: '#7f1d1d',
-      destructiveForeground: '#f8fafc',
+      destructive: '#f87171',
+      destructiveForeground: '#450a0a',
       border: '#1e293b',
       input: '#1e293b',
       ring: '#cbd5e1'
@@ -167,8 +167,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#78716c',
       accent: '#f5f5f4',
       accentForeground: '#1c1917',
-      destructive: '#ef4444',
-      destructiveForeground: '#fafaf9',
+      destructive: '#dc2626',
+      destructiveForeground: '#ffffff',
       border: '#e7e5e4',
       input: '#e7e5e4',
       ring: '#1c1917'
@@ -186,8 +186,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#a8a29e',
       accent: '#292524',
       accentForeground: '#fafaf9',
-      destructive: '#7f1d1d',
-      destructiveForeground: '#fafaf9',
+      destructive: '#f87171',
+      destructiveForeground: '#450a0a',
       border: '#292524',
       input: '#292524',
       ring: '#d6d3d1'
@@ -207,8 +207,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#6b7280',
       accent: '#f3f4f6',
       accentForeground: '#1f2937',
-      destructive: '#ef4444',
-      destructiveForeground: '#f9fafb',
+      destructive: '#dc2626',
+      destructiveForeground: '#ffffff',
       border: '#e5e7eb',
       input: '#e5e7eb',
       ring: '#1f2937'
@@ -226,8 +226,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#9ca3af',
       accent: '#1f2937',
       accentForeground: '#f9fafb',
-      destructive: '#7f1d1d',
-      destructiveForeground: '#f9fafb',
+      destructive: '#f87171',
+      destructiveForeground: '#450a0a',
       border: '#1f2937',
       input: '#1f2937',
       ring: '#d1d5db'
@@ -247,8 +247,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#737373',
       accent: '#f5f5f5',
       accentForeground: '#171717',
-      destructive: '#ef4444',
-      destructiveForeground: '#fafafa',
+      destructive: '#dc2626',
+      destructiveForeground: '#ffffff',
       border: '#e5e5e5',
       input: '#e5e5e5',
       ring: '#171717'
@@ -266,8 +266,8 @@ export const BASE_PALETTES: Record<BaseColor, { light: ColorTokens; dark: ColorT
       mutedForeground: '#a3a3a3',
       accent: '#262626',
       accentForeground: '#fafafa',
-      destructive: '#7f1d1d',
-      destructiveForeground: '#fafafa',
+      destructive: '#f87171',
+      destructiveForeground: '#450a0a',
       border: '#262626',
       input: '#262626',
       ring: '#d4d4d4'
@@ -290,9 +290,9 @@ export const ACCENT_COLORS: Record<
       ring: 'var(--ghost-accent-color, #18181b)'
     },
     dark: {
-      primary: 'var(--ghost-accent-color, #fafafa)',
-      primaryForeground: '#09090b',
-      ring: 'var(--ghost-accent-color, #d4d4d8)'
+      primary: 'var(--ghost-accent-color, #4f46e5)',
+      primaryForeground: '#ffffff',
+      ring: 'var(--ghost-accent-color, #a5b4fc)'
     }
   },
   zinc: {
@@ -301,27 +301,27 @@ export const ACCENT_COLORS: Record<
   },
   indigo: {
     light: { primary: '#4f46e5', primaryForeground: '#ffffff', ring: '#4f46e5' },
-    dark: { primary: '#6366f1', primaryForeground: '#ffffff', ring: '#6366f1' }
+    dark: { primary: '#818cf8', primaryForeground: '#1e1b4b', ring: '#818cf8' }
   },
   violet: {
     light: { primary: '#7c3aed', primaryForeground: '#ffffff', ring: '#7c3aed' },
-    dark: { primary: '#8b5cf6', primaryForeground: '#ffffff', ring: '#8b5cf6' }
+    dark: { primary: '#a78bfa', primaryForeground: '#1e1b4b', ring: '#a78bfa' }
   },
   blue: {
     light: { primary: '#2563eb', primaryForeground: '#ffffff', ring: '#2563eb' },
-    dark: { primary: '#3b82f6', primaryForeground: '#ffffff', ring: '#3b82f6' }
+    dark: { primary: '#60a5fa', primaryForeground: '#0f172a', ring: '#60a5fa' }
   },
   emerald: {
-    light: { primary: '#059669', primaryForeground: '#ffffff', ring: '#059669' },
-    dark: { primary: '#10b981', primaryForeground: '#ffffff', ring: '#10b981' }
+    light: { primary: '#047857', primaryForeground: '#ffffff', ring: '#047857' },
+    dark: { primary: '#34d399', primaryForeground: '#022c22', ring: '#34d399' }
   },
   rose: {
-    light: { primary: '#e11d48', primaryForeground: '#ffffff', ring: '#e11d48' },
-    dark: { primary: '#f43f5e', primaryForeground: '#ffffff', ring: '#f43f5e' }
+    light: { primary: '#be123c', primaryForeground: '#ffffff', ring: '#be123c' },
+    dark: { primary: '#fb7185', primaryForeground: '#4c0519', ring: '#fb7185' }
   },
   orange: {
-    light: { primary: '#ea580c', primaryForeground: '#ffffff', ring: '#ea580c' },
-    dark: { primary: '#f97316', primaryForeground: '#ffffff', ring: '#f97316' }
+    light: { primary: '#c2410c', primaryForeground: '#ffffff', ring: '#c2410c' },
+    dark: { primary: '#fb923c', primaryForeground: '#431407', ring: '#fb923c' }
   }
 };
 
@@ -347,6 +347,8 @@ export function generateThemeCss(config: ThemeConfig): string {
   --accent-foreground: ${base.dark.accentForeground};
   --destructive: ${base.dark.destructive};
   --destructive-foreground: ${base.dark.destructiveForeground};
+  --success: #4ade80;
+  --success-foreground: #052e16;
   --border: ${base.dark.border};
   --input: ${base.dark.input};
   --ring: ${accent.dark.ring || base.dark.ring};`;
@@ -374,6 +376,8 @@ export function generateThemeCss(config: ThemeConfig): string {
   --accent-foreground: ${base.light.accentForeground};
   --destructive: ${base.light.destructive};
   --destructive-foreground: ${base.light.destructiveForeground};
+  --success: #15803d;
+  --success-foreground: #ffffff;
   --border: ${base.light.border};
   --input: ${base.light.input};
   --ring: ${accent.light.ring || base.light.ring};
@@ -506,6 +510,9 @@ ${Object.entries(designDefaults).map(([name, value]) => `  --ghcn-${name}: ${val
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ghcn-button, .ghcn-icon-button { transition: none; }
 }
 `;
   return componentCss(css, config.style);

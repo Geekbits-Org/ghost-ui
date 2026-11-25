@@ -1,0 +1,71 @@
+{
+  "name": "visibility-badge",
+  "type": "components:members",
+  "description": "Ghost-native access indicator pill for members-only, paid-only, tier-restricted, or public posts.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Visual treatment.",
+      "options": [
+        "default",
+        "outline",
+        "subtle"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "description": "Badge scale.",
+      "options": [
+        "sm",
+        "default",
+        "lg"
+      ],
+      "default": "default"
+    },
+    "showPublic": {
+      "description": "Boolean. Render a Public badge for public posts (hidden by default)."
+    },
+    "membersLabel": {
+      "description": "Custom label for members-only posts.",
+      "default": "Members only"
+    },
+    "paidLabel": {
+      "description": "Custom label for paid-only posts.",
+      "default": "Paid only"
+    },
+    "tiersLabel": {
+      "description": "Custom label for specific-tier posts.",
+      "default": "Specific tiers"
+    },
+    "publicLabel": {
+      "description": "Custom label for public posts when showPublic=true.",
+      "default": "Public"
+    }
+  },
+  "files": [
+    {
+      "name": "visibility-badge.hbs",
+      "type": "partial",
+      "target": "partials/components/visibility-badge.hbs",
+      "content": "{{!-- Styling parameters: class --}}\n{{#with this as |ghostcnStyles|}}\n{{#match visibility \"members\"}}\n<span class=\"ghcn-visibility-badge{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-visibility=\"members\" data-variant=\"{{#match variant \"outline\"}}outline{{else}}{{#match variant \"subtle\"}}subtle{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\"><svg aria-hidden=\"true\" viewBox=\"0 0 16 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"7\" width=\"10\" height=\"7\" rx=\"1.5\"/><path d=\"M5.5 7V5a2.5 2.5 0 0 1 5 0v2\"/></svg><span>{{#if membersLabel}}{{membersLabel}}{{else}}Members only{{/if}}</span></span>\n{{else}}{{#match visibility \"paid\"}}\n<span class=\"ghcn-visibility-badge{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-visibility=\"paid\" data-variant=\"{{#match variant \"outline\"}}outline{{else}}{{#match variant \"subtle\"}}subtle{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\"><svg aria-hidden=\"true\" viewBox=\"0 0 16 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m8 2.2 1.8 3.6 4 .6-2.9 2.8.7 4L8 11.3l-3.6 1.9.7-4-2.9-2.8 4-.6L8 2.2Z\"/></svg><span>{{#if paidLabel}}{{paidLabel}}{{else}}Paid only{{/if}}</span></span>\n{{else}}{{#match visibility \"tiers\"}}\n<span class=\"ghcn-visibility-badge{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-visibility=\"tiers\" data-variant=\"{{#match variant \"outline\"}}outline{{else}}{{#match variant \"subtle\"}}subtle{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\"><svg aria-hidden=\"true\" viewBox=\"0 0 16 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m8 2.2 1.8 3.6 4 .6-2.9 2.8.7 4L8 11.3l-3.6 1.9.7-4-2.9-2.8 4-.6L8 2.2Z\"/></svg><span>{{#if tiersLabel}}{{tiersLabel}}{{else}}Specific tiers{{/if}}</span></span>\n{{else}}{{#if showPublic}}\n<span class=\"ghcn-visibility-badge{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-visibility=\"public\" data-variant=\"{{#match variant \"outline\"}}outline{{else}}{{#match variant \"subtle\"}}subtle{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\"><svg aria-hidden=\"true\" viewBox=\"0 0 16 16\" width=\"12\" height=\"12\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"8\" cy=\"8\" r=\"5.5\"/><path d=\"M2.5 8h11M8 2.5a8.5 8.5 0 0 1 0 11 8.5 8.5 0 0 1 0-11Z\"/></svg><span>{{#if publicLabel}}{{publicLabel}}{{else}}Public{{/if}}</span></span>\n{{/if}}{{/match}}{{/match}}{{/match}}\n{{/with}}"
+    },
+    {
+      "name": "visibility-badge.css",
+      "type": "style",
+      "target": "assets/css/components/visibility-badge.css",
+      "content": ".ghcn-visibility-badge { box-sizing: border-box; display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border: 1px solid var(--border); border-radius: 9999px; background: var(--secondary); color: var(--secondary-foreground); font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1.25; white-space: nowrap; }\n.ghcn-visibility-badge:where([data-visibility=\"paid\"]),\n.ghcn-visibility-badge:where([data-visibility=\"tiers\"]) { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }\n.ghcn-visibility-badge:where([data-size=\"sm\"]) { font-size: 11px; padding: 2px 7px; gap: 4px; }\n.ghcn-visibility-badge:where([data-size=\"lg\"]) { font-size: 14px; padding: 4px 11px; gap: 6px; }\n.ghcn-visibility-badge:where([data-variant=\"outline\"]) { background: transparent; color: var(--foreground); border-color: var(--border); }\n.ghcn-visibility-badge:where([data-variant=\"outline\"][data-visibility=\"paid\"]),\n.ghcn-visibility-badge:where([data-variant=\"outline\"][data-visibility=\"tiers\"]) { border-color: var(--primary); color: var(--primary); }\n.ghcn-visibility-badge:where([data-variant=\"subtle\"]) { background: transparent; border-color: transparent; padding-inline: 2px; color: var(--muted-foreground); }\n.ghcn-visibility-badge:where([data-variant=\"subtle\"][data-visibility=\"paid\"]),\n.ghcn-visibility-badge:where([data-variant=\"subtle\"][data-visibility=\"tiers\"]) { color: var(--foreground); }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native Ghost post {{visibility}} property (public, members, paid, tiers)."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-visibility-badge"
+    ]
+  }
+}

@@ -8,7 +8,9 @@ const variants = {
   card: ['default', 'secondary', 'outline'],
   badge: ['default', 'secondary', 'outline', 'destructive'],
   input: ['default', 'filled'],
-  alert: ['default', 'secondary', 'outline', 'destructive']
+  alert: ['default', 'secondary', 'outline', 'destructive'],
+  avatar: ['default', 'rounded', 'outline'],
+  accordion: ['default', 'secondary', 'outline', 'ghost']
 };
 const sizes = ['sm', 'default', 'lg'];
 const modifiers = name => `data-variant="${choice('variant', variants[name])}" data-size="${choice('size', sizes)}"`;
@@ -42,15 +44,18 @@ const button = primitive('button', 'A native button or link with variants, sizes
 {{else}}
 <button class="ghcn-ui-button" ${buttonAttributes} type="${choice('type', ['button', 'submit', 'reset'], 'button')}" {{#if disabled}}disabled{{/if}}>{{#if text}}{{text}}{{else}}Button{{/if}}</button>
 {{/if}}`, `${base('.ghcn-ui-button')}
-.ghcn-ui-button { ${control} display: inline-flex; align-items: center; justify-content: center; gap: ${token('control-gap')}; border: 1px solid transparent; background: var(--primary); color: var(--primary-foreground); font-weight: 600; text-decoration: none; cursor: pointer; }
+.ghcn-ui-button { ${control} display: inline-flex; align-items: center; justify-content: center; gap: ${token('control-gap')}; border: 1px solid transparent; background: var(--primary); color: var(--primary-foreground); font-weight: 600; text-decoration: none; cursor: pointer; transition: opacity 150ms ease, background-color 150ms ease, border-color 150ms ease; }
 .ghcn-ui-button:hover { opacity: .9; }
 ${controlSizes('.ghcn-ui-button')}
 .ghcn-ui-button:where([data-variant="secondary"]) { background: var(--secondary); color: var(--secondary-foreground); }
 .ghcn-ui-button:where([data-variant="outline"]) { background: transparent; color: var(--foreground); border-color: var(--border); }
+.ghcn-ui-button:where([data-variant="outline"]):hover { background: var(--muted); opacity: 1; }
 .ghcn-ui-button:where([data-variant="ghost"]), .ghcn-ui-button:where([data-variant="link"]) { background: transparent; color: var(--foreground); }
-.ghcn-ui-button:where([data-variant="link"]) { color: var(--primary); text-decoration: underline; }
+.ghcn-ui-button:where([data-variant="ghost"]):hover { background: var(--muted); opacity: 1; }
+.ghcn-ui-button:where([data-variant="link"]) { color: var(--primary); text-decoration: underline; text-underline-offset: 3px; }
 .ghcn-ui-button:where([data-variant="destructive"]) { background: var(--destructive); color: var(--destructive-foreground); }
 .ghcn-ui-button:disabled, .ghcn-ui-button[aria-disabled="true"] { opacity: .5; cursor: not-allowed; }
+@media (prefers-reduced-motion: reduce) { .ghcn-ui-button { transition: none; } }
 `, { class: ['ghcn-ui-button'] }, {
   text: { description: 'Visible, escaped label.', default: 'Button' },
   href: { description: 'Trusted link URL. Omit to render a button.' },
@@ -92,13 +97,13 @@ const badge = primitive('badge', 'A small non-interactive label with variants an
 
 const input = primitive('input', 'An accessible labeled native input, with optional hint and invalid/disabled states.', `<div class="ghcn-ui-field" ${modifiers('input')}>
   <label class="ghcn-ui-field__label"><span class="ghcn-ui-field__label-text">{{#if label}}{{label}}{{else}}Input{{/if}}{{#if required}} (required){{/if}}</span>
-    <input class="ghcn-ui-field__input" type="${choice('type', ['text', 'email', 'search', 'url', 'number', 'password'], 'text')}" {{#if name}}name="{{name}}"{{/if}} value="{{value}}" placeholder="{{placeholder}}" {{#if required}}required{{/if}} {{#if disabled}}disabled{{/if}} {{#if invalid}}aria-invalid="true"{{/if}} {{#if hintId}}aria-describedby="{{hintId}}"{{/if}} />
+    <input class="ghcn-ui-field__input" type="${choice('type', ['text', 'email', 'search', 'url', 'number', 'password'], 'text')}"{{#if id}} id="{{id}}"{{/if}}{{#if name}} name="{{name}}"{{/if}}{{#if value}} value="{{value}}"{{/if}}{{#if placeholder}} placeholder="{{placeholder}}"{{/if}}{{#if autocomplete}} autocomplete="{{autocomplete}}"{{/if}}{{#if required}} required{{/if}}{{#if disabled}} disabled{{/if}}{{#if invalid}} aria-invalid="true"{{/if}}{{#if hint}}{{#if hintId}} aria-describedby="{{hintId}}"{{/if}}{{/if}} />
   </label>
-  {{#if hint}}<p class="ghcn-ui-field__hint" {{#if hintId}}id="{{hintId}}"{{/if}}>{{hint}}</p>{{/if}}
+  {{#if hint}}<p class="ghcn-ui-field__hint"{{#if hintId}} id="{{hintId}}"{{/if}}>{{hint}}</p>{{/if}}
 </div>`, `${base('.ghcn-ui-field')}
 .ghcn-ui-field { width: 100%; }
 .ghcn-ui-field__label { display: grid; gap: .375em; font-weight: 500; }
-.ghcn-ui-field__input { ${control} width: 100%; min-width: 0; border: 1px solid var(--input); background: var(--background); color: var(--foreground); font-family: inherit; }
+.ghcn-ui-field__input { ${control} width: 100%; min-width: 0; border: 1px solid var(--input); background: var(--background); color: var(--foreground); font-family: inherit; transition: border-color 150ms ease, background-color 150ms ease; }
 :where(.ghcn-ui-field[data-size="sm"]) .ghcn-ui-field__input { min-height: 34px; padding: 5px 11px; font-size: 13px; }
 :where(.ghcn-ui-field[data-size="lg"]) .ghcn-ui-field__input { min-height: 46px; padding: 10px 17px; font-size: 16px; }
 :where(.ghcn-ui-field[data-variant="filled"]) .ghcn-ui-field__input { background: var(--muted); }
@@ -106,10 +111,13 @@ const input = primitive('input', 'An accessible labeled native input, with optio
 .ghcn-ui-field__input[aria-invalid="true"] { border-color: var(--destructive); }
 .ghcn-ui-field__input:disabled { opacity: .5; cursor: not-allowed; }
 .ghcn-ui-field__hint { color: var(--muted-foreground); font-size: .875em; margin: .5em 0 0; }
+@media (prefers-reduced-motion: reduce) { .ghcn-ui-field__input { transition: none; } }
 `, { class: ['ghcn-ui-field'], labelClass: ['ghcn-ui-field__label-text'], inputClass: ['ghcn-ui-field__input'], descriptionClass: ['ghcn-ui-field__hint'] }, {
   label: { description: 'Visible accessible label.', default: 'Input' },
   type: { description: 'Native input type.', options: ['text', 'email', 'search', 'url', 'number', 'password'], default: 'text' },
+  id: { description: 'Optional unique input ID.' },
   name: { description: 'Form field name.' }, value: { description: 'Initial field value.' }, placeholder: { description: 'Optional placeholder (not a label).' },
+  autocomplete: { description: 'Optional HTML autocomplete token (for example: email).' },
   hint: { description: 'Optional help text.' }, hintId: { description: 'Unique ID for help text; provide with hint for aria-describedby.' },
   invalid: { description: 'Boolean invalid state.' }, required: { description: 'Boolean required state.' }, disabled: { description: 'Boolean disabled state.' }
 });
@@ -130,4 +138,57 @@ const alert = primitive('alert', 'An accessible status message with an optional 
   heading: { description: 'Optional status heading.' }, description: { description: 'Escaped status text.' }, urgent: { description: 'Boolean. Use role=alert for urgent, dynamically inserted errors only.' }
 });
 
-module.exports = [button, card, badge, input, alert];
+const avatarInner = `{{#if src}}<img class="ghcn-ui-avatar__image" src="{{img_url src size="xs"}}" alt="{{#unless decorative}}{{#if name}}{{name}}{{/if}}{{/unless}}" loading="lazy" />{{else if profile_image}}<img class="ghcn-ui-avatar__image" src="{{img_url profile_image size="xs"}}" alt="{{#unless decorative}}{{#if name}}{{name}}{{/if}}{{/unless}}" loading="lazy" />{{else}}<span class="ghcn-ui-avatar__fallback"{{#if decorative}} aria-hidden="true"{{else}}{{#if name}} role="img" aria-label="{{name}}"{{/if}}{{/if}}>{{#if name}}{{name.[0]}}{{else}}?{{/if}}</span>{{/if}}`;
+const avatar = primitive('avatar', 'A reusable author or user avatar with image and initials fallback.', `{{#if href}}
+<a class="ghcn-ui-avatar" ${modifiers('avatar')} href="{{href}}"{{#if name}} aria-label="{{name}}"{{/if}}>${avatarInner}</a>
+{{else}}
+<span class="ghcn-ui-avatar" ${modifiers('avatar')}>${avatarInner}</span>
+{{/if}}`, `${base('.ghcn-ui-avatar')}
+.ghcn-ui-avatar { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: 0 0 auto; overflow: hidden; border-radius: 9999px; border: 1px solid var(--border); background: var(--muted); color: var(--foreground); text-decoration: none; vertical-align: middle; }
+.ghcn-ui-avatar:where([data-size="sm"]) { width: 28px; height: 28px; font-size: 12px; }
+.ghcn-ui-avatar:where([data-size="lg"]) { width: 56px; height: 56px; font-size: 20px; }
+.ghcn-ui-avatar:where([data-variant="rounded"]) { border-radius: ${token('control-radius')}; }
+.ghcn-ui-avatar:where([data-variant="outline"]) { border: 2px solid var(--primary); padding: 2px; background: var(--background); }
+.ghcn-ui-avatar:where([data-variant="outline"]) .ghcn-ui-avatar__image, .ghcn-ui-avatar:where([data-variant="outline"]) .ghcn-ui-avatar__fallback { border-radius: inherit; }
+.ghcn-ui-avatar__image { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ghcn-ui-avatar__fallback { display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-weight: 700; text-transform: uppercase; user-select: none; }
+`, { class: ['ghcn-ui-avatar'], imageClass: ['ghcn-ui-avatar__image', 'ghcn-ui-avatar__fallback'] }, {
+  src: { description: 'Image URL; falls back to profile_image inside a Ghost author context.' },
+  name: { description: 'Display name used for alt text and initials fallback.' },
+  href: { description: 'Optional trusted profile URL.' },
+  decorative: { description: 'Boolean. Hide avatar alt/initial from screen readers when placed next to a visible name.' }
+});
+
+const accordion = primitive('accordion', 'Zero-JS collapsible disclosure built on native details and summary elements.', `<details class="ghcn-ui-accordion" ${modifiers('accordion')}{{#if open}} open{{/if}}{{#if name}} name="{{name}}"{{/if}}>
+  <summary class="ghcn-ui-accordion__trigger">
+    <span class="ghcn-ui-accordion__title">{{#if heading}}{{heading}}{{else}}More details{{/if}}</span>
+    <svg class="ghcn-ui-accordion__icon" aria-hidden="true" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m5 7.5 5 5 5-5"/></svg>
+  </summary>
+  <div class="ghcn-ui-accordion__content">{{#> @partial-block}}{{#if body}}<p>{{body}}</p>{{/if}}{{/@partial-block}}</div>
+</details>`, `${base('.ghcn-ui-accordion')}
+.ghcn-ui-accordion { ${surface} overflow: hidden; }
+.ghcn-ui-accordion:where([data-variant="secondary"]) { background: var(--secondary); color: var(--secondary-foreground); }
+.ghcn-ui-accordion:where([data-variant="outline"]) { background: transparent; }
+.ghcn-ui-accordion:where([data-variant="ghost"]) { background: transparent; border-width: 0 0 1px; border-radius: 0; }
+.ghcn-ui-accordion__trigger { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 14px 18px; list-style: none; cursor: pointer; font-weight: 600; color: inherit; }
+.ghcn-ui-accordion__trigger::-webkit-details-marker { display: none; }
+.ghcn-ui-accordion:where([data-size="sm"]) .ghcn-ui-accordion__trigger { padding: 10px 14px; font-size: 14px; }
+.ghcn-ui-accordion:where([data-size="lg"]) .ghcn-ui-accordion__trigger { padding: 18px 22px; font-size: 18px; }
+.ghcn-ui-accordion:where([data-variant="ghost"]) .ghcn-ui-accordion__trigger { padding-inline: 0; }
+.ghcn-ui-accordion__icon { flex: 0 0 auto; color: var(--muted-foreground); transition: transform 180ms ease; }
+.ghcn-ui-accordion[open] > .ghcn-ui-accordion__trigger .ghcn-ui-accordion__icon { transform: rotate(180deg); }
+.ghcn-ui-accordion__content { padding: 0 18px 16px; color: var(--muted-foreground); font-size: ${token('text-small')}; }
+.ghcn-ui-accordion:where([data-size="sm"]) .ghcn-ui-accordion__content { padding: 0 14px 12px; }
+.ghcn-ui-accordion:where([data-size="lg"]) .ghcn-ui-accordion__content { padding: 0 22px 20px; font-size: ${token('text-body')}; }
+.ghcn-ui-accordion:where([data-variant="ghost"]) .ghcn-ui-accordion__content { padding-inline: 0; }
+.ghcn-ui-accordion__content > :first-child { margin-top: 0; }
+.ghcn-ui-accordion__content > :last-child { margin-bottom: 0; }
+@media (prefers-reduced-motion: reduce) { .ghcn-ui-accordion__icon { transition: none; } }
+`, { class: ['ghcn-ui-accordion'], triggerClass: ['ghcn-ui-accordion__trigger'], contentClass: ['ghcn-ui-accordion__content'] }, {
+  heading: { description: 'Visible summary heading.', default: 'More details' },
+  body: { description: 'Escaped text body when called as an ordinary partial.' },
+  open: { description: 'Boolean. Expand the disclosure by default.' },
+  name: { description: 'Optional shared group name for native exclusive accordions.' }
+});
+
+module.exports = [button, card, badge, input, alert, avatar, accordion];

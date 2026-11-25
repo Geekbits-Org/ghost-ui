@@ -1,5 +1,5 @@
 // Build-time mechanics shared by registry components. No custom Ghost helper is required.
-function applyStyleSlots(component, slots, { portableMarkup = false } = {}) {
+function applyStyleSlots(component, slots, { portableMarkup = false, extraSlots = {} } = {}) {
     const partial = component.files.find(file => file.type === 'partial');
     if (!partial) throw new Error(`${component.name} is missing its partial`);
     let content = partial.content;
@@ -26,10 +26,14 @@ function applyStyleSlots(component, slots, { portableMarkup = false } = {}) {
             if (!matches) throw new Error(`${component.name}: ${parameter} has no target ${identity}`);
         }
     }
+    const allSlotNames = [...new Set([...Object.keys(slots), ...Object.keys(extraSlots)])];
     // Capture the call context lexically before get/foreach/primary_author changes `this`.
     // Each invocation gets its own block alias; styles never leak from tier/post data or siblings.
-    partial.content = `{{!-- Styling parameters: ${Object.keys(slots).join(', ')} --}}\n{{#with this as |ghostcnStyles|}}\n${content}\n{{/with}}`;
-    component.styleSlots = Object.fromEntries(Object.entries(slots).map(([parameter, classes]) => [parameter, classes.map(value => `.${value}`)]));
+    partial.content = `{{!-- Styling parameters: ${allSlotNames.join(', ')} --}}\n{{#with this as |ghostcnStyles|}}\n${content}\n{{/with}}`;
+    component.styleSlots = {
+        ...Object.fromEntries(Object.entries(slots).map(([parameter, classes]) => [parameter, classes.map(value => `.${value}`)])),
+        ...extraSlots
+    };
     return component;
 }
 

@@ -11,7 +11,7 @@ const secondImage = editorialImage('#cbd1c5', '#374738', '<circle cx="600" cy="3
 const thirdImage = editorialImage('#dbc7bb', '#6a483e', '<path d="M334 454l140-235 127 208 126-208 140 235z"/><path d="M312 485h576v40H312z" fill="#9c6956"/><circle cx="603" cy="166" r="44" fill="#f5e4cd"/>');
 export const demoAuthor = { name: 'Alex Reader', url: '/author/alex/', bio: 'Writing about independent publishing, thoughtful design, and building a home for your readers.', location: 'Everywhere', count: { posts: 12 } };
 const tags = [{ name: 'Publishing', description: 'Stories about independent publishing.', url: '/tag/publishing/', visibility: 'public' }, { name: 'Design', description: 'The details that make it yours.', url: '/tag/design/', visibility: 'public' }];
-export const demoPost = { title: 'A home for independent ideas', url: '/a-home-for-independent-ideas/', excerpt: 'Good stories deserve a place of their own. Build a publication around your ideas, your community, and your voice.', custom_excerpt: 'Good stories deserve a place of their own.', feature_image: demoImage, feature_image_alt: 'An abstract illustration of folded paper', primary_author: demoAuthor, primary_tag: tags[0], tags, access: true };
+export const demoPost = { title: 'A home for independent ideas', url: '/a-home-for-independent-ideas/', excerpt: 'Good stories deserve a place of their own. Build a publication around your ideas, your community, and your voice.', custom_excerpt: 'Good stories deserve a place of their own.', feature_image: demoImage, feature_image_alt: 'An abstract illustration of folded paper', primary_author: demoAuthor, primary_tag: tags[0], tags, access: true, visibility: 'members' };
 export const demoPosts = [
   demoPost,
   { ...demoPost, title: 'Make room for your readers', url: '/make-room-for-your-readers/', feature_image: secondImage, feature_image_alt: 'An abstract illustration of intersecting circles', excerpt: 'A thoughtful reading experience starts with space for the story and a clear path to what comes next.' },
@@ -27,11 +27,20 @@ export const demoParameters: Record<string, Record<string, string>> = {
   input: { label: 'Email address', type: 'email', name: 'email', placeholder: 'you@example.com', hint: 'We will keep your email private.', hintId: 'demo-email-hint' },
   alert: { heading: 'You are all set', description: 'Your theme is ready to customize.' },
   'post-grid': { heading: 'Latest stories' }, 'author-list': { heading: 'Meet the authors' }, 'tag-grid': { heading: 'Explore topics' },
-  'archive-header': { heading: 'Publishing', description: 'Ideas for a publication of your own.', eyebrow: 'Topic', archiveImage: demoImage, imageAlt: 'Demo archive image' }
+  'archive-header': { heading: 'Publishing', description: 'Ideas for a publication of your own.', eyebrow: 'Topic', archiveImage: demoImage, imageAlt: 'Demo archive image' },
+  avatar: { name: 'Alex Reader' },
+  accordion: { heading: 'How does membership work?', body: 'Choose a free or paid tier in Ghost Portal to unlock member-only essays and newsletters.' },
+  'theme-toggle': { ariaLabel: 'Color theme' },
+  'announcement-bar': { text: 'Issue 14 is live — read our spring editorial report.', linkText: 'Read issue', href: '/archive/' },
+  'reading-progress': { initialValue: '42' },
+  'share-buttons': { heading: 'Share' },
+  breadcrumbs: { homeLabel: 'Home' },
+  'visibility-badge': { membersLabel: 'Members only' }
 };
 
-export function renderPreviewTemplate(partials: Record<string, string>, template: string, options: { state?: string; context?: Record<string, unknown> } = {}) {
+export function renderPreviewTemplate(partials: Record<string, string>, template: string, options: { state?: string; context?: Record<string, unknown>; access?: boolean } = {}) {
   const state = options.state || 'visitor';
+  const postContext = options.access === undefined ? demoPost : { ...demoPost, access: options.access };
   const hbs = Handlebars.create();
   hbs.registerPartial(partials);
   hbs.registerHelper('foreach', (items: any[], opts) => {
@@ -44,10 +53,14 @@ export function renderPreviewTemplate(partials: Record<string, string>, template
   hbs.registerHelper('get', (resource, opts) => opts.fn(resource === 'tiers' ? { tiers } : resource === 'authors' ? { authors: [demoAuthor] } : resource === 'tags' ? { tags } : { posts: demoPosts }, { data: opts.data }));
   hbs.registerHelper('match', function (this: unknown, value, expected, opts) { return value === expected ? opts.fn(this) : opts.inverse(this); });
   hbs.registerHelper('has', function (this: unknown, opts) { return String(opts.data?.index) === opts.hash.index ? opts.fn(this) : opts.inverse(this); });
-  hbs.registerHelper('post', opts => opts.fn(demoPost, { data: opts.data }));
+  hbs.registerHelper('post', opts => opts.fn(postContext, { data: opts.data }));
   hbs.registerHelper('primary_author', function (this: typeof demoPost, opts) { return opts.fn(this.primary_author, { data: opts.data }); });
   hbs.registerHelper('img_url', value => value);
-  hbs.registerHelper('url', function (this: { url: string }) { return this.url; });
+  hbs.registerHelper('url', function (this: { url?: string }, opts) {
+    const pathUrl = this.url || '/a-home-for-independent-ideas/';
+    return opts?.hash?.absolute ? `https://example.com${pathUrl}` : pathUrl;
+  });
+  hbs.registerHelper('encode', value => encodeURIComponent(String(value ?? '')));
   hbs.registerHelper('excerpt', function (this: { excerpt: string }) { return this.excerpt; });
   hbs.registerHelper('asset', value => `/theme-assets/${value}`);
   hbs.registerHelper('reading_time', () => '4 min read');
@@ -58,9 +71,10 @@ export function renderPreviewTemplate(partials: Record<string, string>, template
   hbs.registerHelper('navigation', () => new hbs.SafeString('<ul class="nav"><li class="nav-current"><a href="/">Home</a></li><li><a href="/about/">About</a></li><li><a href="/archive/">Archive</a></li></ul>'));
   hbs.registerHelper('search', () => new hbs.SafeString('<button type="button" class="ghcn-icon-button ghcn-button--ghost" aria-label="Search"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="m15 15 6 6" stroke="currentColor" stroke-width="2"/></svg></button>'));
   hbs.registerHelper('price', (amount, opts) => new Intl.NumberFormat('en', { style: 'currency', currency: opts.hash.currency }).format(amount / 100));
-  const site = { title: 'Ghostcn Journal', url: '/', description: 'Independent ideas, shared with your readers.', locale: 'en', members_enabled: state !== 'disabled', paid_members_enabled: state !== 'disabled', members_invite_only: state === 'invite', allow_self_signup: !['disabled', 'invite', 'restricted'].includes(state) };
+  const site = { title: 'Ghostcn Journal', url: '/', description: 'Independent ideas, shared with your readers.', locale: 'en', members_enabled: state !== 'disabled', paid_members_enabled: state !== 'disabled' && state !== 'free-only', members_invite_only: state === 'invite', allow_self_signup: !['disabled', 'invite', 'restricted'].includes(state) };
   const data = { site, member: ['free', 'paid'].includes(state) ? { paid: state === 'paid' } : undefined };
-  return hbs.compile(template)(options.context || previewDemoContext, { data });
+  const context = options.context || (options.access === undefined ? previewDemoContext : { ...previewDemoContext, access: options.access });
+  return hbs.compile(template)(context, { data });
 }
 
 export function previewInvocation(partialName: string, parameters: Record<string, unknown>) {

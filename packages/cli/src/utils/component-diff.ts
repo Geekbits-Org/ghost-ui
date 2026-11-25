@@ -23,6 +23,8 @@ export async function comparisonManifest(name: string, latest: boolean): Promise
   return manifest;
 }
 
+const normalizeEol = (value: string | undefined) => value?.replace(/\r\n/g, '\n');
+
 export function compareComponent(themeRoot: string, config: GhostcnConfig, manifest: ComponentManifest) {
   const files = componentFiles(themeRoot, config, manifest);
   const saved = readHistory(themeRoot).components[manifest.name];
@@ -33,42 +35,68 @@ export function compareComponent(themeRoot: string, config: GhostcnConfig, manif
     const baseline = saved?.files[relative];
     const local = fs.existsSync(target) ? fs.readFileSync(target, 'utf8') : undefined;
     const next = incoming[relative];
+    const normBaseline = normalizeEol(baseline);
+    const normLocal = normalizeEol(local);
+    const normNext = normalizeEol(next);
     let status: FileStatus;
     if (next === undefined) status = 'removed-upstream';
     else if (local === undefined) status = 'missing';
-    else if (local === next) status = 'unchanged';
+    else if (normLocal === normNext) status = 'unchanged';
     else if (baseline === undefined) status = 'untracked';
-    else if (baseline === next) status = 'locally-modified';
-    else if (baseline === local) status = 'upstream-changed';
+    else if (normBaseline === normNext) status = 'locally-modified';
+    else if (normBaseline === normLocal) status = 'upstream-changed';
     else status = 'conflict';
     return { path: relative, status, baseline, local, incoming: next };
   });
   return { name: manifest.name, installedRevision: saved?.revision, incomingRevision: revision(incoming), files: comparisons };
 }
 
-// Complete line diff with bounded memory. Large files remain reviewable as replacement hunks.
-export function unifiedDiff(before: string | undefined, after: string | undefined, label: string): string {
-  if (before === after) return '';
-  const split = (value: string | undefined) => value?.replace(/\r\n/g, '\n').match(/[^\n]*\n|[^\n]+$/g) || [];
+// Contextual line diff (3-line hunks) with bounded memory. Large files remain reviewable as replacement hunks.
+export function unifiedDiff(before: string | undefined, after: string | undefined, label: string, contextLines = 3): string {
+  if (normalizeEol(before) === normalizeEol(after)) return '';
+  const split = (value: string | undefined) => normalizeEol(value)?.match(/[^\n]*\n|[^\n]+$/g) || [];
   const a = split(before);
   const b = split(after);
-  const lines = [`--- ${label} (local)`, `+++ ${label} (registry)`, `@@ -${a.length ? 1 : 0},${a.length} +${b.length ? 1 : 0},${b.length} @@`];
-  const emit = (prefix: string, value: string) => {
-    lines.push(prefix + (value.endsWith('\n') ? value.slice(0, -1) : value));
-    if (!value.endsWith('\n')) lines.push('\\ No newline at end of file');
+  const header = [`--- ${label} (local)`, `+++ ${label} (registry)`];
+  const formatLine = (prefix: string, value: string): string[] => {
+    const out = [prefix + (value.endsWith('\n') ? value.slice(0, -1) : value)];
+    if (!value.endsWith('\n')) out.push('\\ No newline at end of file');
+    return out;
   };
   if (a.length * b.length > 1_000_000) {
-    a.forEach(value => emit('-', value)); b.forEach(value => emit('+', value));
-    return lines.join('\n');
+    const out = [...header, `@@ -${a.length ? 1 : 0},${a.length} +${b.length ? 1 : 0},${b.length} @@`];
+    a.forEach(value => out.push(...formatLine('-', value)));
+    b.forEach(value => out.push(...formatLine('+', value)));
+    return out.join('\n');
   }
   const width = b.length + 1;
   const matrix = new Uint32Array((a.length + 1) * width);
   for (let i = a.length - 1; i >= 0; i--) for (let j = b.length - 1; j >= 0; j--) matrix[i * width + j] = a[i] === b[j] ? 1 + matrix[(i + 1) * width + j + 1] : Math.max(matrix[(i + 1) * width + j], matrix[i * width + j + 1]);
+  type Op = { kind: ' ' | '-' | '+'; value: string; oldLine: number; newLine: number };
+  const ops: Op[] = [];
   let i = 0, j = 0;
   while (i < a.length || j < b.length) {
-    if (i < a.length && j < b.length && a[i] === b[j]) emit(' ', a[i++]), j++;
-    else if (i < a.length && (j === b.length || matrix[(i + 1) * width + j] >= matrix[i * width + j + 1])) emit('-', a[i++]);
-    else emit('+', b[j++]);
+    if (i < a.length && j < b.length && a[i] === b[j]) ops.push({ kind: ' ', value: a[i], oldLine: i + 1, newLine: j + 1 }), i++, j++;
+    else if (i < a.length && (j === b.length || matrix[(i + 1) * width + j] >= matrix[i * width + j + 1])) ops.push({ kind: '-', value: a[i], oldLine: i + 1, newLine: j + 1 }), i++;
+    else ops.push({ kind: '+', value: b[j], oldLine: i + 1, newLine: j + 1 }), j++;
+  }
+  const ranges: [number, number][] = [];
+  ops.forEach((op, idx) => {
+    if (op.kind === ' ') return;
+    const start = Math.max(0, idx - contextLines);
+    const end = Math.min(ops.length - 1, idx + contextLines);
+    if (ranges.length && start <= ranges[ranges.length - 1][1] + 1) ranges[ranges.length - 1][1] = end;
+    else ranges.push([start, end]);
+  });
+  const lines = [...header];
+  for (const [start, end] of ranges) {
+    const slice = ops.slice(start, end + 1);
+    const oldCount = slice.filter(op => op.kind !== '+').length;
+    const newCount = slice.filter(op => op.kind !== '-').length;
+    const oldStart = oldCount ? slice.find(op => op.kind !== '+')!.oldLine : Math.max(0, slice[0].oldLine - 1);
+    const newStart = newCount ? slice.find(op => op.kind !== '-')!.newLine : Math.max(0, slice[0].newLine - 1);
+    lines.push(`@@ -${oldStart},${oldCount} +${newStart},${newCount} @@`);
+    for (const op of slice) lines.push(...formatLine(op.kind, op.value));
   }
   return lines.join('\n');
 }

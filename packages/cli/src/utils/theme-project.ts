@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { generateThemeCss, ThemeConfig } from './theme';
-import { resolveWithinTheme, StyleSyncResult, syncGhostcnStyles } from './theme-files';
+import { safeThemePath, StyleSyncResult, syncGhostcnStyles } from './theme-files';
 import { tailwindTheme } from './styles';
 
 export interface GhostcnConfig {
@@ -38,7 +38,7 @@ export function buildGhostcnConfig(
 ): GhostcnConfig {
   const normalized = (value: string | undefined, fallback: string) => value?.trim().replace(/\\/g, '/') || fallback;
   return {
-    $schema: 'https://ghostcn.com/schema.json',
+    $schema: 'https://ghostcn.geekbits.dev/schema.json',
     style: theme.style,
     theme: {
       baseColor: theme.baseColor,
@@ -55,14 +55,16 @@ export function buildGhostcnConfig(
 }
 
 export function initializeThemeProject(options: InitializeThemeOptions): InitializeThemeResult {
-  const configPath = resolveWithinTheme(options.themeRoot, 'components.json');
-  const cssPath = resolveWithinTheme(options.themeRoot, options.config.cssFile);
+  const configPath = safeThemePath(options.themeRoot, 'components.json');
+  const cssPath = safeThemePath(options.themeRoot, options.config.cssFile);
 
   fs.mkdirSync(path.dirname(cssPath), { recursive: true });
   fs.writeFileSync(configPath, JSON.stringify(options.config, null, 2) + '\n', 'utf8');
   fs.writeFileSync(cssPath, generateThemeCss({ style: options.config.style, ...options.config.theme }), 'utf8');
   if (options.config.style === 'tailwind') {
-    fs.writeFileSync(path.join(path.dirname(cssPath), 'ghostcn-tailwind.css'), tailwindTheme(), 'utf8');
+    const tailwindRelative = path.posix.join(path.posix.dirname(options.config.cssFile.replace(/\\/g, '/')), 'ghostcn-tailwind.css');
+    const tailwindPath = safeThemePath(options.themeRoot, tailwindRelative);
+    fs.writeFileSync(tailwindPath, tailwindTheme(), 'utf8');
   }
 
   const styleSync = syncGhostcnStyles({

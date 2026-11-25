@@ -4,6 +4,12 @@
   "description": "Related reading from the same primary tag, excluding the current post; recent posts when untagged.",
   "dependencies": [],
   "ghost_version": ">=5.0.0",
+  "parameters": {
+    "heading": {
+      "description": "Optional section heading override.",
+      "default": "Keep reading"
+    }
+  },
   "files": [
     {
       "name": "related-posts.hbs",

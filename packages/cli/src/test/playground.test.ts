@@ -33,7 +33,7 @@ test('playground renders every installed component without changing theme files 
   const runtime = await startPlayground({ themeRoot, port: 0 });
   try {
     const catalog = await (await fetch(`${runtime.url}/catalog`)).json() as any;
-    assert.equal(catalog.components.length, 23);
+    assert.equal(catalog.components.length, 31);
     for (const item of catalog.components) {
       const response = await fetch(`${runtime.url}/preview/${item.name}?class=instance-custom&scheme=dark&variant=outline&size=sm`);
       assert.equal(response.status, 200, item.name);

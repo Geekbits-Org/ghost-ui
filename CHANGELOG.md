@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.6.0 — 2026-11-25
+
+- Added 8 new Ghost-native components (bringing the registry to 31): `avatar`, `accordion`, `theme-toggle`, `announcement-bar`, `reading-progress`, `share-buttons`, `breadcrumbs`, and `visibility-badge`.
+- Added a progressive **Monthly / Yearly** billing toggle with automatic savings badge to `pricing-table` (`pricing-table.js`), while preserving full zero-JS fallback.
+- Upgraded destructive and accent color tokens across all palettes to WCAG AA+ contrast in light and dark modes, and added `--success` / `--success-foreground` tokens.
+- Replaced raw Unicode symbols (`✓`, `✕`, `📍`) with inline SVGs, fixed `rem` → `px` host-independent scaling, fixed `site-footer` RSS URL normalization, `site-header` mobile action layout, `post-header` separator, `pricing-table` empty-tier/aria-label handling, and added `error.hbs` + `overflow-x: clip` to generated starters.
+- Hardened `ghostcn doctor`, `pack`, `diff`, `init`, `create`, and `list`: dangling-symlink protection, DEFLATE ZIP compression, packing of `locales/`, `members/`, and `routes.yaml`, CRLF-safe contextual 3-line colorized diffs, and categorized `ghostcn list`.
+- Upgraded `ghostcn playground` with responsive viewport switching, protected-post paywall (`access=false`) and `free-only` previews, live debounced inputs, copyable Handlebars snippets, and instant shutdown.
+
 ## 1.5.0 — 2026-11-08
 
 - New themes default to the Doks palette, monochrome controls, and 10px radius. Other palette and accent choices remain available.

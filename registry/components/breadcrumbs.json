@@ -1,0 +1,59 @@
+{
+  "name": "breadcrumbs",
+  "type": "components:content",
+  "description": "Accessible breadcrumb navigation with Schema.org BreadcrumbList microdata for posts, tags, and authors.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Separator and surface style.",
+      "options": [
+        "default",
+        "chevron",
+        "pill"
+      ],
+      "default": "default"
+    },
+    "homeLabel": {
+      "description": "Label for the home breadcrumb.",
+      "default": "Home"
+    },
+    "current": {
+      "description": "Optional override for the current page title."
+    }
+  },
+  "files": [
+    {
+      "name": "breadcrumbs.hbs",
+      "type": "partial",
+      "target": "partials/components/breadcrumbs.hbs",
+      "content": "{{!-- Styling parameters: class, listClass, linkClass, currentClass --}}\n{{#with this as |ghostcnStyles|}}\n<nav class=\"ghcn-breadcrumbs{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-variant=\"{{#match variant \"chevron\"}}chevron{{else}}{{#match variant \"pill\"}}pill{{else}}default{{/match}}{{/match}}\" aria-label=\"Breadcrumb\">\n  <ol class=\"ghcn-breadcrumbs__list{{#if ghostcnStyles.listClass}} {{ghostcnStyles.listClass}}{{/if}}\" itemscope itemtype=\"https://schema.org/BreadcrumbList\">\n    <li class=\"ghcn-breadcrumbs__item\" itemprop=\"itemListElement\" itemscope itemtype=\"https://schema.org/ListItem\">\n      <a class=\"ghcn-breadcrumbs__link{{#if ghostcnStyles.linkClass}} {{ghostcnStyles.linkClass}}{{/if}}\" href=\"{{@site.url}}\" itemprop=\"item\"><span itemprop=\"name\">{{#if homeLabel}}{{homeLabel}}{{else}}Home{{/if}}</span></a>\n      <meta itemprop=\"position\" content=\"1\" />\n    </li>\n    {{#if primary_tag}}\n    <li class=\"ghcn-breadcrumbs__item\" itemprop=\"itemListElement\" itemscope itemtype=\"https://schema.org/ListItem\">\n      <a class=\"ghcn-breadcrumbs__link{{#if ghostcnStyles.linkClass}} {{ghostcnStyles.linkClass}}{{/if}}\" href=\"{{primary_tag.url}}\" itemprop=\"item\"><span itemprop=\"name\">{{primary_tag.name}}</span></a>\n      <meta itemprop=\"position\" content=\"2\" />\n    </li>\n    {{/if}}\n    <li class=\"ghcn-breadcrumbs__item\" itemprop=\"itemListElement\" itemscope itemtype=\"https://schema.org/ListItem\">\n      <span class=\"ghcn-breadcrumbs__current{{#if ghostcnStyles.currentClass}} {{ghostcnStyles.currentClass}}{{/if}}\" aria-current=\"page\" itemprop=\"name\">{{#if current}}{{current}}{{else}}{{#if title}}{{title}}{{else}}{{#if name}}{{name}}{{else}}{{@site.title}}{{/if}}{{/if}}{{/if}}</span>\n      <meta itemprop=\"position\" content=\"{{#if primary_tag}}3{{else}}2{{/if}}\" />\n    </li>\n  </ol>\n</nav>\n{{/with}}"
+    },
+    {
+      "name": "breadcrumbs.css",
+      "type": "style",
+      "target": "assets/css/components/breadcrumbs.css",
+      "content": ".ghcn-breadcrumbs { box-sizing: border-box; min-width: 0; margin-block: var(--ghcn-section-space, clamp(24px, 4vw, 48px)); font-family: inherit; font-size: var(--ghcn-text-body, 16px); line-height: 1.5; color: var(--foreground); margin-block: 16px; }\n.ghcn-breadcrumbs *, .ghcn-breadcrumbs *::before, .ghcn-breadcrumbs *::after { box-sizing: border-box; }\n.ghcn-breadcrumbs__list { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: var(--ghcn-text-meta, 13px); color: var(--muted-foreground); }\n.ghcn-breadcrumbs:where([data-variant=\"pill\"]) .ghcn-breadcrumbs__list { display: inline-flex; padding: 5px 12px; border: 1px solid var(--border); border-radius: 9999px; background: var(--card); }\n.ghcn-breadcrumbs__item { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }\n.ghcn-breadcrumbs__item + .ghcn-breadcrumbs__item::before { content: \"/\"; color: color-mix(in srgb, var(--muted-foreground) 55%, transparent); }\n.ghcn-breadcrumbs:where([data-variant=\"chevron\"]) .ghcn-breadcrumbs__item + .ghcn-breadcrumbs__item::before { content: \"›\"; font-size: 1.15em; line-height: 1; }\n.ghcn-breadcrumbs__link { color: inherit; text-decoration: none; }\n.ghcn-breadcrumbs__link:hover { color: var(--foreground); text-decoration: underline; text-underline-offset: 3px; }\n.ghcn-breadcrumbs__current { color: var(--foreground); font-weight: 600; }\n.ghcn-breadcrumbs:focus-visible, :where(.ghcn-breadcrumbs) :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 2px; }\n"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native Ghost @site.url, primary_tag, title, and name helpers with Schema.org microdata."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-breadcrumbs"
+    ],
+    "listClass": [
+      ".ghcn-breadcrumbs__list"
+    ],
+    "linkClass": [
+      ".ghcn-breadcrumbs__link"
+    ],
+    "currentClass": [
+      ".ghcn-breadcrumbs__current"
+    ]
+  }
+}

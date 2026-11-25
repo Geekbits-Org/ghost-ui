@@ -33,6 +33,12 @@ export async function create(themeNameArgument?: string, options: CreateOptions 
   let installDependencies = !options.skipInstall;
 
   if (!options.yes) {
+    if (!process.stdin.isTTY) {
+      console.error(chalk.red('Interactive theme creation requires a TTY. Pass --yes (and a theme name) to use defaults.'));
+      process.exitCode = 1;
+      return;
+    }
+    let cancelled = false;
     const response = await prompts([
       ...(!themeName ? [{ type: 'text' as const, name: 'themeName', message: 'What should the theme be called?', initial: 'my-ghost-theme' }] : []),
       { type: 'select', name: 'style', message: 'Which styling system?', choices: [{ title: 'Tailwind CSS', value: 'tailwind' }, { title: 'Vanilla CSS', value: 'css' }], initial: 0 },
@@ -47,10 +53,11 @@ export async function create(themeNameArgument?: string, options: CreateOptions 
       ...(!options.skipInstall ? [{ type: 'confirm' as const, name: 'installDependencies', message: 'Install dependencies now?', initial: true }] : [])
     ], {
       onCancel: () => {
+        cancelled = true;
         console.log(chalk.yellow('\nTheme creation cancelled.'));
-        process.exit(0);
       }
     });
+    if (cancelled) return;
     themeName = response.themeName || themeName;
     style = response.style || style;
     baseColor = response.baseColor || baseColor;
@@ -93,8 +100,7 @@ export async function create(themeNameArgument?: string, options: CreateOptions 
     spinner.succeed(chalk.green(`Created ${themeName} with ${components.length} components.`));
 
     if (installDependencies) {
-      const installSpinner = ora(`Installing dependencies with ${packageManager}...`).start();
-      installSpinner.stop();
+      console.log(chalk.dim(`Installing dependencies with ${packageManager}...`));
       const installed = spawnSync(packageManager, ['install'], {
         cwd: scaffold.themeRoot,
         stdio: 'inherit',

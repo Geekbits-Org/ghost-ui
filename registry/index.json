@@ -2,7 +2,7 @@
   {
     "name": "newsletter-form",
     "description": "A native Ghost members subscription form with state handling.",
-    "category": "components:ui",
+    "category": "components:members",
     "ghost_version": ">=5.0.0",
     "files": [
       "newsletter-form.hbs",
@@ -11,12 +11,13 @@
   },
   {
     "name": "pricing-table",
-    "description": "Membership tiers and pricing plans with native Ghost Portal checkout triggers.",
-    "category": "components:ui",
+    "description": "Live Ghost tiers, prices, currencies, benefits, and progressive monthly/yearly toggle with Portal checkout.",
+    "category": "components:members",
     "ghost_version": ">=5.0.0",
     "files": [
       "pricing-table.hbs",
-      "pricing-table.css"
+      "pricing-table.css",
+      "pricing-table.js"
     ]
   },
   {
@@ -191,6 +192,26 @@
     ]
   },
   {
+    "name": "avatar",
+    "description": "A reusable author or user avatar with image and initials fallback.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "avatar.hbs",
+      "avatar.css"
+    ]
+  },
+  {
+    "name": "accordion",
+    "description": "Zero-JS collapsible disclosure built on native details and summary elements.",
+    "category": "components:ui",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "accordion.hbs",
+      "accordion.css"
+    ]
+  },
+  {
     "name": "post-grid",
     "description": "A responsive grid using post-card; pass posts from a loop, archive or get query.",
     "category": "components:content",
@@ -228,6 +249,70 @@
     "files": [
       "archive-header.hbs",
       "archive-header.css"
+    ]
+  },
+  {
+    "name": "theme-toggle",
+    "description": "Light, dark, and system theme switcher syncing .dark-mode and .auto-color with localStorage persistence.",
+    "category": "components:layout",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "theme-toggle.hbs",
+      "theme-toggle.css",
+      "theme-toggle.js"
+    ]
+  },
+  {
+    "name": "announcement-bar",
+    "description": "Dismissible top publication announcement bar with optional link and session persistence.",
+    "category": "components:layout",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "announcement-bar.hbs",
+      "announcement-bar.css",
+      "announcement-bar.js"
+    ]
+  },
+  {
+    "name": "reading-progress",
+    "description": "Thin scroll-linked reading progress bar tracking article scroll depth.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "reading-progress.hbs",
+      "reading-progress.css",
+      "reading-progress.js"
+    ]
+  },
+  {
+    "name": "share-buttons",
+    "description": "Accessible article share links (Copy link, Bluesky, X, LinkedIn, Email, and native Web Share).",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "share-buttons.hbs",
+      "share-buttons.css",
+      "share-buttons.js"
+    ]
+  },
+  {
+    "name": "breadcrumbs",
+    "description": "Accessible breadcrumb navigation with Schema.org BreadcrumbList microdata for posts, tags, and authors.",
+    "category": "components:content",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "breadcrumbs.hbs",
+      "breadcrumbs.css"
+    ]
+  },
+  {
+    "name": "visibility-badge",
+    "description": "Ghost-native access indicator pill for members-only, paid-only, tier-restricted, or public posts.",
+    "category": "components:members",
+    "ghost_version": ">=5.0.0",
+    "files": [
+      "visibility-badge.hbs",
+      "visibility-badge.css"
     ]
   }
 ]

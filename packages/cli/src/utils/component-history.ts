@@ -12,7 +12,7 @@ export function revision(files: Record<string, string>): string {
 export function readHistory(themeRoot: string): ComponentHistory {
   const target = safeThemePath(themeRoot, '.ghostcn/installed.json');
   if (!fs.existsSync(target)) return { schema: 1, components: {} };
-  const state = JSON.parse(fs.readFileSync(target, 'utf8')) as ComponentHistory;
+  const state = JSON.parse(fs.readFileSync(target, 'utf8').replace(/^\uFEFF/, '')) as ComponentHistory;
   if (state.schema !== 1 || !state.components || Array.isArray(state.components) || typeof state.components !== 'object') throw new Error('Invalid .ghostcn/installed.json; preserve it and repair before continuing.');
   for (const [name, entry] of Object.entries(state.components)) {
     sanitizeComponentName(name);

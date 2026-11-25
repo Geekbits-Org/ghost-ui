@@ -1,11 +1,12 @@
 const { applyStyleSlots } = require('./component-styling');
 const { token, section, sectionTitle, surface, cardTitle, grid, focus } = require('./component-defaults');
-const component = (name, description, partial, css, slots, extra = []) => applyStyleSlots({
+const component = (name, description, partial, css, slots, extra = [], extraSlots = {}, parameters) => applyStyleSlots({
   name, type: 'components:content', description, dependencies: [], ghost_version: '>=5.0.0',
+  ...(parameters ? { parameters } : {}),
   files: [{ name: `${name}.hbs`, type: 'partial', target: `partials/components/${name}.hbs`, content: partial },
     { name: `${name}.css`, type: 'style', target: `assets/css/components/${name}.css`, content: css }, ...extra],
   gscan: { rules_satisfied: ['GS010-PJ-VALID'], notes: 'Uses native Ghost post data and optional progressive enhancement.' }
-}, slots);
+}, slots, { extraSlots });
 
 const relatedBody = `{{#if posts}}
 <section class="ghcn-related" aria-label="Related posts">
@@ -38,7 +39,9 @@ const related = component('related-posts', 'Related reading from the same primar
 .ghcn-related__card-title a:hover { text-decoration: underline; }
 .ghcn-related__description { color: var(--muted-foreground); font-size: ${token('text-small')}; margin: 0; }
 .ghcn-related a:focus-visible { ${focus} }
-`, { class: ['ghcn-related'], titleClass: ['ghcn-related__title'], gridClass: ['ghcn-related__grid'], cardClass: ['ghcn-related__card'], cardTitleClass: ['ghcn-related__card-title'], imageClass: ['ghcn-related__image'], contentClass: ['ghcn-related__content'], descriptionClass: ['ghcn-related__description'] });
+`, { class: ['ghcn-related'], titleClass: ['ghcn-related__title'], gridClass: ['ghcn-related__grid'], cardClass: ['ghcn-related__card'], cardTitleClass: ['ghcn-related__card-title'], imageClass: ['ghcn-related__image'], contentClass: ['ghcn-related__content'], descriptionClass: ['ghcn-related__description'] }, [], {}, {
+  heading: { description: 'Optional section heading override.', default: 'Keep reading' }
+});
 
 const navigation = component('post-navigation', 'Accessible chronological previous/next post links, with no dead links at either end.', `{{!-- Use inside {{#post}}. Native helpers hide missing neighbors. --}}
 <nav class="ghcn-post-navigation" aria-label="Post navigation">{{~#prev_post~}}<a class="ghcn-post-navigation__link" href="{{url}}" rel="prev"><span class="ghcn-post-navigation__label">Previous post</span><span class="ghcn-post-navigation__title">{{title}}</span></a>{{~/prev_post~}}{{~#next_post~}}<a class="ghcn-post-navigation__link ghcn-post-navigation__link--next" href="{{url}}" rel="next"><span class="ghcn-post-navigation__label">Next post</span><span class="ghcn-post-navigation__title">{{title}}</span></a>{{~/next_post~}}</nav>`, `
@@ -110,7 +113,8 @@ const tocScript = `/* ghostcn table of contents: no dependencies, no HTML inject
         if (headings.length < 2) return;
         headings.forEach((heading, index) => {
           if (!heading.id) {
-            const base = 'ghcn-' + (heading.textContent.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'section-' + (index + 1));
+            const slug = heading.textContent.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g, '').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '');
+            const base = 'ghcn-' + (slug || 'section-' + (index + 1));
             let id = base, suffix = 2;
             while (used.has(id)) id = base + '-' + suffix++;
             heading.id = id; used.add(id);
@@ -203,8 +207,9 @@ const toc = component('table-of-contents', 'Progressively enhanced h2/h3 navigat
   :where(.ghcn-toc--sticky) .ghcn-toc__list { max-block-size: max(120px, 100dvh - var(--ghcn-toc-top, 80px) - 56px); overflow-y: auto; }
   :where(.ghcn-toc--sticky) .ghcn-toc__link:focus-visible { outline-offset: -2px; }
 }
-`, { class: ['ghcn-toc'], titleClass: ['ghcn-toc__title'], listClass: ['ghcn-toc__list'] }, [{ name: 'table-of-contents.js', type: 'js', target: 'assets/js/components/table-of-contents.js', content: tocScript }]);
-// This dynamic slot is applied by the script, not by the template's static class injector.
-toc.styleSlots.linkClass = ['.ghcn-toc__link'];
+`, { class: ['ghcn-toc'], titleClass: ['ghcn-toc__title'], listClass: ['ghcn-toc__list'] }, [{ name: 'table-of-contents.js', type: 'js', target: 'assets/js/components/table-of-contents.js', content: tocScript }], { linkClass: ['.ghcn-toc__link'] }, {
+  heading: { description: 'Optional heading for the table of contents.', default: 'On this page' },
+  contentSelector: { description: 'CSS selector for the article container to scan.', default: '.ghcn-article-content' }
+});
 
 module.exports = [related, navigation, toc, tags];

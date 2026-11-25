@@ -1,0 +1,62 @@
+{
+  "name": "avatar",
+  "type": "components:ui",
+  "description": "A reusable author or user avatar with image and initials fallback.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Visual treatment; unknown values fall back to default.",
+      "options": [
+        "default",
+        "rounded",
+        "outline"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "description": "Component scale; unknown values fall back to default.",
+      "options": [
+        "sm",
+        "default",
+        "lg"
+      ],
+      "default": "default"
+    },
+    "src": {
+      "description": "Image URL; falls back to profile_image inside a Ghost author context."
+    },
+    "name": {
+      "description": "Display name used for alt text and initials fallback."
+    },
+    "href": {
+      "description": "Optional trusted profile URL."
+    },
+    "decorative": {
+      "description": "Boolean. Hide avatar alt/initial from screen readers when placed next to a visible name."
+    }
+  },
+  "files": [
+    {
+      "name": "avatar.hbs",
+      "type": "partial",
+      "target": "partials/components/avatar.hbs",
+      "content": "{{!-- Styling parameters: class, imageClass --}}\n{{#with this as |ghostcnStyles|}}\n{{#if href}}\n<a class=\"ghcn-ui-avatar{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-variant=\"{{#match variant \"rounded\"}}rounded{{else}}{{#match variant \"outline\"}}outline{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\" href=\"{{href}}\"{{#if name}} aria-label=\"{{name}}\"{{/if}}>{{#if src}}<img class=\"ghcn-ui-avatar__image{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\" src=\"{{img_url src size=\"xs\"}}\" alt=\"{{#unless decorative}}{{#if name}}{{name}}{{/if}}{{/unless}}\" loading=\"lazy\" />{{else if profile_image}}<img class=\"ghcn-ui-avatar__image{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\" src=\"{{img_url profile_image size=\"xs\"}}\" alt=\"{{#unless decorative}}{{#if name}}{{name}}{{/if}}{{/unless}}\" loading=\"lazy\" />{{else}}<span class=\"ghcn-ui-avatar__fallback{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\"{{#if decorative}} aria-hidden=\"true\"{{else}}{{#if name}} role=\"img\" aria-label=\"{{name}}\"{{/if}}{{/if}}>{{#if name}}{{name.[0]}}{{else}}?{{/if}}</span>{{/if}}</a>\n{{else}}\n<span class=\"ghcn-ui-avatar{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-variant=\"{{#match variant \"rounded\"}}rounded{{else}}{{#match variant \"outline\"}}outline{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\">{{#if src}}<img class=\"ghcn-ui-avatar__image{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\" src=\"{{img_url src size=\"xs\"}}\" alt=\"{{#unless decorative}}{{#if name}}{{name}}{{/if}}{{/unless}}\" loading=\"lazy\" />{{else if profile_image}}<img class=\"ghcn-ui-avatar__image{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\" src=\"{{img_url profile_image size=\"xs\"}}\" alt=\"{{#unless decorative}}{{#if name}}{{name}}{{/if}}{{/unless}}\" loading=\"lazy\" />{{else}}<span class=\"ghcn-ui-avatar__fallback{{#if ghostcnStyles.imageClass}} {{ghostcnStyles.imageClass}}{{/if}}\"{{#if decorative}} aria-hidden=\"true\"{{else}}{{#if name}} role=\"img\" aria-label=\"{{name}}\"{{/if}}{{/if}}>{{#if name}}{{name.[0]}}{{else}}?{{/if}}</span>{{/if}}</span>\n{{/if}}\n{{/with}}"
+    },
+    {
+      "name": "avatar.css",
+      "type": "style",
+      "target": "assets/css/components/avatar.css",
+      "content": ".ghcn-ui-avatar { box-sizing: border-box; font-family: inherit; font-size: var(--ghcn-text-body, 16px); line-height: 1.5; color: var(--foreground); }\n.ghcn-ui-avatar, .ghcn-ui-avatar * { box-sizing: border-box; }\n.ghcn-ui-avatar:where([data-size=\"sm\"]) { font-size: 14px; }\n.ghcn-ui-avatar:where([data-size=\"lg\"]) { font-size: 18px; }\n.ghcn-ui-avatar:focus-visible, :where(.ghcn-ui-avatar) :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 2px; }\n.ghcn-ui-avatar { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: 0 0 auto; overflow: hidden; border-radius: 9999px; border: 1px solid var(--border); background: var(--muted); color: var(--foreground); text-decoration: none; vertical-align: middle; }\n.ghcn-ui-avatar:where([data-size=\"sm\"]) { width: 28px; height: 28px; font-size: 12px; }\n.ghcn-ui-avatar:where([data-size=\"lg\"]) { width: 56px; height: 56px; font-size: 20px; }\n.ghcn-ui-avatar:where([data-variant=\"rounded\"]) { border-radius: var(--ghcn-control-radius, var(--radius, 8px)); }\n.ghcn-ui-avatar:where([data-variant=\"outline\"]) { border: 2px solid var(--primary); padding: 2px; background: var(--background); }\n.ghcn-ui-avatar:where([data-variant=\"outline\"]) .ghcn-ui-avatar__image, .ghcn-ui-avatar:where([data-variant=\"outline\"]) .ghcn-ui-avatar__fallback { border-radius: inherit; }\n.ghcn-ui-avatar__image { display: block; width: 100%; height: 100%; object-fit: cover; }\n.ghcn-ui-avatar__fallback { display: inline-flex; align-items: center; justify-content: center; width: 100%; height: 100%; font-weight: 700; text-transform: uppercase; user-select: none; }\n"
+    }
+  ],
+  "styleSlots": {
+    "class": [
+      ".ghcn-ui-avatar"
+    ],
+    "imageClass": [
+      ".ghcn-ui-avatar__image",
+      ".ghcn-ui-avatar__fallback"
+    ]
+  }
+}

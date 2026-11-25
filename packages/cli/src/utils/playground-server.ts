@@ -31,15 +31,20 @@ function collectThemeFiles(themeRoot: string, directory: string, extension?: str
 
 function themeStyles(themeRoot: string, config: GhostcnConfig) {
   const layout = safeThemePath(themeRoot, 'default.hbs');
-  const source = fs.existsSync(layout) ? fs.readFileSync(layout, 'utf8') : '';
+  const raw = fs.existsSync(layout) ? fs.readFileSync(layout, 'utf8') : '';
+  const source = raw.replace(/\{\{!--[\s\S]*?--\}\}/g, '').replace(/\{\{![\s\S]*?\}\}/g, '');
   const links: string[] = [];
-  for (const link of source.match(/<link\b[^>]*>/g) || []) {
-    if (!/rel=["']stylesheet["']/.test(link)) continue;
+  for (const link of source.match(/<link\b[^>]*>/gi) || []) {
+    if (!/\brel\s*=\s*["']stylesheet["']/i.test(link)) continue;
     const asset = link.match(/\{\{asset\s+["']([^"']+\.css)["']\s*\}\}/)?.[1] || link.match(/href=["']\/assets\/([^"']+\.css)["']/)?.[1];
-    if (asset && !links.includes(asset)) { safeThemePath(themeRoot, `assets/${asset}`); links.push(asset); }
+    if (asset && !links.includes(asset)) {
+      const target = safeThemePath(themeRoot, `assets/${asset}`);
+      if (fs.existsSync(target) && fs.statSync(target).isFile()) links.push(asset);
+    }
   }
   if (!links.length) {
-    const fallback = [config.cssFile, ...collectThemeFiles(themeRoot, config.aliases.styles, '.css').map(file => path.relative(themeRoot, file).replace(/\\/g, '/')), 'assets/built/screen.css'];
+    const styleFiles = config.aliases?.styles ? collectThemeFiles(themeRoot, config.aliases.styles, '.css').map(file => path.relative(themeRoot, file).replace(/\\/g, '/')) : [];
+    const fallback = [config.cssFile, ...styleFiles, 'assets/built/screen.css'].filter(Boolean);
     for (const relative of fallback) if (fs.existsSync(safeThemePath(themeRoot, relative))) links.push(relative.replace(/^assets\//, ''));
   }
   return links;
@@ -47,7 +52,9 @@ function themeStyles(themeRoot: string, config: GhostcnConfig) {
 
 export async function startPlayground(options: { themeRoot: string; port?: number }) {
   const themeRoot = fs.realpathSync(options.themeRoot);
-  const config = JSON.parse(fs.readFileSync(safeThemePath(themeRoot, 'components.json'), 'utf8').replace(/^\uFEFF/, '')) as GhostcnConfig;
+  const configPath = safeThemePath(themeRoot, 'components.json');
+  if (!fs.existsSync(configPath)) throw new Error('components.json was not found. Run "npx ghostcn init" from your Ghost theme root first.');
+  const config = JSON.parse(fs.readFileSync(configPath, 'utf8').replace(/^\uFEFF/, '')) as GhostcnConfig;
   if (!['css', 'tailwind'].includes(config.style) || !config.aliases) throw new Error('Invalid components.json. Run ghostcn doctor.');
   componentPartialName(config, 'button');
   const port = options.port ?? 4190;
@@ -112,14 +119,22 @@ export async function startPlayground(options: { themeRoot: string; port?: numbe
         for (const file of collectThemeFiles(themeRoot, 'partials', '.hbs')) partials[path.relative(path.join(themeRoot, 'partials'), file).replace(/\\/g, '/').replace(/\.hbs$/, '')] = fs.readFileSync(file, 'utf8');
         const parameters: Record<string, unknown> = { ...(demoParameters[name] || {}) };
         const keys = new Set([...Object.keys(manifest.parameters || {}), ...Object.keys(manifest.styleSlots || {})]);
-        for (const key of keys) if (url.searchParams.has(key)) parameters[key] = ['disabled', 'required', 'invalid', 'urgent'].includes(key) ? url.searchParams.get(key) === 'true' : url.searchParams.get(key)!;
-        const state = previewStates.includes(url.searchParams.get('state') || '') ? url.searchParams.get('state')! : 'visitor';
+        const boolKeys = new Set(['disabled', 'required', 'invalid', 'urgent', 'decorative', 'open', 'hideDismiss', 'showPublic']);
+        for (const key of keys) if (url.searchParams.has(key)) parameters[key] = boolKeys.has(key) ? url.searchParams.get(key) === 'true' : url.searchParams.get(key)!;
+        const allowedStates = [...previewStates, 'free-only'];
+        const state = allowedStates.includes(url.searchParams.get('state') || '') ? url.searchParams.get('state')! : 'visitor';
+        const access = url.searchParams.get('access') === 'false' ? false : true;
         const scheme = url.searchParams.get('scheme');
         const nameInTheme = name === 'pagination' ? 'pagination' : componentPartialName(config, name);
-        const context: Record<string, unknown> = { ...(name === 'author-card' ? demoAuthor : previewDemoContext), ...parameters };
+        const baseContext = ['pricing-table', 'newsletter-form'].includes(name)
+          ? {}
+          : name === 'author-card'
+            ? demoAuthor
+            : { ...previewDemoContext, access };
+        const context: Record<string, unknown> = { ...baseContext, ...parameters };
         let source = previewInvocation(nameInTheme, parameters);
         if (name === 'pagination') source = `{{> "pagination" pagination ${Object.keys(parameters).map(key => `${key}=${key}`).join(' ')}}}`;
-        let html = renderPreviewTemplate(partials, source, { state, context });
+        let html = renderPreviewTemplate(partials, source, { state, context, access });
         if (name === 'table-of-contents') html += '<article class="ghcn-article-content"><h2>Start with your story</h2><p>Demo article.</p><h3>Make room for readers</h3><p>A subsection.</p><h2>Keep it yours</h2><p>Your theme, your style.</p></article>';
         const scripts = manifest.files.filter(file => file.type === 'js').map(file => componentFiles(themeRoot, config, manifest).find(target => target.relative.endsWith(`/${file.name}`))!).filter(Boolean);
         const styles = themeStyles(themeRoot, config).map(asset => `<link rel="stylesheet" href="/theme-assets/${escape(asset)}">`).join('');
@@ -130,5 +145,12 @@ export async function startPlayground(options: { themeRoot: string; port?: numbe
     } catch (error) { send(400, `<!doctype html><html lang="en"><head><title>Preview error</title></head><body><h1>Cannot render preview</h1><p>${escape((error as Error).message)}</p><p>Check missing partials, run your theme build, or use Ghost to test helpers not supported by this synthetic preview.</p></body></html>`); }
   });
   await new Promise<void>((resolve, reject) => { server.once('error', reject); server.listen(port, '127.0.0.1', () => { server.removeListener('error', reject); actualPort = (server.address() as { port: number }).port; resolve(); }); });
-  return { server, url: `http://127.0.0.1:${actualPort}`, close: () => new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve())) };
+  return {
+    server,
+    url: `http://127.0.0.1:${actualPort}`,
+    close: () => new Promise<void>((resolve, reject) => {
+      server.close(error => error ? reject(error) : resolve());
+      if (typeof server.closeAllConnections === 'function') server.closeAllConnections();
+    })
+  };
 }

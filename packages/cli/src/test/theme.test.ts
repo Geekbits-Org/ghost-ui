@@ -45,7 +45,7 @@ describe('ghostcn Theming System', () => {
         accentColor: 'emerald',
         radius: '0.75rem'
       });
-      assert.ok(emeraldCss.includes('--primary: #059669;'));
+      assert.ok(emeraldCss.includes('--primary: #047857;'));
       assert.ok(emeraldCss.includes('--radius: 0.75rem;'));
     });
 

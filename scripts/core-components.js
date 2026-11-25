@@ -89,7 +89,8 @@ const siteHeader = {
 .ghcn-header__panel .nav { align-items: stretch; flex-direction: column; gap: 0.25rem; }
 .ghcn-header__panel .nav a { display: block; border-radius: var(--radius); padding: 0.625rem 0.75rem; }
 .ghcn-header__panel .nav a:hover { background: var(--muted); }
-.ghcn-header__mobile-actions { display: grid; grid-template-columns: auto 1fr 1fr; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.ghcn-header__mobile-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.ghcn-header__mobile-actions .ghcn-button { flex: 1 1 auto; }
 @media (max-width: 800px) { .ghcn-header__nav, .ghcn-header__actions { display: none; } .ghcn-header__mobile { display: block; } }
 `
     }
@@ -117,7 +118,7 @@ const siteFooter = {
         <div class="ghcn-footer__social">
             {{#if @site.facebook}}<a href="{{social_url type="facebook"}}" target="_blank" rel="noopener">Facebook</a>{{/if}}
             {{#if @site.twitter}}<a href="{{social_url type="twitter"}}" target="_blank" rel="noopener">X</a>{{/if}}
-            <a href="{{@site.url}}/rss/">RSS</a>
+            <a href="{{#match @site.url "/"}}/rss/{{else}}{{@site.url}}/rss/{{/match}}">RSS</a>
         </div>
     </div>
     <div class="ghcn-footer__legal ghcn-container">
@@ -167,12 +168,12 @@ const featuredPosts = {
         {{#foreach posts}}
         <article class="ghcn-featured__card{{#has index="0"}} ghcn-featured__card--lead{{/has}}">
             {{#if feature_image}}
-                <a class="ghcn-featured__image" href="{{url}}">
-                    <img src="{{img_url feature_image size="l"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" loading="{{#has index="0"}}eager{{else}}lazy{{/has}}" />
+                <a class="ghcn-featured__image" href="{{url}}" tabindex="-1" aria-hidden="true">
+                    <img src="{{img_url feature_image size="l"}}" alt="" loading="{{#has index="0"}}eager{{else}}lazy{{/has}}" />
                 </a>
             {{/if}}
             <div class="ghcn-featured__content">
-                <div class="ghcn-featured__meta">{{#if primary_tag}}<a href="{{primary_tag.url}}">{{primary_tag.name}}</a><span>&bull;</span>{{/if}}<span>{{reading_time}}</span></div>
+                <div class="ghcn-featured__meta">{{#if primary_tag}}<a href="{{primary_tag.url}}">{{primary_tag.name}}</a><span aria-hidden="true">&bull;</span>{{/if}}<span>{{reading_time}}</span></div>
                 <h3><a href="{{url}}">{{title}}</a></h3>
                 {{#has index="0"}}{{#if excerpt}}<p>{{excerpt words="30"}}</p>{{/if}}{{/has}}
             </div>
@@ -192,11 +193,14 @@ const featuredPosts = {
 .ghcn-featured__title { ${sectionTitle} margin: 8px 0 0; }
 .ghcn-featured__heading > a { color: var(--muted-foreground); font-size: ${token('text-small')}; font-weight: 600; text-decoration: none; }
 .ghcn-featured__grid { display: grid; grid-template-columns: minmax(0,2fr) minmax(0,1fr); gap: ${token('grid-gap')}; }
-.ghcn-featured__card { ${surface} display: flex; flex-direction: column; overflow: hidden; }
+.ghcn-featured__card { ${surface} display: flex; flex-direction: column; overflow: hidden; transition: border-color 180ms ease; }
+.ghcn-featured__card:hover { border-color: color-mix(in srgb, var(--foreground) 22%, var(--border)); }
 .ghcn-featured__card--lead { grid-row: span 2; }
 .ghcn-featured__card:only-child { grid-column: 1 / -1; grid-row: auto; }
 .ghcn-featured__image { display: block; aspect-ratio: 16 / 9; overflow: hidden; background: var(--muted); }
-.ghcn-featured__image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.ghcn-featured__image img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform 300ms ease; }
+.ghcn-featured__card:hover .ghcn-featured__image img { transform: scale(1.02); }
+@media (prefers-reduced-motion: reduce) { .ghcn-featured__card, .ghcn-featured__image img { transition: none; transform: none; } }
 .ghcn-featured__card--lead:not(:only-child) .ghcn-featured__image { flex: 1 1 auto; }
 .ghcn-featured__content { padding: ${token('panel-padding')}; }
 .ghcn-featured__meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; color: var(--muted-foreground); font-size: ${token('text-meta')}; }
@@ -222,7 +226,7 @@ const pagination = {
   files: [
     {
       name: 'pagination.hbs', type: 'partial', target: 'partials/pagination.hbs', placement: 'theme',
-      content: `<nav class="ghcn-pagination" role="navigation" aria-label="Pagination">
+      content: `<nav class="ghcn-pagination" aria-label="Pagination">
     <div class="ghcn-pagination__side">{{#if prev}}<a class="ghcn-button ghcn-button--outline" href="{{page_url prev}}" rel="prev"><span aria-hidden="true">&larr;</span> Newer</a>{{/if}}</div>
     <span class="ghcn-pagination__status">Page <strong>{{page}}</strong> of <strong>{{pages}}</strong></span>
     <div class="ghcn-pagination__side ghcn-pagination__side--end">{{#if next}}<a class="ghcn-button ghcn-button--outline" href="{{page_url next}}" rel="next">Older <span aria-hidden="true">&rarr;</span></a>{{/if}}</div>
@@ -262,8 +266,8 @@ const postHeader = {
                 {{#if profile_image}}<img class="ghcn-avatar" src="{{img_url profile_image size="xs"}}" alt="" />{{/if}}
                 <span>{{name}}</span>
             </a>
+            <span aria-hidden="true">&bull;</span>
         {{/primary_author}}
-        <span aria-hidden="true">&bull;</span>
         <time datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMM YYYY"}}</time>
         <span aria-hidden="true">&bull;</span>
         <span>{{reading_time}}</span>
@@ -358,7 +362,7 @@ const memberCta = {
     {
       name: 'member-cta.css', type: 'style', target: 'assets/css/components/member-cta.css',
       content: `/* ghostcn: Member CTA */
-.ghcn-member-cta { ${section} ${surface} width: min(100% - 32px, 704px); margin-inline: auto; padding: ${token('panel-padding')}; text-align: center; }
+.ghcn-member-cta { ${surface} margin-block: ${token('section-space')}; font-family: inherit; font-size: ${token('text-body')}; line-height: 1.5; width: min(100% - 32px, 704px); margin-inline: auto; padding: ${token('panel-padding')}; text-align: center; }
 .ghcn-member-cta *, .ghcn-member-cta *::before, .ghcn-member-cta *::after { box-sizing: border-box; }
 .ghcn-member-cta__title { ${sectionTitle} margin: 12px 0 8px; color: inherit; }
 .ghcn-member-cta__description { max-width: 60ch; margin: 0 auto 16px; color: var(--muted-foreground); font-size: ${token('text-small')}; }

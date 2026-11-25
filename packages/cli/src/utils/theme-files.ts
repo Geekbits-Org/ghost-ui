@@ -64,20 +64,24 @@ export function syncGhostcnScripts(themeRoot: string, scriptsDir: string): Style
   const templatePath = safeThemePath(themeRoot, 'default.hbs');
   const directory = safeThemePath(themeRoot, scriptsDir);
   const assetPaths = fs.existsSync(directory) ? fs.readdirSync(directory, { withFileTypes: true })
-    .filter(entry => entry.isFile() && entry.name.endsWith('.js'))
+    .filter(entry => entry.isFile() && entry.name.toLowerCase().endsWith('.js'))
     .map(entry => toGhostAssetPath(path.relative(themeRoot, path.join(directory, entry.name))))
-    .sort() : [];
+    .sort((a, b) => a.localeCompare(b)) : [];
   if (!fs.existsSync(templatePath)) return { status: 'missing-template', templatePath, assetPaths };
   if (!assetPaths.length) return { status: 'unchanged', templatePath, assetPaths };
   const original = fs.readFileSync(templatePath, 'utf8');
   const newline = original.includes('\r\n') ? '\r\n' : '\n';
   const start = '{{!-- ghostcn:scripts:start --}}', end = '{{!-- ghostcn:scripts:end --}}';
   const block = [start, ...assetPaths.map(asset => `<script defer src="{{asset "${asset}"}}"></script>`), end].join(newline);
-  let updated = original.replace(/\{\{!-- ghostcn:scripts:start --\}\}[\s\S]*?\{\{!-- ghostcn:scripts:end --\}\}/g, '');
+  let updated = original.replace(/^[ \t]*\{\{!-- ghostcn:scripts:start --\}\}[\s\S]*?\{\{!-- ghostcn:scripts:end --\}\}[ \t]*(?:\r?\n)?/gm, '');
   // Preserve unrelated host scripts; deduplicate only these owned asset URLs.
-  updated = updated.replace(/<script\b[^>]*\bsrc=["'][^"']*\{\{asset\s+["']([^"']+)["']\}\}[^>]*>\s*<\/script>/gi, (tag, asset) => assetPaths.includes(asset) ? '' : tag);
+  updated = updated.replace(/^[ \t]*<script\b[^>]*\bsrc=["'][^"']*\{\{asset\s+["']([^"']+)["']\}\}[^>]*>\s*<\/script>[ \t]*(?:\r?\n)?/gim, (tag, asset) => assetPaths.includes(asset) ? '' : tag);
   if (!/<\/body\s*>/i.test(updated)) return { status: 'missing-template', templatePath, assetPaths };
-  updated = updated.replace(/[ \t]*(?:\r?\n)*[ \t]*<\/body\s*>/i, `${newline}${block}${newline}</body>`);
+  if (/^[ \t]*<\/body\s*>/im.test(updated)) {
+    updated = updated.replace(/^([ \t]*)<\/body\s*>/im, (_match, indent: string) => `${indentBlock(block, indent, newline)}${newline}${indent}</body>`);
+  } else {
+    updated = updated.replace(/<\/body\s*>/i, `${newline}${block}${newline}</body>`);
+  }
   if (updated !== original) fs.writeFileSync(templatePath, updated, 'utf8');
   return { status: updated === original ? 'unchanged' : 'updated', templatePath, assetPaths };
 }
@@ -111,12 +115,14 @@ export function syncGhostcnStyles(options: StyleSyncOptions): StyleSyncResult {
   const cssPath = safeThemePath(options.themeRoot, options.cssFile);
   const stylesDirPath = safeThemePath(options.themeRoot, options.stylesDir);
 
-  const assetPaths = [toGhostAssetPath(options.cssFile)];
+  const rootAsset = toGhostAssetPath(options.cssFile);
+  const assetPaths = [rootAsset];
   if (fs.existsSync(stylesDirPath)) {
     const componentStyles = fs
       .readdirSync(stylesDirPath, { withFileTypes: true })
       .filter(entry => entry.isFile() && entry.name.toLowerCase().endsWith('.css'))
       .map(entry => toGhostAssetPath(path.relative(options.themeRoot, path.join(stylesDirPath, entry.name))))
+      .filter(assetPath => assetPath !== rootAsset)
       .sort((a, b) => a.localeCompare(b));
     assetPaths.push(...componentStyles);
   }
@@ -134,7 +140,7 @@ export function syncGhostcnStyles(options: StyleSyncOptions): StyleSyncResult {
   const block = stylesheetBlock(assetPaths, newline);
   const managedBlockPattern = new RegExp(
     `^[ \\t]*${STYLES_START.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[\\s\\S]*?${STYLES_END.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}[ \\t]*(?:\\r?\\n)?`,
-    'm'
+    'gm'
   );
 
   const withoutManagedBlock = original.replace(managedBlockPattern, '');

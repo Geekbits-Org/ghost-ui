@@ -4,6 +4,7 @@ const coreComponents = require('./core-components');
 const readingComponents = require('./reading-components');
 const primitives = require('./ui-primitives');
 const composedComponents = require('./composed-components');
+const extraComponents = require('./extra-components');
 const { applyStyleSlots } = require('./component-styling');
 const { token, section, sectionTitle, surface, cardTitle, focusWithin } = require('./component-defaults');
 
@@ -15,10 +16,14 @@ if (!fs.existsSync(componentsDir)) {
 // 1. newsletter-form
 const newsletterForm = {
   name: "newsletter-form",
-  type: "components:ui",
+  type: "components:members",
   description: "A native Ghost members subscription form with state handling.",
   dependencies: [],
   ghost_version: ">=5.0.0",
+  parameters: {
+    title: { description: "Optional heading override.", default: "Subscribe to our newsletter" },
+    description: { description: "Optional introductory text override." }
+  },
   files: [
     {
       name: "newsletter-form.hbs",
@@ -62,10 +67,12 @@ const newsletterForm = {
 
         {{!-- Ghost automatic states (hidden by default, shown via Ghost Portal JS) --}}
         <div class="gh-newsletter-msg-success message-success absolute -bottom-7 left-0 right-0 text-xs text-green-600 dark:text-green-400 font-medium" role="status" data-members-success>
-            ✓ Check your inbox to confirm your subscription!
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5 6.5 12 13 4"/></svg>
+            <span>Check your inbox to confirm your subscription!</span>
         </div>
         <div class="gh-newsletter-msg-error message-error absolute -bottom-7 left-0 right-0 text-xs text-red-600 dark:text-red-400 font-medium" role="alert" data-members-error>
-            ✕ Please enter a valid email address.
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l8 8M12 4l-8 8"/></svg>
+            <span>Please enter a valid email address.</span>
         </div>
     </form>
     {{/if}}
@@ -81,8 +88,11 @@ const newsletterForm = {
       target: "assets/css/components/newsletter-form.css",
       content: `/* ghostcn: Newsletter Form Styles */
 .gh-newsletter-form {
-    ${section}
     ${surface}
+    margin-block: ${token('section-space')};
+    font-family: inherit;
+    font-size: ${token('text-body')};
+    line-height: 1.5;
     padding: ${token('panel-padding')};
     text-align: center;
     width: min(100% - 32px, 704px);
@@ -169,7 +179,10 @@ ${focusWithin('.gh-newsletter-form')}
 
 .gh-newsletter-fields.success .gh-newsletter-msg-success,
 .gh-newsletter-fields.error .gh-newsletter-msg-error {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
 .gh-newsletter-form .sr-only {
@@ -185,11 +198,11 @@ ${focusWithin('.gh-newsletter-form')}
 }
 
 .gh-newsletter-msg-success {
-    color: #16a34a;
+    color: var(--success, #15803d);
 }
 
 .gh-newsletter-msg-error {
-    color: #dc2626;
+    color: var(--destructive, #dc2626);
 }
 `
     }
@@ -223,7 +236,7 @@ const authorCard = {
     {{#if profile_image}}
     <img src="{{img_url profile_image size="m"}}" alt="{{name}}" class="gh-author-avatar w-20 h-20 rounded-full object-cover border-2 border-border shadow-sm" />
     {{else}}
-    <div class="gh-author-avatar-fallback w-20 h-20 rounded-full bg-muted text-foreground flex items-center justify-center font-bold text-2xl border-2 border-border shadow-sm">
+    <div class="gh-author-avatar-fallback w-20 h-20 rounded-full bg-muted text-foreground flex items-center justify-center font-bold text-2xl border-2 border-border shadow-sm" aria-hidden="true">
         {{name.[0]}}
     </div>
     {{/if}}
@@ -246,7 +259,7 @@ const authorCard = {
 
         <div class="gh-author-meta flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-muted-foreground">
             {{#if location}}
-            <span class="gh-author-location flex items-center gap-1">📍 {{location}}</span>
+            <span class="gh-author-location flex items-center gap-1"><svg aria-hidden="true" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 14s5-4.4 5-8a5 5 0 1 0-10 0c0 3.6 5 8 5 8Z"/><circle cx="8" cy="6" r="1.75"/></svg>{{location}}</span>
             {{/if}}
             {{#if website}}
             <a href="{{website}}" target="_blank" rel="noopener noreferrer" class="gh-author-link text-primary hover:underline">Website</a>
@@ -405,8 +418,8 @@ const postCard = {
 --}}
 <article class="gh-post-card group bg-card text-card-foreground border border-border rounded-ghostcn overflow-hidden hover:shadow-lg transition-all duration-200 flex flex-col">
     {{#if feature_image}}
-    <a href="{{url}}" class="gh-post-card-image block aspect-video overflow-hidden bg-muted">
-        <img src="{{img_url feature_image size="m"}}" alt="{{#if feature_image_alt}}{{feature_image_alt}}{{else}}{{title}}{{/if}}" class="gh-post-card-img" loading="lazy" />
+    <a href="{{url}}" class="gh-post-card-image block aspect-video overflow-hidden bg-muted" tabindex="-1" aria-hidden="true">
+        <img src="{{img_url feature_image size="m"}}" alt="" class="gh-post-card-img" loading="lazy" />
     </a>
     {{/if}}
 
@@ -415,7 +428,7 @@ const postCard = {
             <div class="gh-post-card-meta">
                 {{#if primary_tag}}
                 <a href="{{primary_tag.url}}" class="gh-post-card-tag text-primary uppercase tracking-wider hover:underline">{{primary_tag.name}}</a>
-                <span class="gh-post-card-separator">&bull;</span>
+                <span class="gh-post-card-separator" aria-hidden="true">&bull;</span>
                 {{/if}}
                 <span class="gh-post-card-reading-time text-muted-foreground">{{reading_time}}</span>
             </div>
@@ -454,6 +467,11 @@ const postCard = {
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    transition: border-color 180ms ease;
+}
+
+.gh-post-card:hover {
+    border-color: color-mix(in srgb, var(--foreground) 22%, var(--border));
 }
 
 .gh-post-card *,
@@ -474,6 +492,15 @@ const postCard = {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 300ms ease;
+}
+
+.gh-post-card:hover .gh-post-card-image img {
+    transform: scale(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gh-post-card, .gh-post-card-image img { transition: none; transform: none; }
 }
 
 .gh-post-card-content {
@@ -552,14 +579,17 @@ ${focusWithin('.gh-post-card')}
 function makeCssHostIndependent(component) {
   for (const file of component.files) {
     if (file.type === 'style') {
-      // Casper and other themes may change the root font size. Component
-      // spacing follows each component's own 16px baseline instead.
-      file.content = file.content.replace(/(-?\d*\.?\d+)rem\b/g, '$1em');
+      // Casper and other themes may change the root font size (e.g. 62.5%).
+      // Convert rem to exact px on a 16px baseline so nested smaller-font elements don't compound em scaling.
+      file.content = file.content.replace(/(-?\d*\.?\d+)rem\b/g, (_match, value) => {
+        const px = Math.round(parseFloat(value) * 16 * 100) / 100;
+        return `${px}px`;
+      });
     }
   }
 }
 
-const allComponents = [newsletterForm, pricingTable, authorCard, postCard, ...coreComponents, ...readingComponents, ...primitives, ...composedComponents];
+const allComponents = [newsletterForm, pricingTable, authorCard, postCard, ...coreComponents, ...readingComponents, ...primitives, ...composedComponents, ...extraComponents];
 applyStyleSlots(pricingTable, {
   class: ['gh-pricing'], titleClass: ['gh-pricing-title'], gridClass: ['gh-pricing-grid'],
   cardClass: ['gh-pricing-card'], buttonClass: ['ghcn-button'], cardTitleClass: ['gh-pricing-card-title'],
@@ -604,49 +634,19 @@ for (const component of coreComponents) {
   fs.writeFileSync(path.join(componentsDir, `${component.name}.json`), JSON.stringify(component, null, 2), 'utf8');
   console.log(`Created ${component.name}.json`);
 }
-for (const component of [...readingComponents, ...primitives, ...composedComponents]) {
+for (const component of [...readingComponents, ...primitives, ...composedComponents, ...extraComponents]) {
   fs.writeFileSync(path.join(componentsDir, `${component.name}.json`), JSON.stringify(component, null, 2), 'utf8');
   console.log(`Created ${component.name}.json`);
 }
 
-// 5. Generate registry/index.json
-const index = [
-  {
-    name: "newsletter-form",
-    description: "A native Ghost members subscription form with state handling.",
-    category: "components:ui",
-    ghost_version: ">=5.0.0",
-    files: ["newsletter-form.hbs", "newsletter-form.css"]
-  },
-  {
-    name: "pricing-table",
-    description: "Membership tiers and pricing plans with native Ghost Portal checkout triggers.",
-    category: "components:ui",
-    ghost_version: ">=5.0.0",
-    files: ["pricing-table.hbs", "pricing-table.css"]
-  },
-  {
-    name: "author-card",
-    description: "Author bio box featuring avatar, biography, social links, and post counts.",
-    category: "components:ui",
-    ghost_version: ">=5.0.0",
-    files: ["author-card.hbs", "author-card.css"]
-  },
-  {
-    name: "post-card",
-    description: "Post preview card with feature image, primary tag, excerpt, and reading time.",
-    category: "components:ui",
-    ghost_version: ">=5.0.0",
-    files: ["post-card.hbs", "post-card.css"]
-  },
-  ...[...coreComponents, ...readingComponents, ...primitives, ...composedComponents].map(component => ({
-    name: component.name,
-    description: component.description,
-    category: component.type,
-    ghost_version: component.ghost_version,
-    files: component.files.map(file => file.name)
-  }))
-];
+// 5. Generate registry/index.json from the single source of truth
+const index = allComponents.map(component => ({
+  name: component.name,
+  description: component.description,
+  category: component.type,
+  ghost_version: component.ghost_version,
+  files: component.files.map(file => file.name)
+}));
 
 fs.writeFileSync(path.join(__dirname, '..', 'registry', 'index.json'), JSON.stringify(index, null, 2), 'utf8');
 console.log('Created registry/index.json');

@@ -1,13 +1,11 @@
 const { applyStyleSlots } = require('./component-styling');
 const { token, section, wideSection, sectionTitle, displayTitle, grid } = require('./component-defaults');
 function block(name, description, dependencies, markup, css, slots, forwarded = {}, parameters = {}) {
-  const result = applyStyleSlots({ name, type: 'components:content', description, dependencies, ghost_version: '>=5.0.0', parameters,
+  return applyStyleSlots({ name, type: 'components:content', description, dependencies, ghost_version: '>=5.0.0', parameters,
     files: [
       { name: `${name}.hbs`, type: 'partial', target: `partials/components/${name}.hbs`, content: markup },
       { name: `${name}.css`, type: 'style', target: `assets/css/components/${name}.css`, content: css }
-    ] }, slots);
-  Object.assign(result.styleSlots, forwarded);
-  return result;
+    ] }, slots, { extraSlots: forwarded });
 }
 const gridCss = (selector, minimum) => `${selector} { ${section} ${wideSection} }
 ${selector}__title { ${sectionTitle} margin: 0 0 ${token('section-gap')}; }
@@ -46,7 +44,7 @@ const tagGrid = block('tag-grid', 'Public tag archive links composed from card a
   {{#if ghostcnStyles.heading}}<h2 class="ghcn-tag-grid__title">{{ghostcnStyles.heading}}</h2>{{/if}}
   <div class="ghcn-tag-grid__grid">{{#foreach tags visibility="public"}}
     {{#> "components/card" heading=name description=description class=ghostcnStyles.cardClass titleClass=ghostcnStyles.cardTitleClass descriptionClass=ghostcnStyles.descriptionClass variant=ghostcnStyles.cardVariant}}
-      {{> "components/button" href=url text="Explore topic" variant="outline" size="sm" class=ghostcnStyles.buttonClass}}
+      {{> "components/button" href=url text="Explore topic" ariaLabel=name variant="outline" size="sm" class=ghostcnStyles.buttonClass}}
     {{/components/card}}
   {{/foreach}}</div>
 </section>{{else}}{{#if ghostcnStyles.emptyText}}<section class="ghcn-tag-grid"><p class="ghcn-tag-grid__empty">{{ghostcnStyles.emptyText}}</p></section>{{/if}}{{/if}}

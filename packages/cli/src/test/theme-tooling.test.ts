@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import zlib from 'zlib';
 import { spawnSync } from 'child_process';
 import { scaffoldTheme, REQUIRED_STARTER_COMPONENTS } from '../utils/theme-scaffold';
 import { buildGhostcnConfig, initializeThemeProject } from '../utils/theme-project';
@@ -39,10 +40,11 @@ describe('theme diagnostics and packaging', () => {
       const entries = new Map<string, Buffer>();
       let offset = 0;
       while (zip.readUInt32LE(offset) === 0x04034b50) {
-        const size = zip.readUInt32LE(offset + 18), length = zip.readUInt16LE(offset + 26), extra = zip.readUInt16LE(offset + 28);
+        const method = zip.readUInt16LE(offset + 8), size = zip.readUInt32LE(offset + 18), length = zip.readUInt16LE(offset + 26), extra = zip.readUInt16LE(offset + 28);
         const name = zip.subarray(offset + 30, offset + 30 + length).toString();
         const start = offset + 30 + length + extra;
-        entries.set(name, zip.subarray(start, start + size));
+        const raw = zip.subarray(start, start + size);
+        entries.set(name, method === 8 ? zlib.inflateRawSync(raw) : raw);
         offset = start + size;
       }
       assert.equal(zip.readUInt32LE(offset), 0x02014b50);

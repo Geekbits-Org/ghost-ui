@@ -1,0 +1,76 @@
+{
+  "name": "share-buttons",
+  "type": "components:content",
+  "description": "Accessible article share links (Copy link, Bluesky, X, LinkedIn, Email, and native Web Share).",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Button presentation (default pills, icon-only squares, or ghost buttons).",
+      "options": [
+        "default",
+        "icon",
+        "ghost"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "description": "Button scale.",
+      "options": [
+        "sm",
+        "default",
+        "lg"
+      ],
+      "default": "default"
+    },
+    "heading": {
+      "description": "Optional label displayed before the share buttons."
+    },
+    "shareUrl": {
+      "description": "Optional URL override; defaults to current post absolute URL."
+    },
+    "shareTitle": {
+      "description": "Optional title override; defaults to current post title."
+    }
+  },
+  "files": [
+    {
+      "name": "share-buttons.hbs",
+      "type": "partial",
+      "target": "partials/components/share-buttons.hbs",
+      "content": "{{!-- Styling parameters: class, titleClass, listClass, buttonClass --}}\n{{#with this as |ghostcnStyles|}}\n<div class=\"ghcn-share{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-ghcn-share data-variant=\"{{#match variant \"icon\"}}icon{{else}}{{#match variant \"ghost\"}}ghost{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\" data-share-url=\"{{#if shareUrl}}{{shareUrl}}{{else}}{{url absolute=\"true\"}}{{/if}}\" data-share-title=\"{{#if shareTitle}}{{shareTitle}}{{else}}{{title}}{{/if}}\">\n  {{#if heading}}<span class=\"ghcn-share__title{{#if ghostcnStyles.titleClass}} {{ghostcnStyles.titleClass}}{{/if}}\">{{heading}}</span>{{/if}}\n  <div class=\"ghcn-share__list{{#if ghostcnStyles.listClass}} {{ghostcnStyles.listClass}}{{/if}}\" role=\"group\" aria-label=\"{{#if heading}}{{heading}}{{else}}Share this post{{/if}}\">\n    <button type=\"button\" class=\"ghcn-share__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" data-share-copy aria-label=\"Copy link\">\n      <svg aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M8.5 11.5a3.5 3.5 0 0 0 5 0l2-2a3.5 3.5 0 0 0-5-5l-1 1\"/><path d=\"M11.5 8.5a3.5 3.5 0 0 0-5 0l-2 2a3.5 3.5 0 0 0 5 5l1-1\"/></svg>\n      <span class=\"ghcn-share__label\" data-copy-label>Copy link</span>\n    </button>\n    <a class=\"ghcn-share__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" href=\"https://bsky.app/intent/compose?text={{encode title}}%20{{encode (url absolute=\"true\")}}\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Share on Bluesky\">\n      <svg aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M10 10.5C8.5 7.4 5.5 4.2 3.6 3.3c-.9-.4-1.6.1-1.6 1.1 0 1 .4 4.2.9 5.3.7 1.4 2.2 1.8 3.6 1.6-2.4.4-4.1 1.7-2.2 4.1 2.2 2.7 4.7-.4 5.7-2.4 1 2 3.5 5.1 5.7 2.4 1.9-2.4.2-3.7-2.2-4.1 1.4.2 2.9-.2 3.6-1.6.5-1.1.9-4.3.9-5.3 0-1-.7-1.5-1.6-1.1-1.9.9-4.9 4.1-6.4 7.2Z\"/></svg>\n      <span class=\"ghcn-share__label\">Bluesky</span>\n    </a>\n    <a class=\"ghcn-share__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" href=\"https://x.com/intent/tweet?text={{encode title}}&url={{encode (url absolute=\"true\")}}\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Share on X\">\n      <svg aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3.5 3.5 16.5 16.5M16.5 3.5 3.5 16.5\"/></svg>\n      <span class=\"ghcn-share__label\">X</span>\n    </a>\n    <a class=\"ghcn-share__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" href=\"https://www.linkedin.com/sharing/share-offsite/?url={{encode (url absolute=\"true\")}}\" target=\"_blank\" rel=\"noopener noreferrer\" aria-label=\"Share on LinkedIn\">\n      <svg aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"3\" y=\"3\" width=\"14\" height=\"14\" rx=\"2\"/><path d=\"M7 9v4.5M7 6.5v.01M10 13.5V9m0 1.5a2 2 0 0 1 3.5 1.3v1.7\"/></svg>\n      <span class=\"ghcn-share__label\">LinkedIn</span>\n    </a>\n    <a class=\"ghcn-share__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" href=\"mailto:?subject={{encode title}}&body={{encode (url absolute=\"true\")}}\" aria-label=\"Share by email\">\n      <svg aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><rect x=\"2.5\" y=\"4.5\" width=\"15\" height=\"11\" rx=\"1.5\"/><path d=\"m3.5 5.5 6.5 5 6.5-5\"/></svg>\n      <span class=\"ghcn-share__label\">Email</span>\n    </a>\n    <button type=\"button\" class=\"ghcn-share__btn{{#if ghostcnStyles.buttonClass}} {{ghostcnStyles.buttonClass}}{{/if}}\" data-share-native hidden aria-label=\"More share options\">\n      <svg aria-hidden=\"true\" viewBox=\"0 0 20 20\" width=\"15\" height=\"15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M10 3v9M6.5 6.5 10 3l3.5 3.5M4 12.5v3a1.5 1.5 0 0 0 1.5 1.5h9a1.5 1.5 0 0 0 1.5-1.5v-3\"/></svg>\n      <span class=\"ghcn-share__label\">Share</span>\n    </button>\n  </div>\n  <span class=\"ghcn-share__status\" data-share-status role=\"status\" aria-live=\"polite\"></span>\n</div>\n{{/with}}"
+    },
+    {
+      "name": "share-buttons.css",
+      "type": "style",
+      "target": "assets/css/components/share-buttons.css",
+      "content": ".ghcn-share { box-sizing: border-box; min-width: 0; margin-block: var(--ghcn-section-space, clamp(24px, 4vw, 48px)); font-family: inherit; font-size: var(--ghcn-text-body, 16px); line-height: 1.5; color: var(--foreground); display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }\n.ghcn-share *, .ghcn-share *::before, .ghcn-share *::after { box-sizing: border-box; }\n.ghcn-share__title { font-size: var(--ghcn-text-small, 14px); font-weight: 600; color: var(--muted-foreground); }\n.ghcn-share__list { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }\n.ghcn-share__btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 6px 12px; border: 1px solid var(--border); border-radius: var(--ghcn-control-radius, var(--radius, 8px)); background: var(--card); color: var(--foreground); font: inherit; font-size: var(--ghcn-text-meta, 13px); font-weight: 600; text-decoration: none; cursor: pointer; transition: background-color 150ms ease, border-color 150ms ease; }\n.ghcn-share__btn[hidden] { display: none; }\n.ghcn-share__btn:hover { background: var(--muted); border-color: color-mix(in srgb, var(--foreground) 22%, var(--border)); }\n.ghcn-share:where([data-size=\"sm\"]) .ghcn-share__btn { min-height: 30px; padding: 4px 9px; font-size: 12px; }\n.ghcn-share:where([data-size=\"lg\"]) .ghcn-share__btn { min-height: 42px; padding: 8px 15px; font-size: 14px; }\n.ghcn-share:where([data-variant=\"icon\"]) .ghcn-share__label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }\n.ghcn-share:where([data-variant=\"icon\"]) .ghcn-share__btn { width: 36px; padding: 0; }\n.ghcn-share:where([data-variant=\"icon\"][data-size=\"sm\"]) .ghcn-share__btn { width: 30px; }\n.ghcn-share:where([data-variant=\"icon\"][data-size=\"lg\"]) .ghcn-share__btn { width: 42px; }\n.ghcn-share:where([data-variant=\"ghost\"]) .ghcn-share__btn { border-color: transparent; background: transparent; color: var(--muted-foreground); }\n.ghcn-share:where([data-variant=\"ghost\"]) .ghcn-share__btn:hover { background: var(--muted); color: var(--foreground); }\n.ghcn-share__status { font-size: var(--ghcn-text-meta, 13px); color: var(--muted-foreground); }\n.ghcn-share__status:empty { display: none; }\n.ghcn-share:focus-visible, :where(.ghcn-share) :focus-visible { outline: 2px solid var(--ring, currentColor); outline-offset: 2px; }\n@media (prefers-reduced-motion: reduce) { .ghcn-share__btn { transition: none; } }\n"
+    },
+    {
+      "name": "share-buttons.js",
+      "type": "js",
+      "target": "assets/js/components/share-buttons.js",
+      "content": "/* ghostcn share buttons: copy-link feedback and native Web Share progressive enhancement. */\n(() => {\n  function init() {\n    document.querySelectorAll('[data-ghcn-share]').forEach(root => {\n      if (root.dataset.ghcnShareReady) return;\n      root.dataset.ghcnShareReady = 'true';\n      const status = root.querySelector('[data-share-status]');\n      const copyBtn = root.querySelector('[data-share-copy]');\n      const nativeBtn = root.querySelector('[data-share-native]');\n      const shareUrl = root.dataset.shareUrl || window.location.href;\n      const shareTitle = root.dataset.shareTitle || document.title;\n\n      if (copyBtn) {\n        copyBtn.addEventListener('click', async () => {\n          const label = copyBtn.querySelector('[data-copy-label]');\n          try {\n            if (navigator.clipboard?.writeText) {\n              await navigator.clipboard.writeText(shareUrl);\n            } else {\n              const input = document.createElement('input');\n              input.value = shareUrl;\n              document.body.append(input);\n              input.select();\n              document.execCommand('copy');\n              input.remove();\n            }\n            if (label) label.textContent = 'Copied';\n            if (status) status.textContent = 'Link copied to clipboard.';\n            setTimeout(() => {\n              if (label) label.textContent = 'Copy link';\n              if (status) status.textContent = '';\n            }, 2000);\n          } catch {\n            if (status) status.textContent = 'Could not copy link automatically.';\n          }\n        });\n      }\n\n      if (nativeBtn && typeof navigator.share === 'function') {\n        nativeBtn.hidden = false;\n        nativeBtn.addEventListener('click', () => {\n          navigator.share({ title: shareTitle, url: shareUrl }).catch(() => {});\n        });\n      }\n    });\n  }\n  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });\n  else init();\n})();"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native Ghost url and encode helpers with progressive Clipboard and Web Share API support."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-share"
+    ],
+    "titleClass": [
+      ".ghcn-share__title"
+    ],
+    "listClass": [
+      ".ghcn-share__list"
+    ],
+    "buttonClass": [
+      ".ghcn-share__btn"
+    ]
+  }
+}

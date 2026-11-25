@@ -1,0 +1,73 @@
+{
+  "name": "reading-progress",
+  "type": "components:content",
+  "description": "Thin scroll-linked reading progress bar tracking article scroll depth.",
+  "dependencies": [],
+  "ghost_version": ">=5.0.0",
+  "parameters": {
+    "variant": {
+      "description": "Progress bar fill style.",
+      "options": [
+        "default",
+        "subtle",
+        "gradient"
+      ],
+      "default": "default"
+    },
+    "size": {
+      "description": "Bar thickness (2px, 3px, or 5px).",
+      "options": [
+        "sm",
+        "default",
+        "lg"
+      ],
+      "default": "default"
+    },
+    "contentSelector": {
+      "description": "CSS selector for the article element to track.",
+      "default": ".ghcn-article-content"
+    },
+    "ariaLabel": {
+      "description": "Accessible label for the progress bar.",
+      "default": "Reading progress"
+    },
+    "initialValue": {
+      "description": "Optional initial percentage (0-100) for static previews.",
+      "default": "0"
+    }
+  },
+  "files": [
+    {
+      "name": "reading-progress.hbs",
+      "type": "partial",
+      "target": "partials/components/reading-progress.hbs",
+      "content": "{{!-- Styling parameters: class, barClass --}}\n{{#with this as |ghostcnStyles|}}\n<div class=\"ghcn-reading-progress{{#if ghostcnStyles.class}} {{ghostcnStyles.class}}{{/if}}\" data-ghcn-reading-progress data-variant=\"{{#match variant \"subtle\"}}subtle{{else}}{{#match variant \"gradient\"}}gradient{{else}}default{{/match}}{{/match}}\" data-size=\"{{#match size \"sm\"}}sm{{else}}{{#match size \"lg\"}}lg{{else}}default{{/match}}{{/match}}\" data-content-selector=\"{{#if contentSelector}}{{contentSelector}}{{else}}.ghcn-article-content{{/if}}\">\n  <progress class=\"ghcn-reading-progress__bar{{#if ghostcnStyles.barClass}} {{ghostcnStyles.barClass}}{{/if}}\" max=\"100\" value=\"{{#if initialValue}}{{initialValue}}{{else}}0{{/if}}\" aria-label=\"{{#if ariaLabel}}{{ariaLabel}}{{else}}Reading progress{{/if}}\"></progress>\n</div>\n{{/with}}"
+    },
+    {
+      "name": "reading-progress.css",
+      "type": "style",
+      "target": "assets/css/components/reading-progress.css",
+      "content": ".ghcn-reading-progress { box-sizing: border-box; position: sticky; top: 0; z-index: 40; width: 100%; height: 3px; background: color-mix(in srgb, var(--border) 60%, transparent); overflow: hidden; }\n.ghcn-reading-progress:where([data-size=\"sm\"]) { height: 2px; }\n.ghcn-reading-progress:where([data-size=\"lg\"]) { height: 5px; }\n.ghcn-reading-progress__bar { display: block; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; appearance: none; background: transparent; color: var(--primary); accent-color: var(--primary); }\n.ghcn-reading-progress__bar::-webkit-progress-bar { background: transparent; }\n.ghcn-reading-progress__bar::-webkit-progress-value { background: var(--primary); transition: width 80ms linear; }\n.ghcn-reading-progress__bar::-moz-progress-bar { background: var(--primary); }\n.ghcn-reading-progress:where([data-variant=\"subtle\"]) .ghcn-reading-progress__bar { color: var(--muted-foreground); accent-color: var(--muted-foreground); }\n.ghcn-reading-progress:where([data-variant=\"subtle\"]) .ghcn-reading-progress__bar::-webkit-progress-value { background: var(--muted-foreground); }\n.ghcn-reading-progress:where([data-variant=\"subtle\"]) .ghcn-reading-progress__bar::-moz-progress-bar { background: var(--muted-foreground); }\n.ghcn-reading-progress:where([data-variant=\"gradient\"]) .ghcn-reading-progress__bar::-webkit-progress-value { background: linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary) 55%, var(--foreground))); }\n.ghcn-reading-progress:where([data-variant=\"gradient\"]) .ghcn-reading-progress__bar::-moz-progress-bar { background: linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary) 55%, var(--foreground))); }\n@media (prefers-reduced-motion: reduce) { .ghcn-reading-progress__bar::-webkit-progress-value { transition: none; } }\n"
+    },
+    {
+      "name": "reading-progress.js",
+      "type": "js",
+      "target": "assets/js/components/reading-progress.js",
+      "content": "/* ghostcn reading progress: scroll-linked article progress bar, CSP-safe via native <progress>. */\n(() => {\n  function init() {\n    const widgets = [...document.querySelectorAll('[data-ghcn-reading-progress]')].filter(el => !el.dataset.ghcnProgressReady);\n    if (!widgets.length) return;\n    const entries = widgets.map(el => {\n      el.dataset.ghcnProgressReady = 'true';\n      let target = null;\n      try { target = document.querySelector(el.dataset.contentSelector || '.ghcn-article-content'); } catch {}\n      const bar = el.querySelector('progress');\n      return bar ? { el, bar, target } : null;\n    }).filter(Boolean);\n    if (!entries.length) return;\n\n    let frame = 0;\n    const update = () => {\n      frame = 0;\n      const vh = window.innerHeight || 1;\n      for (const { bar, target } of entries) {\n        let ratio = 0;\n        if (target) {\n          const rect = target.getBoundingClientRect();\n          if (rect.height <= vh) continue;\n          ratio = Math.min(1, Math.max(0, -rect.top / Math.max(1, rect.height - vh)));\n        } else {\n          const doc = document.scrollingElement || document.documentElement;\n          if (doc.scrollHeight <= doc.clientHeight + 4) continue;\n          ratio = Math.min(1, Math.max(0, doc.scrollTop / Math.max(1, doc.scrollHeight - doc.clientHeight)));\n        }\n        const percent = Math.round(ratio * 100);\n        bar.value = percent;\n        bar.setAttribute('aria-valuenow', String(percent));\n      }\n    };\n    const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };\n    update();\n    window.addEventListener('scroll', schedule, { passive: true });\n    window.addEventListener('resize', schedule);\n  }\n  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });\n  else init();\n})();"
+    }
+  ],
+  "gscan": {
+    "rules_satisfied": [
+      "GS010-PJ-VALID"
+    ],
+    "notes": "Uses native <progress> element updated on scroll via requestAnimationFrame; zero inline styles."
+  },
+  "styleSlots": {
+    "class": [
+      ".ghcn-reading-progress"
+    ],
+    "barClass": [
+      ".ghcn-reading-progress__bar"
+    ]
+  }
+}

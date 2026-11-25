@@ -58,23 +58,35 @@ export async function fetchRegistryJson<T>(url: string, timeoutMs = 5000): Promi
   }
 }
 
+function safeRegistryBase(raw: string): string {
+  const url = new URL(raw.trim().replace(/\/+$/, ''));
+  if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) {
+    throw new Error('Invalid GHOST_UI_REGISTRY_URL.');
+  }
+  return url.href.replace(/\/+$/, '');
+}
+
+function isValidRegistryDir(dir: string): boolean {
+  return fs.existsSync(path.join(dir, 'index.json')) && fs.statSync(path.join(dir, 'index.json')).isFile();
+}
+
 function findLocalRegistryDir(): string | null {
   const bundledCandidates = [
     path.join(__dirname, 'registry'),
     path.join(__dirname, '..', 'registry')
   ];
   for (const cand of bundledCandidates) {
-    if (fs.existsSync(cand) && fs.statSync(cand).isDirectory()) {
+    if (isValidRegistryDir(cand)) {
       return cand;
     }
   }
 
-  const searchStarts = [process.cwd(), __dirname];
+  const searchStarts = [__dirname, process.cwd()];
   for (const start of searchStarts) {
     let currentDir = start;
     while (currentDir !== path.parse(currentDir).root) {
       const potentialPath = path.join(currentDir, 'registry');
-      if (fs.existsSync(potentialPath) && fs.statSync(potentialPath).isDirectory()) {
+      if (isValidRegistryDir(potentialPath)) {
         return potentialPath;
       }
       currentDir = path.dirname(currentDir);
@@ -115,7 +127,7 @@ export async function getRegistryIndex(): Promise<RegistryItem[]> {
   // If custom registry URL explicitly configured, try remote first
   if (process.env.GHOST_UI_REGISTRY_URL) {
     try {
-      return await fetchRegistryJson<RegistryItem[]>(`${process.env.GHOST_UI_REGISTRY_URL}/index.json`);
+      return await fetchRegistryJson<RegistryItem[]>(`${safeRegistryBase(process.env.GHOST_UI_REGISTRY_URL)}/index.json`);
     } catch {
       // Fallback to local
     }
@@ -143,7 +155,7 @@ export async function getComponent(componentName: string): Promise<ComponentMani
   // If custom registry URL explicitly configured, try remote first
   if (process.env.GHOST_UI_REGISTRY_URL) {
     try {
-      return await fetchRegistryJson<ComponentManifest>(`${process.env.GHOST_UI_REGISTRY_URL}/components/${sanitized}.json`);
+      return await fetchRegistryJson<ComponentManifest>(`${safeRegistryBase(process.env.GHOST_UI_REGISTRY_URL)}/components/${sanitized}.json`);
     } catch {
       // Fallback to local
     }
